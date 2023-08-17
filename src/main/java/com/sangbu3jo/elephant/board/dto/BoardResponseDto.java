@@ -9,13 +9,13 @@ import java.time.LocalDate;
 @Getter
 public class BoardResponseDto {
 
+    private Long boardid;
     private String title;
-    private String content;
     private LocalDate expiredAt;
 
     public BoardResponseDto(Board board) {
+        this.boardid = board.getId();
         this.title = board.getTitle();
-        this.content = board.getContent();
         this.expiredAt = board.getExpiredAt();
     }
 

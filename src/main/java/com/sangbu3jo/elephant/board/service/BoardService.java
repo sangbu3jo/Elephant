@@ -1,5 +1,6 @@
 package com.sangbu3jo.elephant.board.service;
 
+import com.sangbu3jo.elephant.board.dto.BoardOneResponseDto;
 import com.sangbu3jo.elephant.board.dto.BoardRequestDto;
 import com.sangbu3jo.elephant.board.dto.BoardResponseDto;
 import com.sangbu3jo.elephant.board.entity.Board;
@@ -37,14 +38,22 @@ public class BoardService {
         return new BoardResponseDto(board);
     }
 
+    public BoardOneResponseDto getOneBoard(User user, Long boardId) {
+        log.info("보드 수정");
+        Board board = findBoard(boardId);
+        BoardUser boardUser = findBoardUser(board, user); // 해당 사용자가 보드의 참여자인지 아닌지 확인
+
+        return new BoardOneResponseDto(board);
+    }
     // 보드 조회 (사용자 것만)
+
     public List<BoardResponseDto> getBoards(User user) {
         log.info("보드 전체 조회");
         List<Board> boards = boardRepository.findAllById(boardUserRepository.findAllByUser(user).stream().map(BoardUser::getBoard).map(Board::getId).toList());
         return boards.stream().map(BoardResponseDto::new).toList();
     }
-
     // 보드 수정 (참여자/매니저)
+
     @Transactional
     public BoardResponseDto updateBoard(Long boardId, User user, BoardRequestDto boardRequestDto) {
         log.info("보드 수정");
@@ -79,5 +88,4 @@ public class BoardService {
     public BoardUser findBoardUser(Board board, User user) {
         return boardUserRepository.findByBoardAndUser(board, user).orElseThrow(IllegalArgumentException::new);
     }
-
 }

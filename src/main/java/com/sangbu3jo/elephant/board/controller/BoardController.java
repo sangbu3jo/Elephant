@@ -1,7 +1,9 @@
 package com.sangbu3jo.elephant.board.controller;
 
+import com.sangbu3jo.elephant.board.dto.BoardOneResponseDto;
 import com.sangbu3jo.elephant.board.dto.BoardRequestDto;
 import com.sangbu3jo.elephant.board.dto.BoardResponseDto;
+import com.sangbu3jo.elephant.board.entity.Board;
 import com.sangbu3jo.elephant.board.service.BoardService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.users.entity.User;
@@ -33,6 +35,14 @@ public class BoardController {
     }
 
     // 보드 단건 조회 (카드랑 컬럼 완성되면 마무리하기)
+    @ResponseBody
+    @GetMapping("/boards/{board_id}")
+    public ResponseEntity<BoardOneResponseDto> getOneBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                              @PathVariable Long board_id) {
+        log.info("보드 단건 조회 시도");
+        BoardOneResponseDto boardOneResponseDto = boardService.getOneBoard(userDetails.getUser(), board_id);
+        return ResponseEntity.ok().body(boardOneResponseDto);
+    }
 
     // 보드 전체 조회
     @GetMapping("/boards")
