@@ -1,6 +1,8 @@
 package com.sangbu3jo.elephant.users.entity;
 
 
+import com.sangbu3jo.elephant.auth.dto.APIUserInfoDto;
+import com.sangbu3jo.elephant.auth.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +12,7 @@ import java.util.Set;
 // lombok
 @Getter
 @EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 
 // jpa
 @Entity
@@ -29,7 +31,7 @@ public class User {
   @Column(name = "password", nullable = false)
   private String password;
 
-  @Column(name = "nickname", nullable = false, unique = true,  length = 25)
+  @Column(name = "nickname")
   private String nickname;
 
   @Column(name = "introduction")
@@ -49,19 +51,11 @@ public class User {
   private UserRoleEnum role;
 
   @Builder
-  public User(String username, String password, String nickname, String intruduction, UserRoleEnum role) {
-    this.username = username;
+  public User(SignupRequestDto signupRequestDto, String password, UserRoleEnum role) {
+    this.username = signupRequestDto.getUsername();
+    this.nickname = signupRequestDto.getNickname();
     this.password = password;
-    this.nickname = nickname;
-    this.introduction = intruduction;
+    this.introduction = signupRequestDto.getIntroduction();
     this.role = role;
   }
-
-  public User(String username, String password, String nickname, String googleId) {
-    this.username = username;
-    this.password = password;
-    this.nickname = nickname;
-    this.googleId = googleId;
-  }
-  
 }
