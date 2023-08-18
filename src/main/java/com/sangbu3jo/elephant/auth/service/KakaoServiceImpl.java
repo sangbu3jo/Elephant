@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class KakaoServiceImpl implements SocialService{
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
-  private final RestTemplate restTemplate; // 수동 등록한 Bean
+  private final RestTemplate restTemplate;
   private final JwtUtil jwtUtil;
 
   private final String CLIENT_ID = "d7da621a3b256dc1ef5cc2ee72d98307";
@@ -75,7 +76,11 @@ public class KakaoServiceImpl implements SocialService{
     body.add("redirect_uri", KAKAO_REDIRECT_URL);
     body.add("code",code); // 인가 코드
 
-    RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
+    // 방법 1
+    ResponseEntity<String> response = restTemplate.postForEntity(uri,new HttpEntity<>(body, headers),String.class);
+
+    // 방법 2
+/*    RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
         .post(uri) // body 가 있으므로 post 메서드
         .headers(headers)
         .body(body);
@@ -84,7 +89,7 @@ public class KakaoServiceImpl implements SocialService{
     ResponseEntity<String> response = restTemplate.exchange(
         requestEntity,
         String.class // 반환값 타입은 String
-    );
+    );*/
 
     // HTTP 응답 (JSON) -> 액세스 토큰 값을 반환합니다.
     JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());

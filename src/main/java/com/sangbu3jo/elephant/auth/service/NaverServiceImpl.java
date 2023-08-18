@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j(topic = "NAVER Login")
@@ -35,7 +34,6 @@ public class NaverServiceImpl{
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
-  private final RestTemplate restTemplate; // 수동 등록한 Bean
   private final JwtUtil jwtUtil;
 
   private final String CLIENT_ID = "tOZbI07C6ca6FvZufq1F";
@@ -53,11 +51,10 @@ public class NaverServiceImpl{
     String accessToken = getToken(code);
 
     // 2. 토큰으로 네이버 API 호출 : "액세스 토큰"으로 "네이버 사용자 정보" 가져오기
-    APIUserInfoDto naverUserInfo = getNaverUserInfo(accessToken);
-    log.info("accessToken: " + accessToken);
+    APIUserInfoDto apiUserInfoDto = getUserInfo(accessToken);
 
     // 3. 필요시에 회원가입
-    User naverUser = registerUserIfNeeded(naverUserInfo);
+    User naverUser = registerUserIfNeeded(apiUserInfoDto);
 
     // 4. JWT 토큰 반환
      String createToken = jwtUtil.createToken(naverUser.getUsername(), naverUser.getRole());
@@ -109,7 +106,7 @@ public class NaverServiceImpl{
     return jsonNode.get("access_token").asText();
   }
 
-  private APIUserInfoDto getNaverUserInfo(String accessToken) throws JsonProcessingException {
+  private APIUserInfoDto getUserInfo(String accessToken) throws JsonProcessingException {
     String header = "Bearer " + accessToken; // Bearer 다음에 공백 추가
 
     String apiURL = "https://openapi.naver.com/v1/nid/me";

@@ -31,7 +31,7 @@ public class GoogleServiceImpl implements SocialService{
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
-  private final RestTemplate restTemplate; // 수동 등록한 Bean
+  private final RestTemplate restTemplate;
   private final JwtUtil jwtUtil;
 
   private final String CLIENT_ID = "110938612036-nfoui26m7j4isaeph5mp8g62up173d5c.apps.googleusercontent.com";
@@ -70,6 +70,7 @@ public class GoogleServiceImpl implements SocialService{
     // HTTP Header 생성
     HttpHeaders headers = new HttpHeaders();
     headers.add("Content-type", "application/x-www-form-urlencoded");
+    // headers.set() 코드도 가능
 
     // HTTP Body 생성
     MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
@@ -79,7 +80,11 @@ public class GoogleServiceImpl implements SocialService{
     body.add("redirect_uri",GOOGLE_REDIRECT_URL); // 애플리케이션 등록시 설정한 redirect_uri
     body.add("code", code);
 
-    RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
+    // 방법 1
+    ResponseEntity<String> response = restTemplate.postForEntity(uri,new HttpEntity<>(body, headers),String.class);
+
+    // 방법 2
+/*    RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
         .post(uri) // body 가 있으므로 post 메서드
         .headers(headers)
         .body(body);
@@ -88,7 +93,7 @@ public class GoogleServiceImpl implements SocialService{
     ResponseEntity<String> response = restTemplate.exchange(
         requestEntity,
         String.class // 반환값 타입은 String
-    );
+    );*/
 
     // HTTP 응답 (JSON) -> 액세스 토큰 값을 반환합니다.
     JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
