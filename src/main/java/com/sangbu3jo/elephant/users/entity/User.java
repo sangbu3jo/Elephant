@@ -58,4 +58,28 @@ public class User {
     this.introduction = signupRequestDto.getIntroduction();
     this.role = role;
   }
+
+
+  @Builder
+  public User(APIUserInfoDto apiUserInfoDto, String password, UserRoleEnum role) {
+    this.username = apiUserInfoDto.getEmail();
+    this.nickname = apiUserInfoDto.getNickname();
+    this.password = password;
+    this.role = role;
+  }
+
+  public User kakaoIdUpdate(String kakaoId){
+    this.kakaoId = kakaoId;
+    return this;
+  }
+
+  public User googleIdUpdate(String googleId){
+    this.googleId = googleId;
+    return this;
+  }
+
+  public User NaverIdUpdate(String naverId){
+    this.naverId = naverId;
+    return this;
+  }
 }

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="#">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <link rel="stylesheet" href="/css/login.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <title>Elephant</title>
+</head>
+
+<body>
+
+<div class="container left-panel-active">
+    <!-- Sign Up -->
+    <div class="container__form container--signup">
+        <div class="form" id="form1">
+            <h2 class="form__title">Sign Up</h2>
+            <input type="text" placeholder="아이디" name="username" id="username" class="input"/>
+            <input type="password" placeholder="비밀번호" name="password" id="password" class="input"/>
+            <a href="" id="showSignupPwBtn" style="margin-left: -70%; font-size:14px;">Show Password</a>
+            <input type="text" placeholder="닉네임" name="nickname" id="nickname" class="input"/>
+            <input type="text" placeholder="자기소개" name="introduce" id="introduce" class="input"/>
+            <input id="admin-check" type="checkbox" name="admin" onclick="onclickAdmin()" style="margin-top: 10px;">관리자
+            <input id="admin-token" type="관리자 비밀번호" name="adminToken" placeholder="관리자 암호" class="login-input-box input"
+                   style="display:none">
+            <button class="btn" onclick="signup()">가입하기</button>
+        </div>
+    </div>
+
+    <!-- Log In -->
+    <div class="container__form container--login">
+        <div class="form" id="form2">
+            <h2 class="form__title">Login</h2>
+            <input type="text" placeholder="아이디" name="loginUsername" id="loginUsername" class="input"/>
+            <input type="password" placeholder="비밀번호" name="loginPassword" id="loginPassword"
+                   class="input"/>
+            <a href="" id="showLoginPwBtn" style="margin-left: -70%; font-size:14px;">Show Password</a>
+            <button class="btn" onclick="onLogin()">로그인</button>
+            <button id="login-kakao-btn"
+                    onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=d7da621a3b256dc1ef5cc2ee72d98307&redirect_uri=http://localhost:8080/api/auth/kakao/callback&response_type=code'">
+                KakaoTALK
+            </button>
+            <button id="login-google-btn"
+                    onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id=110938612036-nfoui26m7j4isaeph5mp8g62up173d5c.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/auth/google/callback&response_type=code&scope=email'">
+                Google
+            </button>
+            <button id="login-naver-btn"
+                    onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id=678064930886-r2oo68m8nm0oe7d81ng6ph0obst30hhf.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/auth/naver/callback&response_type=code&scope=email'">
+                Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="container__overlay">
+        <div class="overlay">
+            <div class="overlay__panel overlay--left">
+                <button class="btn" id="logIn" style="WIDTH: 67%;">LogIn</button>
+            </div>
+            <div class="overlay__panel overlay--right">
+                <button class="btn" id="signUp" style="WIDTH: 67%;">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="application/javascript" src="/js/login.js"></script>
+</html>
