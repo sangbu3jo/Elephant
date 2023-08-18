@@ -53,7 +53,6 @@ public class PostController {
     }
 
 
-
     //게시글 삭제
     @DeleteMapping("/posts/{post_id}")
     public ResponseEntity<String> deletePost(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -70,6 +69,11 @@ public class PostController {
         } else return ResponseEntity.status(400).body("삭제 권한이 없습니다.");
 
     }
+
+
+
+
+
 
 }
 
