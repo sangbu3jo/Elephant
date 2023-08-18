@@ -129,6 +129,31 @@ public class PostService {
 
         return postResponseDtoList;
     }
+    //게시글 카테고리 별 검색 조회
+    public List<PostResponseDto> getSearchTitle(Integer category, Integer pageNum, String title){
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        Page<Post> searchList;
+
+        // 페이징 구현
+        Pageable pageable = PageRequest.of(pageNum - 1,5); //페이지 번호는 0부터 시작함, 한 페이지에 게시물 갯수
+
+        if (category == 1) {
+            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+
+        } else if (category == 2) {
+            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+
+        } else if (category == 3) {
+            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+
+        } else throw new NullPointerException("해당 카테고리가 존재하지 않습니다.");
+
+        for (Post post : searchList)
+            postResponseDtoList.add(new PostResponseDto(post));
+
+        return postResponseDtoList;
+
+    }
 
     //게시물 단건 조회(댓글 포함)
     @Transactional

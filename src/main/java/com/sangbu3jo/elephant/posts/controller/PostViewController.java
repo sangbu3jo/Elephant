@@ -1,5 +1,6 @@
 package com.sangbu3jo.elephant.posts.controller;
 
+import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
 import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
@@ -7,10 +8,7 @@ import com.sangbu3jo.elephant.users.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,6 +36,15 @@ public class PostViewController {
 
     }
 
+    //게시글 카테고리 별 검색 조회
+    @GetMapping("/posts/categories/{category}/titles/{page_num}")
+    public List<PostResponseDto> getSearchTitle(@PathVariable Integer category,
+                                                @PathVariable Integer page_num,
+                                                @RequestBody PostRequestDto requestDto){
+
+        return postService.getSearchTitle(category, page_num, requestDto.getTitle());
+    }
+
     //게시글 상세 페이지
     @GetMapping("/posts/{post_id}")
     public PostResponseDto getPost(@PathVariable Long post_id,
@@ -46,4 +53,4 @@ public class PostViewController {
     }
 }
 
-//param 방식 이용
+//RequestParam 방식 이용 프론트에서 값을 받아올 때
