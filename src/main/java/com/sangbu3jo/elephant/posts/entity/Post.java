@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -32,6 +35,7 @@ public class Post extends TimeStamped {
     @Column
     private String files;
 
+
     @Column(nullable = false)
     private Boolean completed;
 
@@ -42,6 +46,9 @@ public class Post extends TimeStamped {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostComment> commentList = new ArrayList<>(); //댓글
+
     public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
@@ -51,14 +58,19 @@ public class Post extends TimeStamped {
 
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
 
     public void updatePost(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
         this.files = postRequestDto.getFiles();
         this.completed = postRequestDto.getCompleted();
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setView_cnt(Integer view_cnt) {
+        this.view_cnt = view_cnt;
     }
 }
