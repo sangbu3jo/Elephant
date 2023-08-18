@@ -50,7 +50,7 @@ public class GoogleServiceImpl implements SocialService{
     User googleUser = registerUserIfNeeded(apiUserInfoDto);
 
     // 4. JWT 토큰 반환
-    String createToken = jwtUtil.createToken(googleUser.getUsername());
+    String createToken = jwtUtil.createToken(googleUser.getUsername(),googleUser.getRole());
 
     return createToken;
   }

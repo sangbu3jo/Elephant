@@ -46,17 +46,17 @@
             <input type="password" placeholder="비밀번호" name="loginPassword" id="loginPassword"
                    class="input"/>
             <a href="" id="showLoginPwBtn" style="margin-left: -70%; font-size:14px;">Show Password</a>
-            <button class="btn" onclick="onLogin()">로그인</button>
+            <button class="btn" onclick="onLogin()">로그인하기</button>
             <button id="login-kakao-btn"
                     onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=d7da621a3b256dc1ef5cc2ee72d98307&redirect_uri=http://localhost:8080/api/auth/kakao/callback&response_type=code'">
                 KakaoTALK
             </button>
+            <button id="login-naver-btn"
+                    onclick="location.href='https://nid.naver.com/oauth2.0/authorize?client_id=tOZbI07C6ca6FvZufq1F&redirect_uri=http://localhost:8080/api/auth/naver/callback&response_type=code'">
+                Naver
+            </button>
             <button id="login-google-btn"
                     onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id=110938612036-nfoui26m7j4isaeph5mp8g62up173d5c.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/auth/google/callback&response_type=code&scope=email'">
-                Google
-            </button>
-            <button id="login-naver-btn"
-                    onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id=678064930886-r2oo68m8nm0oe7d81ng6ph0obst30hhf.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/auth/naver/callback&response_type=code&scope=email'">
                 Google
             </button>
         </div>

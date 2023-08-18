@@ -78,7 +78,7 @@ public class User {
     return this;
   }
 
-  public User NaverIdUpdate(String naverId){
+  public User naverIdUpdate(String naverId){
     this.naverId = naverId;
     return this;
   }

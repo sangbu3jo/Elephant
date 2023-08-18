@@ -48,7 +48,7 @@ public class KakaoServiceImpl implements SocialService{
     User kakaoUser = registerUserIfNeeded(apiUserInfoDto);
 
     // 4. JWT 토큰 반환
-    String createToken = jwtUtil.createToken(kakaoUser.getUsername());
+    String createToken = jwtUtil.createToken(kakaoUser.getUsername(),kakaoUser.getRole());
 
     return createToken;
   }

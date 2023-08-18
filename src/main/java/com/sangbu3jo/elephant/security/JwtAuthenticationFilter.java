@@ -4,6 +4,7 @@ import com.sangbu3jo.elephant.auth.dto.LoginRequestDto;
 import com.sangbu3jo.elephant.security.jwt.JwtUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,7 +49,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
     log.info("로그인 성공 및 JWT 생성");
     String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-    String token = jwtUtil.createToken(username);
+    UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
+
+    String token = jwtUtil.createToken(username,role);
 
     jwtUtil.addJwtToCookie(token, response);
     log.info("로그인 성공");
