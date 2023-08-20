@@ -12,10 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -109,7 +111,7 @@ public class PostService {
         Page<Post> projectList;
 
         // 페이징 구현
-        Pageable pageable = PageRequest.of(pageNum - 1,5); //페이지 번호는 0부터 시작함, 한 페이지에 게시물 갯수
+        Pageable pageable = PageRequest.of(pageNum - 1, 5); //페이지 번호는 0부터 시작함, 한 페이지에 게시물 갯수
 
 
         if (category == 1) {
@@ -129,31 +131,53 @@ public class PostService {
 
         return postResponseDtoList;
     }
+
     //게시글 카테고리 별 검색 조회
-    public List<PostResponseDto> getSearchTitle(Integer category, Integer pageNum, String title){
+    //슬라이스 구현
+    public List<PostResponseDto> getSearchTitle(Integer category, Integer pageNum, String title) {
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-        Page<Post> searchList;
 
-        // 페이징 구현
-        Pageable pageable = PageRequest.of(pageNum - 1,5); //페이지 번호는 0부터 시작함, 한 페이지에 게시물 갯수
 
-        if (category == 1) {
-            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+        //슬라이스 구현
+        Pageable pageable = PageRequest.of(pageNum - 1, 5); //페이지 번호는 0부터 시작함, 한 페이지에 게시물 갯수
 
-        } else if (category == 2) {
-            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+        Slice<Post> searchList;
 
-        } else if (category == 3) {
-            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+        switch (category) {
+            case 1:
+                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(project, title, pageable);
+                break;
+            case 2:
+                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(study, title, pageable);
+                break;
+            case 3:
+                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(previousExam, title, pageable);
+                break;
+            default:
+                throw new IllegalArgumentException("해당 카테고리가 존재하지 않습니다.");
+        }
 
-        } else throw new NullPointerException("해당 카테고리가 존재하지 않습니다.");
-
-        for (Post post : searchList)
-            postResponseDtoList.add(new PostResponseDto(post));
-
-        return postResponseDtoList;
-
+        return searchList.stream()
+                .map(PostResponseDto::new)
+                .collect(Collectors.toList());
     }
+//        if (category == 1) {
+//            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+//
+//        } else if (category == 2) {
+//            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+//
+//        } else if (category == 3) {
+//            searchList = postRepository.findAllByTitleContainingOrderByCreatedAtDesc(title, pageable);
+//
+//        } else throw new IllegalArgumentException("해당 카테고리가 존재하지 않습니다.");
+//
+//        for (Post post : searchList)
+//            postResponseDtoList.add(new PostResponseDto(post));
+//
+//        return postResponseDtoList;
+//
+//
 
     //게시물 단건 조회(댓글 포함)
     @Transactional
@@ -168,7 +192,7 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
         //조회할 때마다 조회수 올라감
-        int cnt = findedPost.getView_cnt() == null ? 1 : findedPost.getView_cnt() + 1;
+        int cnt = findedPost.getViewCnt() == null ? 1 : findedPost.getViewCnt() + 1;
         findedPost.setView_cnt(cnt);
 
         PostResponseDto postResponseDto = new PostResponseDto(findedPost);
@@ -178,29 +202,55 @@ public class PostService {
     }
 
 
-//    public List<PostResponseDto> getAllPosts() {
+    //메인페이지 게시글 전체 조회
+//    public List<PostResponseDto> getAllPosts(Integer selectNum) {
 //
-//        List<Post> postList = new ArrayList<>();
-//        List<Post> projectList = postRepository.findAllByOrderByCategoryAsc();
+//        Page<Post> allPost;
 //        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
 //
-//
-//            for (int i = 0; i <= projectList.size() + 1; i++) {
-//                if (postList.size() % 5 == 0) {
-//                    postList.get(i).equals(postList.get(i + 1));
-//                    continue;
-//                } else postList.add(projectList.get(i));
-//
-//            }
+//        // 페이징 구현
+//        Pageable pageable = PageRequest.of(0, 5); //페이지 번호는 0부터 시작함, 한 페이지에 게시물 갯수
 //
 //
+//        if (selectNum == 1) {
+//            //생성날짜 내림차순
+//            allPost = postRepository.findAllByCategoryOrderByCreatedAtDesc(project, pageable);
+//            allPost = postRepository.findAllByCategoryOrderByCreatedAtDesc(study, pageable);
+//            allPost = postRepository.findAllByCategoryOrderByCreatedAtDesc(previousExam, pageable);
+//        } else if (selectNum == 2) {
+//            //생성날짜 오름차순
+//            allPost = postRepository.findAllByCategoryOrderByCreatedAtAsc(project, pageable);
+//            allPost = postRepository.findAllByCategoryOrderByCreatedAtAsc(study, pageable);
+//            allPost = postRepository.findAllByCategoryOrderByCreatedAtAsc(previousExam, pageable);
+//        } else if (selectNum == 3) {
+//            //조회수 내림차순
+//            allPost = postRepository.findAllByCategoryOrderByViewCntDesc(project, pageable);
+//            allPost = postRepository.findAllByCategoryOrderByViewCntDesc(study, pageable);
+//            allPost = postRepository.findAllByCategoryOrderByViewCntDesc(previousExam, pageable);
+//        } else if (selectNum == 4) {
+//            //댓글 수 내림차순
+//            allPost = postRepository.findAllByCategoryOrderByCommentListDesc(project, pageable);
+//            allPost = postRepository.findAllByCategoryOrderByCommentListDesc(study, pageable);
+//            allPost = postRepository.findAllByCategoryOrderByCommentListDesc(previousExam, pageable);
+//        } else throw new NullPointerException("해당 번호는 없습니다.");
 //
-//
+//        for (Post post : allPost) {
+//            postResponseDtoList.add(new PostResponseDto(post));
+//        }
 //
 //
 //        return postResponseDtoList;
+//
+//
 //    }
+
+
 }
+
+
+
+
+
 
 
 

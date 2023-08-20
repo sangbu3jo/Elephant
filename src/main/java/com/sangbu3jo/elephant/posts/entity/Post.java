@@ -40,7 +40,7 @@ public class Post extends TimeStamped {
     private Boolean completed;
 
     @Column
-    Integer view_cnt;
+    Integer viewCnt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -71,7 +71,7 @@ public class Post extends TimeStamped {
         this.category = category;
     }
 
-    public void setView_cnt(Integer view_cnt) {
-        this.view_cnt = view_cnt;
+    public void setView_cnt(Integer viewCnt) {
+        this.viewCnt = viewCnt;
     }
 }

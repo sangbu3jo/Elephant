@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Getter
-@Setter
+
 public class PostResponseDto {
 
     private String title;
@@ -31,7 +31,7 @@ public class PostResponseDto {
         this.category = post.getCategory();
         this.completed = post.getCompleted();
         this.files = post.getFiles();
-        this.view_cnt = post.getView_cnt();
+        this.view_cnt = post.getViewCnt();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.postCommentList = post.getCommentList().stream()

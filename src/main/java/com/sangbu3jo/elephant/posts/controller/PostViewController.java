@@ -17,12 +17,15 @@ import java.util.List;
 @RequestMapping("/api")
 public class PostViewController {
 
+    //RequestParam 방식 이용 프론트에서 값을 받아올 때
+
     private final PostService postService;
 
     //메인페이지에서 섹션을 나눠서 각 카테고리마다 5개 정도 가져오기
 //    @GetMapping("/posts/categories")
-//    public List<PostResponseDto> getAllPosts() {
-//        return postService.getAllPosts();
+//    public List<PostResponseDto> getAllPosts(@RequestBody PostRequestDto postRequestDto) {
+//
+//        return postService.getAllPosts(postRequestDto.getSelectNum());
 //
 //    }
 
@@ -37,10 +40,11 @@ public class PostViewController {
     }
 
     //게시글 카테고리 별 검색 조회
+    //슬라이스 구현
     @GetMapping("/posts/categories/{category}/titles/{page_num}")
     public List<PostResponseDto> getSearchTitle(@PathVariable Integer category,
                                                 @PathVariable Integer page_num,
-                                                @RequestBody PostRequestDto requestDto){
+                                                @RequestBody PostRequestDto requestDto) {
 
         return postService.getSearchTitle(category, page_num, requestDto.getTitle());
     }
@@ -48,9 +52,8 @@ public class PostViewController {
     //게시글 상세 페이지
     @GetMapping("/posts/{post_id}")
     public PostResponseDto getPost(@PathVariable Long post_id,
-                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return postService.getPost(post_id, userDetails.getUser());
     }
 }
 
-//RequestParam 방식 이용 프론트에서 값을 받아올 때

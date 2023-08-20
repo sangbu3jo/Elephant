@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
+
 public class PostRequestDto {
 
     private String title;
@@ -13,6 +13,8 @@ public class PostRequestDto {
     private int category;
     private String files;
     private Boolean completed;
+
+    private Integer selectNum;
 
 
 }
