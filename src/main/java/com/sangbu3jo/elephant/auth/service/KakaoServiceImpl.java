@@ -33,6 +33,9 @@ public class KakaoServiceImpl implements SocialService{
   private final RestTemplate restTemplate;
   private final JwtUtil jwtUtil;
 
+  /*  @Value("${kakao.client.id}")
+  private String CLIENT_ID;*/
+
   private final String CLIENT_ID = "d7da621a3b256dc1ef5cc2ee72d98307";
   private final String KAKAO_REDIRECT_URL = "http://localhost:8080/api/auth/kakao/callback";
 

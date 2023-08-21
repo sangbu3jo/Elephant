@@ -34,6 +34,11 @@ public class GoogleServiceImpl implements SocialService{
   private final RestTemplate restTemplate;
   private final JwtUtil jwtUtil;
 
+  /*  @Value("${google.client.id}")
+  private String CLIENT_ID;
+  @Value("${google.client.secret}")
+  private String CLIENT_SECRET;*/
+
   private final String CLIENT_ID = "110938612036-nfoui26m7j4isaeph5mp8g62up173d5c.apps.googleusercontent.com";
   private final String SECRET_KEY = "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";
   private final String GOOGLE_REDIRECT_URL = "http://localhost:8080/api/auth/google/callback";

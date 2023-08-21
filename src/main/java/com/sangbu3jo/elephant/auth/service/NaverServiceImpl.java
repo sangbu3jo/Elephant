@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -36,15 +37,16 @@ public class NaverServiceImpl{
   private final UserRepository userRepository;
   private final JwtUtil jwtUtil;
 
+/*  @Value("${naver.client.id}")
+  private String CLIENT_ID;
+  @Value("${naver.client.secret}")
+  private String CLIENT_SECRET;*/
+
   private final String CLIENT_ID = "tOZbI07C6ca6FvZufq1F";
+
   private final String CLIENT_SECRET = "hl5iOUYJ0e";
   private final String NAVER_REDIRECT_URL = "http://localhost:8080/api/auth/kakao/callback";
 
-/*  @Value("${naver.client.id}")
-  private String naverClientId;
-
-  @Value("${naver.client.secret}")
-  private String naverClientSecret;*/
 
   public String naverLogin(String code) throws JsonProcessingException, UnsupportedEncodingException {
     // 1. "인가 코드"로 "엑세스 토큰" 요청
