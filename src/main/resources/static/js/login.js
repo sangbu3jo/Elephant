@@ -191,20 +191,12 @@ function onLogin() {
         contentType: "application/json",
         data: JSON.stringify({username: loginUsername, password: loginPassword}),
     })
-    .done(function (res, status, xhr) {
-        const token = xhr.getResponseHeader('Authorization');
-
-        Cookies.set('Authorization', token, {path: '/'})
-
-        $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-            jqXHR.setRequestHeader('Authorization', token);
-        });
-
+    .done(function () {
         Toast.fire({
             icon: 'success',
             title: loginUsername + '님 환영합니다!'
         }).then(function () {
-            window.location.href = "/view/main"
+            //window.location.href = "/view/main"
         })
     })
     .fail(function (jqXHR, textStatus) {

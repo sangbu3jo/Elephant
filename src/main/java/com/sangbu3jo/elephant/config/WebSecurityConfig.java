@@ -1,5 +1,6 @@
 package com.sangbu3jo.elephant.config;
 
+import com.sangbu3jo.elephant.auth.redis.RefreshTokenRepository;
 import com.sangbu3jo.elephant.security.JwtAuthenticationFilter;
 import com.sangbu3jo.elephant.security.JwtAuthorizationFilter;
 import com.sangbu3jo.elephant.security.UserDetailsServiceImpl;
@@ -27,6 +28,7 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,7 +42,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRepository);
         filter.setAuthenticationManager(authenticationManger(authenticationConfiguration));
         return filter;
     }

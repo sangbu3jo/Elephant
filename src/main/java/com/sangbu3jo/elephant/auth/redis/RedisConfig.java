@@ -1,4 +1,4 @@
-package com.sangbu3jo.elephant.config;
+package com.sangbu3jo.elephant.auth.redis;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,13 +32,15 @@ public class RedisConfig {
   }
 
   /**
-   * RedisConnection에서 넘겨준 byte 값 객체 직렬화
+   * RedisConnection 에서 넘겨준 byte 값 객체 직렬화 RedisTemplate 은 Redis 데이터를 저장하고 조회하는 기능을 하는 클래스 Redis cli
+   * 를 사용해 Redis 데이터를 직접 조회할 때, Redis 데이터를 문자열로 반환하기 위한 설정
    */
   @Bean
-  public RedisTemplate<?,?> redisTemplate(){
-    RedisTemplate<byte[], byte[]> redisTemplate = new RedisTemplate<>();
+  public RedisTemplate<String, String> redisTemplate() {
+    RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
     redisTemplate.setConnectionFactory(redisConnectionFactory());
     redisTemplate.setKeySerializer(new StringRedisSerializer());
+    redisTemplate.setValueSerializer(new StringRedisSerializer());
     return redisTemplate;
   }
 
