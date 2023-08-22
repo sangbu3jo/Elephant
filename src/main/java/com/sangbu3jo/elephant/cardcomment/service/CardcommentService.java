@@ -51,7 +51,7 @@ public class CardcommentService {
         Card card = comment.getCard();
 
         if (!comment.getUser().equals(user)) {
-            throw new AccessDeniedException("작성자만 수정 가능합니다");
+            throw new AccessDeniedException("작성자만 삭제 가능합니다");
         }
         // 해당 카드의 댓글 리스트에서 댓글 삭제
         card.removeCardcomment(comment);
