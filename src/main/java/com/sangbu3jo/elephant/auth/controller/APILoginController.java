@@ -28,7 +28,7 @@ public class APILoginController {
   public String kakaoLogin(@RequestParam String code, HttpServletResponse response)
       throws JsonProcessingException {
     String token = kakaoService.socialLogin(code);
-    jwtUtil.addJwtToCookie(token,response);
+    jwtUtil.addJwtToCookieAccessToken(token,response);
     return "redirect:/";
   }
 
@@ -36,7 +36,7 @@ public class APILoginController {
   public String googleLogin(@RequestParam String code, HttpServletResponse response)
       throws JsonProcessingException {
     String token = googleService.socialLogin(code);
-    jwtUtil.addJwtToCookie(token, response);
+    jwtUtil.addJwtToCookieAccessToken(token, response);
     return "redirect:/";
   }
 
@@ -45,7 +45,7 @@ public class APILoginController {
       throws JsonProcessingException, UnsupportedEncodingException {
     String token = naverService.naverLogin(code);
     log.info("token: " + token);
-    jwtUtil.addJwtToCookie(token, response);
+    jwtUtil.addJwtToCookieAccessToken(token, response);
     return "redirect:/";
   }
 

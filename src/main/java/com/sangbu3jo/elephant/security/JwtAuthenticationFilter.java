@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     // access token 발급 및 쿠키에 저장
     String accessToken = jwtUtil.createToken(username,role);
-    jwtUtil.addJwtToCookie(accessToken, response);
+    jwtUtil.addJwtToCookieAccessToken(accessToken, response);
 
     // access token 재발급을 위한 refresh token 을 uuid 값으로 생성함.
     RefreshToken refreshToken = new RefreshToken(username, UUID.randomUUID().toString());

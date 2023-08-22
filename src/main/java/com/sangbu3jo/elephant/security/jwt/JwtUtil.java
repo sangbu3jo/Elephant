@@ -13,7 +13,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -69,8 +68,8 @@ public class JwtUtil {
             .compact();
   }
 
-  // JWT Cookie 에 저장
-  public void addJwtToCookie(String token, HttpServletResponse res) {
+  // JWT Cookie 에 access token 저장
+  public void addJwtToCookieAccessToken(String token, HttpServletResponse res) {
     token = URLEncoder.encode(token, StandardCharsets.UTF_8).replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
     Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
@@ -122,17 +121,26 @@ public class JwtUtil {
     return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
   }
 
-  // HttpServletRequest 에서 Cookie Value : JWT 가져오기
-  public String getTokenFromRequest(HttpServletRequest req) {
+  // HttpServletRequest 에서 Cookie Value : JWT access Token 가져오기
+  public String getAccessTokenFromRequest(HttpServletRequest req) {
     Cookie[] cookies = req.getCookies();
     if(cookies != null) {
       for (Cookie cookie : cookies) {
         if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
-          try {
-            return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
-          } catch (UnsupportedEncodingException e) {
-            return null;
-          }
+          return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8); // Encode 되어 넘어간 Value 다시 Decode
+        }
+      }
+    }
+    return null;
+  }
+
+  // HttpServletRequest 에서 Cookie Value : JWT access Token 가져오기
+  public String getRefreshTokenFromRequest(HttpServletRequest req) {
+    Cookie[] cookies = req.getCookies();
+    if(cookies != null) {
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals(REFRESH_HEADER)) {
+          return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8); // Encode 되어 넘어간 Value 다시 Decode
         }
       }
     }
@@ -140,7 +148,7 @@ public class JwtUtil {
   }
 
   //로그아웃 쿠키 날짜를 0으로 만들어 만료시킴
-  public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
+  public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
     Cookie[] cookies = request.getCookies();
     if (cookies == null) {
       return;
@@ -154,7 +162,6 @@ public class JwtUtil {
       }
     }
   }
-
 
 
 }

@@ -3,10 +3,14 @@ package com.sangbu3jo.elephant.auth.controller;
 
 import com.sangbu3jo.elephant.auth.dto.SignupRequestDto;
 import com.sangbu3jo.elephant.auth.service.AuthServiceImpl;
-import jakarta.servlet.http.HttpSession;
+import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +30,19 @@ public class AuthController {
     String result = authService.signup(requestDto);
     return ResponseEntity.ok().body(result);
   }
+
+
+  // 로그아웃 메서드 구현 요망
+
+
+  // 만료된 access token 으로, 만료 전 refresh token
+  @GetMapping("/auth/refresh/access-token")
+  public ResponseEntity<String> generateRefreshToken(
+      HttpServletRequest request, HttpServletResponse response,
+      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    String result = authService.generateRefreshToken(request, response, userDetails.getUser());
+    return ResponseEntity.ok(result);
+  }
+
 
 }
