@@ -52,7 +52,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
   @Override
   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
     log.info("로그인 성공 및 JWT 생성");
-    Long id = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getId();
     String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
     UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
 
@@ -61,7 +60,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     jwtUtil.addJwtToCookie(accessToken, response);
 
     // access token 재발급을 위한 refresh token 을 uuid 값으로 생성함.
-    RefreshToken refreshToken = new RefreshToken(Long.toString(id), UUID.randomUUID().toString());
+    RefreshToken refreshToken = new RefreshToken(username, UUID.randomUUID().toString());
     refreshTokenRepository.save(refreshToken); // Redis 에 저장
 
     jwtUtil.addJwtToCookieRefreshToken(refreshToken.getRefreshToken(),response);

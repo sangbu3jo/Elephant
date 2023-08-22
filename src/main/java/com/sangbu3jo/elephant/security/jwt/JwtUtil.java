@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
 public class JwtUtil {
   // Header KEY 값
   public static final String AUTHORIZATION_HEADER = "Authorization";
+  public static final String REFRESH_HEADER = "RefreshToken";
   // 사용자 권한 값의 KEY
   public static final String AUTHORIZATION_KEY = "auth";
 
@@ -38,7 +39,7 @@ public class JwtUtil {
   public static final String BEARER_PREFIX = "Bearer ";
 
   // 엑세스 토큰 만료시간
-  private final long TOKEN_TIME = 60 * 2 * 1000L; // 2분
+  private final long TOKEN_TIME = 60 * 10 * 1000L; // 10분
 
   @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
   private String secretKey;
@@ -83,7 +84,7 @@ public class JwtUtil {
   public void addJwtToCookieRefreshToken(String refreshToken, HttpServletResponse res) {
     refreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8).replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
-    Cookie cookie = new Cookie("RefreshToken", refreshToken); // refreshToken
+    Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken); // refreshToken
     cookie.setPath("/");
 
     cookie.setHttpOnly(true); // For security, make the cookie HttpOnly

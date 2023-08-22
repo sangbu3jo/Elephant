@@ -30,19 +30,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
 
-        String tokenValue = jwtUtil.getTokenFromRequest(request);
+        String AccesstokenValue = jwtUtil.getTokenFromRequest(request);
 
-        if (StringUtils.hasText(tokenValue)) {
+        if (StringUtils.hasText(AccesstokenValue)) {
             // JWT 토큰 substring
-            tokenValue = jwtUtil.substringToken(tokenValue);
-            log.info(tokenValue);
+            AccesstokenValue = jwtUtil.substringToken(AccesstokenValue);
+            log.info(AccesstokenValue);
 
-            if (!jwtUtil.validateToken(tokenValue)) {
+            if (!jwtUtil.validateToken(AccesstokenValue)) {
                 log.error("Token Error");
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            Claims info = jwtUtil.getUserInfoFromToken(AccesstokenValue);
 
             try {
                 setAuthentication(info.getSubject());
