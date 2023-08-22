@@ -1,16 +1,27 @@
 package com.sangbu3jo.elephant.board.service;
 
+import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sangbu3jo.elephant.board.dto.BoardOneResponseDto;
 import com.sangbu3jo.elephant.board.dto.BoardRequestDto;
 import com.sangbu3jo.elephant.board.dto.BoardResponseDto;
 import com.sangbu3jo.elephant.board.entity.Board;
 import com.sangbu3jo.elephant.board.repository.BoardRepository;
+import com.sangbu3jo.elephant.boarduser.dto.BoardUserResponseDto;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUserRoleEnum;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
+import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import com.sangbu3jo.elephant.users.entity.QUser;
 import com.sangbu3jo.elephant.users.entity.User;
+import com.sangbu3jo.elephant.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +35,8 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardUserRepository boardUserRepository;
+    private final UserRepository userRepository;
+    private final JPAQueryFactory jpaQueryFactory;
 
     // 보드 생성
     @Transactional
@@ -47,10 +60,14 @@ public class BoardService {
     }
     // 보드 조회 (사용자 것만)
 
-    public List<BoardResponseDto> getBoards(User user) {
+    public Page<BoardResponseDto> getBoards(User user, Pageable pageable, Integer pageNo) {
         log.info("보드 전체 조회");
-        List<Board> boards = boardRepository.findAllById(boardUserRepository.findAllByUser(user).stream().map(BoardUser::getBoard).map(Board::getId).toList());
-        return boards.stream().map(BoardResponseDto::new).toList();
+        Sort sort = Sort.by(Sort.Direction.DESC, "expiredAt");
+        pageable = PageRequest.of(pageNo, 8, sort);
+
+        Page<Board> boards = boardRepository.findAllByIdIn(boardUserRepository.findAllByUser(user).stream().map(BoardUser::getBoard).map(Board::getId).toList(),
+                pageable);
+        return boards.map(BoardResponseDto::new);
     }
     // 보드 수정 (참여자/매니저)
 
@@ -80,6 +97,81 @@ public class BoardService {
         boardRepository.delete(board);
     }
 
+    public String inviteUser(UserDetailsImpl userDetails, Long boardId, String username) {
+        User user = findUser(username);
+        Board board = findBoard(boardId);
+        Optional<BoardUser> boardUser = boardUserRepository.findByBoardAndUser(board, user);
+        if (boardUser.isEmpty()) {
+            BoardUser boardUsermember = new BoardUser(board, user, BoardUserRoleEnum.MEMBER);
+            boardUserRepository.save(boardUsermember);
+        }
+
+        if (userDetails != null) {
+            if (userDetails.getUser().getUsername().equals(username)) {
+                // 해당 보드 페이지로 넘어가도록
+                return "redirect:/api/boards/" + boardId;
+            }
+        }
+
+        // 로그인 되어있지 않다면 로그인 페이지로 넘어가도록 설정 (html)
+        return "loginsignup";
+    }
+
+    // 프로젝트 유저 리스트
+    public List<BoardUserResponseDto> findBoardUsers(Long boardId) {
+        Board board = findBoard(boardId);
+        return boardUserRepository.findAllByBoard(board).stream().map(BoardUserResponseDto::new).toList();
+    }
+
+    // 프로젝트 유저 삭제
+    public ResponseEntity<String> leaveBoard(User user, Long boardId) {
+        Board board = findBoard(boardId);
+        BoardUser boardUser = findBoardUser(board, user);
+
+        if (boardUser.getRole().equals(BoardUserRoleEnum.MANAGER)) {
+            return ResponseEntity.badRequest().body("매니저는 프로젝트를 떠날 수 없습니다");
+        }
+
+        // 해당 유저 삭제
+        boardUserRepository.delete(boardUser);
+        return ResponseEntity.ok().body("프로젝트 떠나기 완료");
+    }
+
+    // 유저를 검색함
+//    public Slice<User> search(String searching) {
+//        QUser user = QUser.user;
+//        return jpaQueryFactory
+//                .select(user)
+//                .from(user)
+//                .where(
+//                        user.username.contains(searching)
+//                        .or(user.nickname.contains(searching))
+//                )
+//                .fetch();
+//    }
+
+    public Slice<BoardUserResponseDto> search(String searching) {
+        Pageable pageable = PageRequest.of(0, 5);
+
+        QUser user = QUser.user;
+        QueryResults<BoardUserResponseDto> queryResults = jpaQueryFactory
+                .select(Projections.constructor(BoardUserResponseDto.class, user.username, user.nickname))
+                .from(user)
+                .where(
+                        user.username.contains(searching)
+                        .or(user.nickname.contains(searching))
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        List<BoardUserResponseDto> content = queryResults.getResults();
+        long total = queryResults.getTotal();
+
+
+        return new SliceImpl<>(content, pageable, total != pageable.getOffset() + content.size());
+    }
+
 
     public Board findBoard(Long boardId) {
         return boardRepository.findById(boardId).orElseThrow(IllegalArgumentException::new);
@@ -87,5 +179,9 @@ public class BoardService {
 
     public BoardUser findBoardUser(Board board, User user) {
         return boardUserRepository.findByBoardAndUser(board, user).orElseThrow(IllegalArgumentException::new);
+    }
+
+    public User findUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
     }
 }
