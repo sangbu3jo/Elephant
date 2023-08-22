@@ -121,6 +121,7 @@ public class JwtUtil {
     return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
   }
 
+
   // HttpServletRequest 에서 Cookie Value : JWT access Token 가져오기
   public String getAccessTokenFromRequest(HttpServletRequest req) {
     Cookie[] cookies = req.getCookies();
@@ -134,7 +135,8 @@ public class JwtUtil {
     return null;
   }
 
-  // HttpServletRequest 에서 Cookie Value : JWT access Token 가져오기
+
+  // HttpServletRequest 에서 Cookie Value : JWT refresh Token 가져오기
   public String getRefreshTokenFromRequest(HttpServletRequest req) {
     Cookie[] cookies = req.getCookies();
     if(cookies != null) {
@@ -147,21 +149,22 @@ public class JwtUtil {
     return null;
   }
 
-  //로그아웃 쿠키 날짜를 0으로 만들어 만료시킴
-  public void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
+
+  // 로그아웃 시 엑세스, 리프레시 쿠키 날짜를 0으로 만들어 만료시킴
+  public void deleteCookie(HttpServletRequest request, HttpServletResponse response) {
     Cookie[] cookies = request.getCookies();
     if (cookies == null) {
       return;
     }
     for (Cookie cookie : cookies) {
-      if (name.equals(cookie.getName())) {
-        cookie.setValue("");
-        cookie.setPath("/");
+      if(cookie.getName().equals(AUTHORIZATION_HEADER)
+          | cookie.getName().equals(REFRESH_HEADER)){
         cookie.setMaxAge(0);
         response.addCookie(cookie);
       }
     }
   }
+
 
 
 }

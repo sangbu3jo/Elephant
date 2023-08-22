@@ -33,6 +33,13 @@ public class AuthController {
 
 
   // 로그아웃 메서드 구현 요망
+  @GetMapping("/auth/logout")
+  public ResponseEntity<String> logout(
+      HttpServletRequest request, HttpServletResponse response,
+      @AuthenticationPrincipal UserDetailsImpl userDetails){
+    String result = authService.logout(request, response, userDetails.getUser());
+    return ResponseEntity.ok(result);
+  } // delete , get , post ????
 
 
   // 만료된 access token 으로, 만료 전 refresh token
@@ -42,7 +49,7 @@ public class AuthController {
       @AuthenticationPrincipal UserDetailsImpl userDetails) {
     String result = authService.generateRefreshToken(request, response, userDetails.getUser());
     return ResponseEntity.ok(result);
-  }
+  } // post, get
 
 
 }

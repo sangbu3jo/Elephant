@@ -30,12 +30,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
   @Override
   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-//1. **로그인 요청 읽기:** `attemptAuthentication` 메서드는 들어오는 HTTP 요청의 입력 스트림에서 로그인 요청 데이터를 읽습니다.
-// 입력 데이터는 'LoginRequestDto' 클래스의 형식이어야 하며 사용자 이름과 비밀번호에 대한 필드가 포함될 수 있습니다.
-// 2. **인증 토큰 만들기:** 다음 단계는 `UsernamePassword 인스턴스를 만드는 것입니다.
+
     try {
       LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
-      log.info("attemptAuthentication: " + requestDto.getUsername() + ", " + requestDto.getPassword());
+
       return getAuthenticationManager().authenticate(
           new UsernamePasswordAuthenticationToken(
               requestDto.getUsername(),

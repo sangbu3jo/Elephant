@@ -23,6 +23,10 @@ public class RefreshTokenRepository {
     redisTemplate.expire(refreshToken.getUsername(), RRFRESH_TOKEN_TIME, TimeUnit.SECONDS);
   }
 
+  public Boolean delete(String username) {
+    return redisTemplate.delete(username);
+  }
+
   public Optional<RefreshToken> findByUsername(final String username) {
     ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
     String refreshToken = String.valueOf(valueOperations.get(username));
