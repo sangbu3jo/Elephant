@@ -1,6 +1,7 @@
 package com.sangbu3jo.elephant.card.service;
 
 import com.sangbu3jo.elephant.board.entity.Board;
+import com.sangbu3jo.elephant.board.service.BoardService;
 import com.sangbu3jo.elephant.boarduser.dto.BoardUserResponseDto;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
@@ -27,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardService {
 
+    private final BoardService boardService;
     private final CardRepository cardRepository;
     private final ColumnsRepository columnsRepository;
     private final CardUserRepository cardUserRepository;
@@ -185,6 +187,11 @@ public class CardService {
             }
         }
         return users;
+    }
+
+    public List<CardCalendarResponseDto> findAllCardsInBoard(Long boardId) {
+        Board board = boardService.findBoard(boardId);
+        return cardRepository.findAllByBoard(board).stream().map(CardCalendarResponseDto::new).toList();
     }
 
     public Columns findColumns(Long columnId) {

@@ -1,5 +1,6 @@
 package com.sangbu3jo.elephant.card.entity;
 
+import com.sangbu3jo.elephant.board.entity.Board;
 import com.sangbu3jo.elephant.card.dto.CardRequestDto;
 import com.sangbu3jo.elephant.cardcomment.entity.CardComment;
 import com.sangbu3jo.elephant.carduser.entity.CardUser;
@@ -51,11 +52,16 @@ public class Card {
         this.expiredAt = cardRequestDto.getExpiredAt();
         this.columns = columns;
         this.cardOrder = Long.valueOf(order);
+        this.board = columns.getBoard();
     }
 
     /**
      * 연관관계 - Foreign Key 값을 따로 컬럼으로 정의하지 않고 연관 관계로 정의합니다.
      */
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Board board;
+
     @ManyToOne
     @JoinColumn(name = "column_id")
     private Columns columns;

@@ -82,4 +82,11 @@ public class CardController {
         return ResponseEntity.ok().body("카드 유저 변경 성공");
     }
 
+    @ResponseBody
+    @RequestMapping("/boards/{board_id}/cards")
+    public List<CardCalendarResponseDto> getCards(@PathVariable Long board_id) {
+        List<CardCalendarResponseDto> cards = cardService.findAllCardsInBoard(board_id);
+        return cards;
+    }
+
 }
