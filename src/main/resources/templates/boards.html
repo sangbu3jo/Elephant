@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
+    <script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!--상단 아이콘-->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: -1;
+            background: radial-gradient(
+                    circle farthest-corner at center top,
+                    #071021,
+                    #19324a
+            );
+        }
+
+        /* 배경 서식 */
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #f6f6f6;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* header 부분 - only 제목 (코끼리) */
+        .header {
+            color: #f6f6f6;
+            height: 13%;
+            width: 100%;
+            background-color: transparent;
+            padding: 8px 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .title{
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* bottom 부분 */
+        .bottom {
+            height: 87%;
+            padding: 20px;
+            background-color: transparent;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* bottom one 부분 - 내 프로젝트 text & add project 버튼*/
+        .bottomone {
+            color: #f6f6f6;
+            height: 5%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bottomonewrapper{
+            width: 80%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .text-center {
+            font-size: 20px;
+            padding-left: 20px;
+            height: 100%;
+            width: 80%;
+            display: flex;
+            justify-content: start;
+            align-items: center;
+        }
+
+        .button-center {
+            padding-right: 20px;
+            width: 20%;
+            height: 100%;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+        }
+
+        /*bottom two*/
+        .bottomtwo {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bottomwindows {
+            height: 80%;
+            width: 80%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-content: flex-start;
+        }
+
+        .bottomthree {
+            height: 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* bottomtwo - 카드들 나오는 부분 */
+        .floating-window {
+            height: 200px;
+            width: calc(25% - 20px);
+            margin: 10px;
+            background-color: #f6f6f6;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .window-header {
+            height: 20%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background-color: #e6e6e6;
+            border-bottom: 1px solid #d6d6d6;
+        }
+
+        .window-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .window-bottom {
+            height: 30%;
+            width: 100%; /* 부모 요소의 너비를 100%로 설정하여 가로 폭을 채움 */
+            padding: 10px; /* 필요한 패딩값 설정 */
+            background-color: transparent;
+        }
+
+        .window-bottom > button {
+            border-radius: 5px;
+            background-color: transparent;
+            border: 1px solid #d6d6d6;
+            transition: 0.5s;
+        }
+
+        .window-bottom > button:hover {
+            background-color: #e6e6e6;
+            transition: 0.5s;
+        }
+
+        .window-controls {
+            display: flex;
+        }
+
+        .window-minimize,
+        .window-maximize,
+        .window-close {
+            width: 14px;
+            height: 14px;
+            margin-left: 8px;
+            border-radius: 50%;
+        }
+
+        .window-minimize {
+            background-color: #f7d54a;
+        }
+
+        .window-maximize {
+            background-color: #62c462;
+        }
+
+        .window-close {
+            background-color: #ee5f5b;
+        }
+
+        .window-maximize:hover {
+            cursor: pointer;
+            background-color: #52a352;
+        }
+        .window-close:hover{
+            cursor: pointer;
+            background-color: #d35350;
+        }
+
+        .window-content {
+            height: 50%;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .window-content > p {
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        /*bottom3*/
+        nav {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            padding: 0;
+        }
+
+        .custom-pagination .page-item .page-link {
+            cursor: pointer;
+            background-color: #f6f6f6; /* 변경할 배경색 */
+            color: #000; /* 변경할 글씨색 */
+            border-color: #d6d6d6; /* 변경할 테두리색 */
+        }
+
+        .custom-pagination .page-item .page-link:hover {
+            background-color: #e6e6e6; /* 변경할 호버 시 배경색 */
+            border-color: #e6e6e6; /* 변경할 호버 시 테두리색 */
+        }
+
+    </style>
+</head>
+<body>
+<div id="stars-container"></div>
+
+<div class="header">
+    <div class="title">코끼리</div>
+</div>
+<div class="bottom">
+    <div class="bottomone">
+        <div class="bottomonewrapper">
+            <div class="text-center">
+                <text>내 프로젝트</text>
+            </div>
+            <div class="button-center">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">새 프로젝트 추가</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="bottomtwo">
+        <div class="bottomwindows">
+            <div class="floating-window" th:each="board : ${boards}" th:id="${board.boardid}">
+                <div class="window-header">
+                    <div class="window-title" th:text="${board.dday}">D-0</div>
+                    <div class="window-controls">
+                        <div class="window-minimize"></div>
+                        <a th:href="@{|/api/boards/${board.boardid}|}">
+                            <div class="window-maximize" th:id="${board.boardid}"></div>
+                        </a>
+<!--                        <div class="window-maximize" th:id="${board.boardid}" th:href="@{|/${board.boardid}|}"></div>-->
+                        <div class="window-close" data-bs-toggle="modal" th:data-bs-target="'#staticBackdrop'+${board.boardid}" th:id="${board.boardid}"></div>
+
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p th:text="${board.title}">Project Title</p>
+                    <p th:text="${board.expiredAt}">Project Deadline</p>
+                </div>
+                <div class="window-bottom">
+                    <button data-bs-toggle="modal" th:data-bs-target="'#staticBack'+${board.boardid}">수정</button>
+                </div>
+                <!--수정 모달창 -->
+                <div class="modal fade" th:id="'staticBack'+${board.boardid}" aria-labelledby="exampleModalLabell" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModal3">프로젝트 수정</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="recipient-name" class="col-form-label">프로젝트 이름</label>
+                                    <input type="text" class="form-control recipient-namee" id="recipient-namee" th:value="${board.title}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message-text" class="col-form-label">프로젝트 설명</label>
+                                    <textarea class="form-control message-textt" id="message-textt" th:text="${board.content}"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="datepickerr" class="col-form-label">프로젝트 마감일</label>
+                                    <input type="text" class="form-control datepickerr" id="datepickerr" th:placeholder="${board.expiredAt}"
+                                           data-date-settings='{"format": "yyyy-mm-dd"}'>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light btn-update" th:id="${board.boardid}">수정</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--수정 모달창 종료-->
+
+
+                <!--삭제 모달창 -->
+                <div class="modal fade" th:id="'staticBackdrop'+${board.boardid}" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel" th:text="|프로젝트명 : ${board.title}|"></h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                삭제하시겠습니까? 되돌릴 수 없습니다
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger btn-delete" th:id="${board.boardid}">삭제</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--삭제 모달창 종료-->
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="bottomthree">
+        <!-- 페이징처리 시작 -->
+        <div th:if="${!boards.isEmpty()}">
+            <ul class="pagination justify-content-center custom-pagination">
+                <li class="page-item" th:classappend="${!boards.hasPrevious()} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{|?page=${boards.getPageable().getPageNumber() - 1}|}">
+                        <span>이전</span>
+                    </a>
+                </li>
+                <li th:each="page: ${#numbers.sequence(0, boards.getTotalPages() -1)}"
+                    th:if="${page >= page - 5 and page <= page + 5}"
+                    th:classappend="${page == boards.getPageable().getPageNumber()} ? 'active'"
+                    class="page-item">
+                    <a th:text="${page + 1}" class="page-link" th:href="@{|?page=${page + 1}|}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${!boards.hasNext()} ? 'disabled'">
+                    <a class="page-link" th:href="@{|?page=${boards.getPageable().getPageNumber() + 1}|}">
+                        <span>다음</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- 페이징처리 끝 -->
+    </div>
+
+    <!--보드 생성 모달창-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModal2">새 프로젝트</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">프로젝트 이름</label>
+                        <input type="text" class="form-control" id="recipient-name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">프로젝트 설명</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="datepicker" class="col-form-label">프로젝트 마감일</label>
+                        <input type="text" class="form-control" id="datepicker" data-date-settings='{"format": "yyyy-mm-dd"}'>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light btn-create">프로젝트 생성</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--삭제 확인 모달창-->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">삭제 확인</h5>
+                </div>
+                <div class="modal-body">
+                    프로젝트 삭제가 완료되었습니다
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+<script>
+
+    $("#datepicker").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.getElementById("stars-container");
+
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            container.appendChild(star);
+        }
+
+        const updateProject = document.querySelectorAll(".btn-update");
+
+        updateProject.forEach(updatebtn => {
+            updatebtn.addEventListener('click', () => {
+                const id = updatebtn.id;
+                console.log(id); // 가져온 board의 id 값 확인
+
+                $(`#staticBack${id}`).modal('hide');
+
+                const modal = updatebtn.closest('.modal-content'); // 클릭한 버튼이 속한 모달을 선택
+
+                const title = modal.querySelector(".recipient-namee").value;
+                const content = modal.querySelector(".message-textt").value;
+                const expiredAt = modal.querySelector(".datepickerr").value;
+
+                console.log("수정된 프로젝트 이름:", title);
+                console.log("수정된 프로젝트 설명:", content);
+                console.log("수정된 프로젝트 마감일:", expiredAt);
+                console.log("수정될 프로젝트 아이디: ", id);
+
+
+                $.ajax({
+                    method: "PUT",
+                    url: `/api/boards/${id}`,
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        title : title,
+                        content : content,
+                        expiredAt : expiredAt
+                    }),
+                    success: function (data) {
+                        window.location.reload();
+                    },
+                    error: function (data) {
+
+                    }
+                })
+
+            })
+        })
+
+        const deleteProject = document.querySelectorAll(".btn-delete");
+
+        deleteProject.forEach(deletebtn =>{
+            deletebtn.addEventListener('click', () => {
+                const id = deletebtn.id;
+                console.log(id); // 가져온 ID 값 확인
+
+                $(`#staticBackdrop${id}`).modal('hide');
+
+                $.ajax({
+                    method: "DELETE",
+                    url: `/api/boards/${id}`,
+                    contentType: "application/json",
+                    success: function (data) {
+                        // 새로운 모달 열기
+                        $('#confirmationModal').modal('show');
+
+                        // 3초 후에 새로운 모달 닫기
+                        setTimeout(function() {
+                            $('#confirmationModal').modal('hide');
+                        }, 1000);
+
+                        window.location.reload();
+                    },
+                    error: function (data) {
+
+                    }
+                })
+            });
+        });
+
+        const createProject = document.querySelector('.btn-create');
+        createProject.addEventListener('click', () => {
+            const title = document.getElementById("recipient-name").value;
+            const content = document.getElementById("message-text").value;
+            const expiredAt = document.getElementById("datepicker").value;
+
+            console.log("프로젝트 이름:", title);
+            console.log("프로젝트 설명:", content);
+            console.log("프로젝트 마감일:", expiredAt);
+
+            if (title.trim() === "") {
+                document.getElementById("recipient-name").style.backgroundColor = "#ffcbc2";
+                document.getElementById("recipient-name").placeholder = "프로젝트 제목을 입력해주세요";
+                return;
+            } else {
+                document.getElementById("recipient-name").style.backgroundColor = "";
+                document.getElementById("recipient-name").placeholder = "";
+            }
+
+            if (content.trim() === "") {
+                document.getElementById("message-text").style.backgroundColor = "#ffcbc2";
+                document.getElementById("message-text").placeholder = "프로젝트 내용을 입력해주세요";
+                return;
+            } else {
+                document.getElementById("message-text").style.backgroundColor = "";
+                document.getElementById("message-text").placeholder = "";
+            }
+
+            if (expiredAt.trim() === "") {
+                document.getElementById("datepicker").style.backgroundColor = "#ffcbc2";
+                document.getElementById("datepicker").placeholder = "프로젝트 마감일을 입력해주세요";
+            } else {
+                document.getElementById("datepicker").style.backgroundColor = "";
+            }
+
+            $.ajax({
+                method: "POST",
+                url: `/api/boards`,
+                contentType: "application/json",
+                data: JSON.stringify({
+                    title : title,
+                    content : content,
+                    expiredAt : expiredAt
+                }),
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (data) {
+
+                }
+            })
+        })
+    }); // document 종료
+
+
+</script>
+
+</html>

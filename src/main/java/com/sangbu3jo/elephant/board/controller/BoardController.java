@@ -3,22 +3,17 @@ package com.sangbu3jo.elephant.board.controller;
 import com.sangbu3jo.elephant.board.dto.BoardOneResponseDto;
 import com.sangbu3jo.elephant.board.dto.BoardRequestDto;
 import com.sangbu3jo.elephant.board.dto.BoardResponseDto;
-import com.sangbu3jo.elephant.board.dto.BoardUserSearchingDto;
 import com.sangbu3jo.elephant.board.entity.Board;
 import com.sangbu3jo.elephant.board.service.BoardService;
 import com.sangbu3jo.elephant.boarduser.dto.BoardUserResponseDto;
-import com.sangbu3jo.elephant.card.dto.CardResponseDto;
-import com.sangbu3jo.elephant.card.service.CardService;
 import com.sangbu3jo.elephant.columns.dto.ColumnsResponseDto;
 import com.sangbu3jo.elephant.columns.service.ColumnsService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
-import com.sangbu3jo.elephant.users.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -26,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j(topic = "보드 컨트롤러")
 @Controller
@@ -36,7 +30,6 @@ public class BoardController {
 
     private final BoardService boardService;
     private final ColumnsService columnsService;
-    private final CardService cardService;
 
     // 프로젝트 생성
     @ResponseBody
@@ -150,6 +143,14 @@ public class BoardController {
         }
 
         return ResponseEntity.ok().body(users);
+    }
+
+    @GetMapping("/boards/calendar/{board_id}")
+    public String showCalendar(@PathVariable Long board_id, Model model) {
+        Board board = boardService.findBoard(board_id);
+        BoardResponseDto boardResponseDto = new BoardResponseDto(board);
+        model.addAttribute("board", boardResponseDto);
+        return "cardCalendar";
     }
 
 }
