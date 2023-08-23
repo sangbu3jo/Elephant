@@ -10,7 +10,6 @@ import com.sangbu3jo.elephant.users.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -83,15 +82,10 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public String logout(HttpServletRequest request, HttpServletResponse response, User user) {
+  public String logout(User user) {
     // redis refresh token 삭제
     Boolean result = refreshTokenRepository.delete(user.getUsername());
-
-    log.info("result: " + result);
     if(!result) { throw new IllegalArgumentException("RefreshToken couldn't deleted."); }
-
-    // Delete client-side cookie
-    jwtUtil.deleteCookie(request, response);
     return "Logout 성공";
   }
 

@@ -38,7 +38,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             log.info(AccesstokenValue);
 
             if (!jwtUtil.validateToken(AccesstokenValue)) {
-                log.error("Token Error");
+                // 만료된 토큰 이므로 클라이언트 측에서 토큰 모두 삭제
+                jwtUtil.deleteCookie(request,response);
+                log.error("Access Token not valid. Token Error");
+                response.sendRedirect("/api/auth/login-page");
                 return;
             }
 

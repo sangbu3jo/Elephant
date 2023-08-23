@@ -53,10 +53,6 @@ const Toast = Swal.mixin({
     }
 })
 
-
-// 쿠키값 가져오기
-let token = Cookies.get('Authorization');
-
 function signup() {
     let username = $('#username').val();
     let password = $('#password').val();
@@ -196,7 +192,7 @@ function onLogin() {
             icon: 'success',
             title: loginUsername + '님 환영합니다!'
         }).then(function () {
-            //window.location.href = "/view/main"
+            window.location.href = "/"
         })
     })
     .fail(function (jqXHR, textStatus) {

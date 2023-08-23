@@ -74,8 +74,6 @@ public class JwtUtil {
 
     Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
     cookie.setPath("/");
-
-    cookie.setHttpOnly(true); // For security, make the cookie HttpOnly
     res.addCookie(cookie);
   }
 
@@ -85,8 +83,6 @@ public class JwtUtil {
 
     Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken); // refreshToken
     cookie.setPath("/");
-
-    cookie.setHttpOnly(true); // For security, make the cookie HttpOnly
     res.addCookie(cookie);
   }
 
@@ -150,7 +146,7 @@ public class JwtUtil {
   }
 
 
-  // 로그아웃 시 엑세스, 리프레시 쿠키 날짜를 0으로 만들어 만료시킴
+  // 엑세스, 리프레시 쿠키 날짜를 0으로 만들어 만료시킴
   public void deleteCookie(HttpServletRequest request, HttpServletResponse response) {
     Cookie[] cookies = request.getCookies();
     if (cookies == null) {
