@@ -3,7 +3,10 @@ package com.sangbu3jo.elephant.auth.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sangbu3jo.elephant.auth.dto.APITokenDto;
 import com.sangbu3jo.elephant.auth.dto.APIUserInfoDto;
+import com.sangbu3jo.elephant.auth.redis.RefreshToken;
+import com.sangbu3jo.elephant.auth.redis.RefreshTokenRepository;
 import com.sangbu3jo.elephant.security.jwt.JwtUtil;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
@@ -31,8 +34,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j(topic = "NAVER Login")
 @Service
 @RequiredArgsConstructor
-public class NaverServiceImpl{
+public class NaverServiceImpl implements SocialService{
 
+  private final RefreshTokenRepository refreshTokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final JwtUtil jwtUtil;
@@ -48,7 +52,8 @@ public class NaverServiceImpl{
   private final String NAVER_REDIRECT_URL = "http://localhost:8080/api/auth/kakao/callback";
 
 
-  public String naverLogin(String code) throws JsonProcessingException, UnsupportedEncodingException {
+  @Override
+  public APITokenDto socialLogin(String code) throws JsonProcessingException, UnsupportedEncodingException {
     // 1. "인가 코드"로 "엑세스 토큰" 요청
     String accessToken = getToken(code);
 
@@ -58,13 +63,18 @@ public class NaverServiceImpl{
     // 3. 필요시에 회원가입
     User naverUser = registerUserIfNeeded(apiUserInfoDto);
 
-    // 4. JWT 토큰 반환
+    // 4. JWT 토큰 생성
      String createToken = jwtUtil.createToken(naverUser.getUsername(), naverUser.getRole());
 
-    return createToken;
+    // 5. 리프레시 토큰 생성
+    RefreshToken refreshToken = jwtUtil.createRefreshToken(naverUser.getUsername(),naverUser.getRole());
+    refreshTokenRepository.save(refreshToken);
+
+    return new APITokenDto(createToken, refreshToken.getRefreshToken());
   }
 
-  private String getToken(String code) throws JsonProcessingException, UnsupportedEncodingException {
+  @Override
+  public String getToken(String code) throws JsonProcessingException, UnsupportedEncodingException {
     // 요청 URL 만들기
     URI uri = UriComponentsBuilder
         .fromUriString("https://nid.naver.com")
@@ -108,7 +118,8 @@ public class NaverServiceImpl{
     return jsonNode.get("access_token").asText();
   }
 
-  private APIUserInfoDto getUserInfo(String accessToken) throws JsonProcessingException {
+  @Override
+  public APIUserInfoDto getUserInfo(String accessToken) throws JsonProcessingException {
     String header = "Bearer " + accessToken; // Bearer 다음에 공백 추가
 
     String apiURL = "https://openapi.naver.com/v1/nid/me";
@@ -178,7 +189,8 @@ public class NaverServiceImpl{
     }
   }
 
-  private User registerUserIfNeeded(APIUserInfoDto apiUserInfoDto) {
+  @Override
+  public User registerUserIfNeeded(APIUserInfoDto apiUserInfoDto) {
     // naverId 중복 확인
     String naverId = apiUserInfoDto.getId();
     User naverUser = userRepository.findByNaverId(naverId).orElse(null);

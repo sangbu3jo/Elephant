@@ -1,5 +1,6 @@
 package com.sangbu3jo.elephant.security.jwt;
 
+import com.sangbu3jo.elephant.auth.redis.RefreshToken;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -19,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,6 +68,11 @@ public class JwtUtil {
             .setIssuedAt(date) // 발급일
             .signWith(key, signatureAlgorithm) // 암호화 알고리즘
             .compact();
+  }
+
+  // refresh token 생성
+  public RefreshToken createRefreshToken(String username, UserRoleEnum role){
+    return new RefreshToken(username, UUID.randomUUID().toString());
   }
 
   // JWT Cookie 에 access token 저장

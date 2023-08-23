@@ -3,7 +3,10 @@ package com.sangbu3jo.elephant.auth.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sangbu3jo.elephant.auth.dto.APITokenDto;
 import com.sangbu3jo.elephant.auth.dto.APIUserInfoDto;
+import com.sangbu3jo.elephant.auth.redis.RefreshToken;
+import com.sangbu3jo.elephant.auth.redis.RefreshTokenRepository;
 import com.sangbu3jo.elephant.security.jwt.JwtUtil;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
@@ -28,6 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RequiredArgsConstructor
 public class KakaoServiceImpl implements SocialService{
 
+  private final RefreshTokenRepository refreshTokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final RestTemplate restTemplate;
@@ -41,7 +45,7 @@ public class KakaoServiceImpl implements SocialService{
 
 
   @Override
-  public String socialLogin(String code) throws JsonProcessingException {
+  public APITokenDto socialLogin(String code) throws JsonProcessingException {
     // 1. "인가 코드"로 "액세스 토큰" 요청
     String accessToken = getToken(code);
 
@@ -51,10 +55,14 @@ public class KakaoServiceImpl implements SocialService{
     // 3. 필요시에 회원가입
     User kakaoUser = registerUserIfNeeded(apiUserInfoDto);
 
-    // 4. JWT 토큰 반환
+    // 4. JWT 토큰 생성
     String createToken = jwtUtil.createToken(kakaoUser.getUsername(),kakaoUser.getRole());
 
-    return createToken;
+    // 5. 리프레시 토큰 생성
+    RefreshToken refreshToken = jwtUtil.createRefreshToken(kakaoUser.getUsername(),kakaoUser.getRole());
+    refreshTokenRepository.save(refreshToken);
+
+    return new APITokenDto(createToken, refreshToken.getRefreshToken());
   }
 
 

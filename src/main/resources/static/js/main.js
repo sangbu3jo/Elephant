@@ -30,11 +30,9 @@ function refreshAccessToken() { // 엑세스 토큰 갱신
     url: `/api/auth/refresh/access-token`,
     contentType: "application/json",
     success: function (data) {
-      //console.log('Success:', data);
-      alert("로그인 연장 성공");
+      alert(data);
     },
-    error: function (jqXHR, textStatus) {
-      console.log('Error:', textStatus);
+    error: function () {
       alert("로그인 연장 실패 \n 재로그인 부탁드립니다.");
       redirectToLoginPage();
     }
@@ -47,12 +45,11 @@ function logout() { // 로그아웃
     url: `/api/auth/logout`,
     contentType: "application/json",
     success: function (data) {
-      console.log('Success:', data);
       removeTokenAll();
-      alert("로그아웃 성공'");
+      alert(data);
+      window.location.reload();
     },
-    error: function (jqXHR, textStatus) {
-      console.log('Error:', textStatus);
+    error: function () {
       alert("로그아웃 실패");
       window.location.reload();
     }

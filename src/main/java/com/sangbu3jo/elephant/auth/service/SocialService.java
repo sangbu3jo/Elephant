@@ -1,8 +1,10 @@
 package com.sangbu3jo.elephant.auth.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sangbu3jo.elephant.auth.dto.APITokenDto;
 import com.sangbu3jo.elephant.auth.dto.APIUserInfoDto;
 import com.sangbu3jo.elephant.users.entity.User;
+import java.io.UnsupportedEncodingException;
 
 public interface SocialService {
 
@@ -13,7 +15,7 @@ public interface SocialService {
    * @return JWT 토큰 반환
    * @throws JsonProcessingException json 활용 시에 예외 throw
    */
-  String socialLogin(String code) throws JsonProcessingException;
+  APITokenDto socialLogin(String code) throws JsonProcessingException, UnsupportedEncodingException;
 
   /**
    * 애플리케이션은 인증 코드로 카카오 서버에 토큰을 요청하고, 토큰을 전달 받습니다.
@@ -22,7 +24,7 @@ public interface SocialService {
    * @return 액세스 토큰
    * @throws JsonProcessingException json 활용 시에 예외 throw
    */
-  String getToken(String code) throws JsonProcessingException;
+  String getToken(String code) throws JsonProcessingException, UnsupportedEncodingException;
 
   /**
    * 인가 토큰을 통해 사용자 정보 가져오기

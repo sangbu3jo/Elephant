@@ -1,6 +1,7 @@
 package com.sangbu3jo.elephant.auth.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.sangbu3jo.elephant.auth.dto.APITokenDto;
 import com.sangbu3jo.elephant.auth.service.GoogleServiceImpl;
 import com.sangbu3jo.elephant.auth.service.KakaoServiceImpl;
 import com.sangbu3jo.elephant.auth.service.NaverServiceImpl;
@@ -27,25 +28,27 @@ public class APILoginController {
   @GetMapping("/auth/kakao/callback")
   public String kakaoLogin(@RequestParam String code, HttpServletResponse response)
       throws JsonProcessingException {
-    String token = kakaoService.socialLogin(code);
-    jwtUtil.addJwtToCookieAccessToken(token,response);
+    APITokenDto tokenDto = kakaoService.socialLogin(code);
+    jwtUtil.addJwtToCookieAccessToken(tokenDto.getAccessToken(),response);
+    jwtUtil.addJwtToCookieRefreshToken(tokenDto.getRefreshToken(),response);
     return "redirect:/";
   }
 
   @GetMapping("/auth/google/callback")
   public String googleLogin(@RequestParam String code, HttpServletResponse response)
       throws JsonProcessingException {
-    String token = googleService.socialLogin(code);
-    jwtUtil.addJwtToCookieAccessToken(token, response);
+    APITokenDto tokenDto = googleService.socialLogin(code);
+    jwtUtil.addJwtToCookieAccessToken(tokenDto.getAccessToken(),response);
+    jwtUtil.addJwtToCookieRefreshToken(tokenDto.getRefreshToken(),response);
     return "redirect:/";
   }
 
   @GetMapping("/auth/naver/callback")
   public String naverLogin(@RequestParam String code, HttpServletResponse response)
       throws JsonProcessingException, UnsupportedEncodingException {
-    String token = naverService.naverLogin(code);
-    log.info("token: " + token);
-    jwtUtil.addJwtToCookieAccessToken(token, response);
+    APITokenDto tokenDto = naverService.socialLogin(code);
+    jwtUtil.addJwtToCookieAccessToken(tokenDto.getAccessToken(),response);
+    jwtUtil.addJwtToCookieRefreshToken(tokenDto.getRefreshToken(),response);
     return "redirect:/";
   }
 

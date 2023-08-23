@@ -198,9 +198,10 @@ function onLogin() {
     .fail(function (jqXHR, textStatus) {
         Toast.fire({
             icon: 'warning',
-            title: '가입한 내역 여부 혹은 \n 로그인 정보를 확인부탁드립니다.'
+            title: '로그인 정보 재확인 부탁드립니다.'
         }).then(function () {
             window.location.reload();
         })
     });
 }
+
