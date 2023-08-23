@@ -8,7 +8,7 @@ function pageSetting() {  // main page 세팅
   const token = Cookies.get('Authorization');
 
   if(!token) {
-    redirectToLoginPage();
+    // 토큰 없을 경우, 로그인하지 않은 유저에게 보여줘야 할 내용을 처리하실 수 있습니다.
   }
 
   // 만료되지 않은 경우, 로그인한 유저에게 보여줘야 할 내용을 처리하실 수 있습니다.

@@ -1,12 +1,18 @@
 package com.sangbu3jo.elephant.security;
 
+import com.sangbu3jo.elephant.auth.redis.RedisServiceImpl;
+import com.sangbu3jo.elephant.auth.redis.RefreshTokenRepository;
+import com.sangbu3jo.elephant.auth.service.AuthServiceImpl;
 import com.sangbu3jo.elephant.security.jwt.JwtUtil;
+import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,32 +22,47 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@RequiredArgsConstructor
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final RedisServiceImpl redisService;
     private final UserDetailsServiceImpl userDetailsService;
 
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
+/*    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    // 해당 필터를 거치지 않아야 할 url을 기재하여 처리할 수 있습니다.
+        String[] excludePath = {"/" , "/api/auth/login-page" , "/api/auth/login" , "/api/auth/signup",
+            "/api/auth/google/callback" , "/api/auth/kakao/callback" , "/api/auth/naver/callback"};
+        String path = request.getRequestURI();
+        return Arrays.stream(excludePath).anyMatch(path::startsWith);
+    }*/
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
 
         String AccesstokenValue = jwtUtil.getAccessTokenFromRequest(request);
+        String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(request);
 
         if (StringUtils.hasText(AccesstokenValue)) {
             // JWT 토큰 substring
             AccesstokenValue = jwtUtil.substringToken(AccesstokenValue);
-            log.info(AccesstokenValue);
+            refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
+            log.info("Access Token: " + AccesstokenValue);
+            log.info("Refresh Token: " + refreshTokenValue);
 
             if (!jwtUtil.validateToken(AccesstokenValue)) {
-                // 만료된 토큰 이므로 클라이언트 측에서 토큰 모두 삭제
-                jwtUtil.deleteCookie(request,response);
-                log.error("Access Token not valid. Token Error");
-                response.sendRedirect("/api/auth/login-page");
+                log.error("Access Token does not valid.");
+
+                if(!jwtUtil.validateToken(refreshTokenValue)){
+                    log.error("Refresh Token does not valid.");
+                    jwtUtil.deleteCookie(request,response);
+                    return;
+                }
+                // 엑세스 토큰 재발급
+                redisService.generateRefreshToken(refreshTokenValue, request, response);
+                response.sendRedirect("/");
                 return;
             }
 

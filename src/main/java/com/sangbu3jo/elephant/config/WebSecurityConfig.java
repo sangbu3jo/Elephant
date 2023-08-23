@@ -1,6 +1,8 @@
 package com.sangbu3jo.elephant.config;
 
+import com.sangbu3jo.elephant.auth.redis.RedisServiceImpl;
 import com.sangbu3jo.elephant.auth.redis.RefreshTokenRepository;
+import com.sangbu3jo.elephant.auth.service.AuthServiceImpl;
 import com.sangbu3jo.elephant.security.JwtAuthenticationFilter;
 import com.sangbu3jo.elephant.security.JwtAuthorizationFilter;
 import com.sangbu3jo.elephant.security.UserDetailsServiceImpl;
@@ -26,6 +28,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final RedisServiceImpl redisService;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -49,7 +52,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, redisService, userDetailsService);
     }
 
     @Bean

@@ -57,6 +57,7 @@ body {
     overflow: hidden;
     position: relative;
     width: 100%;
+    margin: 0px 0px 5rem;
 }
 
 .container__form {
