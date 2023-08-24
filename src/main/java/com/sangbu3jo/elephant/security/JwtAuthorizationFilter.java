@@ -1,19 +1,17 @@
 package com.sangbu3jo.elephant.security;
 
 import com.sangbu3jo.elephant.auth.redis.RedisServiceImpl;
-import com.sangbu3jo.elephant.auth.redis.RefreshTokenRepository;
 import com.sangbu3jo.elephant.auth.service.AuthServiceImpl;
 import com.sangbu3jo.elephant.security.jwt.JwtUtil;
-import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -49,19 +47,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // JWT 토큰 substring
             AccesstokenValue = jwtUtil.substringToken(AccesstokenValue);
             refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
-            log.info("Access Token: " + AccesstokenValue);
-            log.info("Refresh Token: " + refreshTokenValue);
 
             if (!jwtUtil.validateToken(AccesstokenValue)) {
                 log.error("Access Token does not valid.");
 
-                if(!jwtUtil.validateToken(refreshTokenValue)){
-                    log.error("Refresh Token does not valid.");
-                    jwtUtil.deleteCookie(request,response);
+                if(request.getRequestURI().equals("/api/auth/logout")){
+                    // 만료된 access token 을 갖고 로그아웃 요청 시 -> 토큰 모두 삭제
+                    redisService.deleteRefreshToken(request,response);
                     return;
                 }
+
                 // 엑세스 토큰 재발급
-                redisService.generateRefreshToken(refreshTokenValue, request, response);
+                redisService.generateAccessToken(request, response);
+
                 response.sendRedirect("/");
                 return;
             }

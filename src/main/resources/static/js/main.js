@@ -30,9 +30,11 @@ function refreshAccessToken() { // 엑세스 토큰 갱신
     url: `/api/auth/refresh/access-token`,
     contentType: "application/json",
     success: function (data) {
-      alert(data);
+      console.log(data);
+      alert("로그인 연장 성공");
     },
-    error: function () {
+    error: function (data) {
+      console.log(data);
       alert("로그인 연장 실패 \n 재로그인 부탁드립니다.");
       redirectToLoginPage();
     }
@@ -46,7 +48,7 @@ function logout() { // 로그아웃
     contentType: "application/json",
     success: function (data) {
       removeTokenAll();
-      alert(data);
+      alert("로그아웃 성공");
       window.location.reload();
     },
     error: function () {

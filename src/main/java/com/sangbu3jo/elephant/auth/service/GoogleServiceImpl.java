@@ -72,7 +72,6 @@ public class GoogleServiceImpl implements SocialService{
 
   @Override
   public String getToken(String code) throws JsonProcessingException {
-    log.info("getToken code: " + code);
     // 요청 URL 만들기
     URI uri = UriComponentsBuilder
         .fromUriString("https://oauth2.googleapis.com")

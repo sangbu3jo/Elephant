@@ -7,6 +7,7 @@ import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +26,7 @@ public class AuthController {
   private final AuthServiceImpl authService;
 
 
+  // 회원가입 메서드 구현
   @PostMapping("/auth/signup")
   public ResponseEntity<String> signUp(
       @RequestBody @Valid SignupRequestDto requestDto) {
@@ -33,7 +35,7 @@ public class AuthController {
   }
 
 
-  // 로그아웃 메서드 구현 요망
+  // 로그아웃 메서드 구현
   @DeleteMapping("/auth/logout")
   public ResponseEntity<String> logout(
       @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -42,13 +44,16 @@ public class AuthController {
   }
 
 
-  // 만료된 access token 으로, 만료 전 refresh token
+  // 만료 전 access token 재발급
   @GetMapping("/auth/refresh/access-token")
   public ResponseEntity<String> generateRefreshToken(
-      HttpServletRequest request, HttpServletResponse response,
-      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-    String result = authService.generateRefreshToken(request, response, userDetails.getUser());
-    return ResponseEntity.ok(result);
+      HttpServletRequest request, HttpServletResponse response) throws IOException {
+    boolean result = authService.generateAccessToken(request, response);
+    if(result) {
+      return ResponseEntity.ok("Access Token 생성 성공");
+    }else {
+      return ResponseEntity.badRequest().body("Access Token 생성 실패");
+    }
   }
 
 

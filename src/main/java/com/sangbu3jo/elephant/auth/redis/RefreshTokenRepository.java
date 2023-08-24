@@ -27,18 +27,6 @@ public class RefreshTokenRepository {
     return redisTemplate.delete(username);
   }
 
-/*
-  public Boolean findByAndDelete(String username){
-    ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-    String keyValue = String.valueOf(valueOperations.get(username));
-
-    if (Objects.isNull(keyValue)) {
-      return false;
-    }
-    return this.delete(keyValue);
-  }
-*/
-
   public Optional<RefreshToken> findByUsername(final String username) {
     ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
     String keyValue = String.valueOf(valueOperations.get(username));

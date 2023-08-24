@@ -3,13 +3,14 @@ package com.sangbu3jo.elephant.auth.redis;
 
 import com.sangbu3jo.elephant.security.jwt.JwtUtil;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
-import com.sangbu3jo.elephant.users.entity.UserRoleEnum.Authority;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "Redis Service")
 @Service
@@ -20,25 +21,53 @@ public class RedisServiceImpl implements RedisService {
   private final JwtUtil jwtUtil;
 
   @Override
-  public void generateRefreshToken(String inputToken, HttpServletRequest request, HttpServletResponse response) {
+  public Boolean generateAccessToken(HttpServletRequest request, HttpServletResponse response) {
+    // 클라이언트 쿠키에서 refresh token 추출
+    String InputRefreshToken = jwtUtil.getRefreshTokenFromRequest(request);
+    String InputRefreshTokenValue = jwtUtil.substringToken(InputRefreshToken);
+
+    // refresh token 없을 경우 예외 처리
+    if (!StringUtils.hasText(InputRefreshToken)) {
+      log.error("RefreshToken is null. please login");
+      return false;
+      //throw new IllegalArgumentException("RefreshToken is null. please login");
+    }
+
+    // refresh token 유효성 검사 불일치
+    if (!jwtUtil.validateToken(InputRefreshTokenValue)) {
+      log.error("Refresh Token does not valid.");
+      jwtUtil.deleteCookie(request, response);
+      return false;
+    }
+
     // 유저 정보 추출
-    Claims claims = jwtUtil.getUserInfoFromToken(inputToken);
+    Claims claims = jwtUtil.getUserInfoFromToken(InputRefreshTokenValue);
     String username = claims.getSubject();
     UserRoleEnum role = jwtUtil.getUserRole(claims);
-    log.info("username: " + username + ", role: " + role);
 
     // Redis 의 리프레시 토큰과 일치 여부 판단
     RefreshToken refreshToken = refreshTokenRepository.findByUsername(username).get();
-    String refreshTokenValue = jwtUtil.substringToken(refreshToken.getRefreshToken());
-    if (inputToken.equals(refreshTokenValue)) {
-      log.info("refresh token 일치");
+    if (InputRefreshToken.equals(refreshToken.getRefreshToken())) {
       // 엑세스 토큰 생성
       createAccessToken(response, username, role);
-      return;
+      return true;
     }
-    // 다를 경우 쿠키의 토큰값 삭제
+    return false;
+  }
+
+  public void deleteRefreshToken(HttpServletRequest request, HttpServletResponse response){
+    // 클라이언트 쿠키에서 refresh token 추출
+    String InputRefreshToken = jwtUtil.getRefreshTokenFromRequest(request);
+    String InputRefreshTokenValue = jwtUtil.substringToken(InputRefreshToken);
+
+    // 유저 정보 추출
+    Claims claims = jwtUtil.getUserInfoFromToken(InputRefreshTokenValue);
+    String username = claims.getSubject();
+
+    refreshTokenRepository.delete(username);
     jwtUtil.deleteCookie(request,response);
-}
+    response.setStatus(HttpStatus.OK.value());
+  }
 
   private void createAccessToken(HttpServletResponse response, String username, UserRoleEnum role) {
     // access token 발급 및 쿠키에 저장

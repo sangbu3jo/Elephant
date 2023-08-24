@@ -144,10 +144,10 @@ function signup() {
             introduction : introduce, adminToken: adminToken
         }),
     })
-    .done(function (res, status, xhr) {
+    .done(function (data) {
         Toast.fire({
             icon: 'success',
-            title: '회원가입에 성공하셨습니다.'
+            title: data,
         }).then(function () {
             window.location.reload();
         })

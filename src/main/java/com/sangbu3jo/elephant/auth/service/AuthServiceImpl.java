@@ -7,8 +7,10 @@ import com.sangbu3jo.elephant.security.jwt.JwtUtil;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -59,27 +61,42 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public String generateRefreshToken(HttpServletRequest request, HttpServletResponse response, User user) {
+  public Boolean generateAccessToken(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
     // 클라이언트 쿠키에서 refresh token 추출
-    String clientRefreshToken = jwtUtil.getRefreshTokenFromRequest(request);
-    String username = user.getUsername();
-    UserRoleEnum role = user.getRole();
+    String InputRefreshToken = jwtUtil.getRefreshTokenFromRequest(request);
+    String InputRefreshTokenValue = jwtUtil.substringToken(InputRefreshToken);
 
     // refresh token 없을 경우 예외 처리
-    if (!StringUtils.hasText(clientRefreshToken)) {
-      throw new IllegalArgumentException("RefreshToken is null. please login");
+    if (!StringUtils.hasText(InputRefreshToken)) {
+      log.error("RefreshToken is null. please login");
+      return false;
+      //throw new IllegalArgumentException("RefreshToken is null. please login");
     }
 
-    // redis 에서 해당 유저에 따른 refresh token 추출
-    RefreshToken refreshToken = refreshTokenRepository.findByUsername(username).get();
+    // refresh token 유효성 검사 불일치
+    if(!jwtUtil.validateToken(InputRefreshTokenValue)){
+      log.error("Refresh Token does not valid.");
+      jwtUtil.deleteCookie(request,response);
+      return false;
+    }
 
-    // refresh token 일치 여부 확인
-    if (clientRefreshToken.equals(refreshToken.getRefreshToken())) {
+    // 유저 정보 추출
+    Claims claims = jwtUtil.getUserInfoFromToken(InputRefreshTokenValue);
+    String username = claims.getSubject();
+    UserRoleEnum role = jwtUtil.getUserRole(claims);
+
+    // Redis 의 refresh token 일치 여부 판단
+    RefreshToken refreshToken = refreshTokenRepository.findByUsername(username).get();
+    if (InputRefreshToken.equals(refreshToken.getRefreshToken())) {
       // 엑세스 토큰 생성
       createAccessToken(response, username, role);
+      return true;
     }
-    return "Access Token 생성 성공";
+    return false;
   }
+
+
 
   @Override
   public String logout(User user) {

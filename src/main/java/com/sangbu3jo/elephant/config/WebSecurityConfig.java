@@ -2,7 +2,6 @@ package com.sangbu3jo.elephant.config;
 
 import com.sangbu3jo.elephant.auth.redis.RedisServiceImpl;
 import com.sangbu3jo.elephant.auth.redis.RefreshTokenRepository;
-import com.sangbu3jo.elephant.auth.service.AuthServiceImpl;
 import com.sangbu3jo.elephant.security.JwtAuthenticationFilter;
 import com.sangbu3jo.elephant.security.JwtAuthorizationFilter;
 import com.sangbu3jo.elephant.security.UserDetailsServiceImpl;
@@ -16,7 +15,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;

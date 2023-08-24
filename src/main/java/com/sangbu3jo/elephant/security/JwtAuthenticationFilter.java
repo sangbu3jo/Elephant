@@ -57,11 +57,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     String accessToken = jwtUtil.createToken(username,role);
     jwtUtil.addJwtToCookieAccessToken(accessToken, response);
 
-    // access token 재발급을 위한 refresh token 을 uuid 값으로 생성함.
+    //  access token 발급 및 쿠키, Redis 에 저장
     RefreshToken refreshToken = jwtUtil.createRefreshToken(username,role);
-    refreshTokenRepository.save(refreshToken); // Redis 에 저장
-
+    refreshTokenRepository.save(refreshToken);
     jwtUtil.addJwtToCookieRefreshToken(refreshToken.getRefreshToken(),response);
+
     log.info("로그인 성공");
   }
 
