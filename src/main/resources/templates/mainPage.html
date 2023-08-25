@@ -50,49 +50,89 @@
 
 <h2>메인 페이지</h2>
 
+<!--<div id="container">-->
+<!--    <div id="post-list">-->
+<!--        <form method="get" action="/api/posts/project">-->
+<!--            <ul>-->
+<!--                <li th:each="project, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
+<!--                    &lt;!&ndash;                <a>&ndash;&gt;-->
+<!--                    <h2 th:text="${project.title}"></h2>-->
+<!--                    <h3 th:text="${project.category}"></h3>-->
+<!--                    <a th:href="@{'/api/posts/' + ${project.id}}">-->
+<!--                        자세히 보기-->
+<!--                    </a>-->
 
 <div id="post-list">
     <ul>
         <li th:each="project : ${projects}">
+            <!--                <a>-->
             <h2 th:text="${project.title}"></h2>
             <h3 th:text="${project.category}"></h3>
             <a th:href="@{'/api/posts/' + ${project.id}}">
                 자세히 보기
             </a>
+
         </li>
     </ul>
 </div>
 
 <div id="study-list">
-    <form method="get" action="/api/posts/study">
-        <ul>
-            <li th:each="study, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">
-                <!--                <a>-->
-                <h2 th:text="${study.title}"></h2>
-                <h3 th:text="${study.category}"></h3>
-                <a th:href="@{'/api/posts/' + ${study.id}}">
-                    자세히 보기
+    <li th:each="study : ${studys}">
+        <!--                <a>-->
+        <h2 th:text="${study.title}"></h2>
+        <h3 th:text="${study.category}"></h3>
+        <a th:href="@{'/api/posts/' + ${study.id}}">
+            자세히 보기
+        </a>
 
-                </a>
-            </li>
-        </ul>
-    </form>
+    </li>
+    </ul>
 </div>
 
 <div id="exam-list">
-    <form method="get" action="/api/posts/exam">
-        <ul>
-            <li th:each="exam, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">
+    <ul>
+        <li th:each="exam : ${exams}">
+            <!--                <a>-->
+            <h2 th:text="${exam.title}"></h2>
+            <h3 th:text="${exam.category}"></h3>
+            <a th:href="@{'/api/posts/' + ${exam.id}}">
+                자세히 보기
+            </a>
 
-                <h2 th:text="${exam.title}"></h2>
-                <h3 th:text="${exam.category}"></h3>
-                <a th:href="@{'/api/posts/' + ${exam.id}}">자세히 보기
-
-                </a>
-            </li>
-        </ul>
-    </form>
+        </li>
+    </ul>
 </div>
+
+<!--    <div id="study-list">-->
+<!--        <form method="get" action="/api/posts/study">-->
+<!--            <ul>-->
+<!--                <li th:each="study, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
+<!--                    &lt;!&ndash;                <a>&ndash;&gt;-->
+<!--                    <h2 th:text="${study.title}"></h2>-->
+<!--                    <h3 th:text="${study.category}"></h3>-->
+<!--                    <a th:href="@{'/api/posts/' + ${study.id}}">-->
+<!--                        자세히 보기-->
+
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div id="exam-list">-->
+<!--    <form method="get" action="/api/posts/exam">-->
+<!--        <ul>-->
+<!--            <li th:each="exam, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
+
+<!--                <h2 th:text="${exam.title}"></h2>-->
+<!--                <h3 th:text="${exam.category}"></h3>-->
+<!--                <a th:href="@{'/api/posts/' + ${exam.id}}">자세히 보기-->
+
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </form>-->
+<!--</div>-->
 
 <script>
     // 게시글 생성 버튼 클릭 이벤트 핸들러
