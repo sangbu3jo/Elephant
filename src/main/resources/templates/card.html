@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
+  <script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+
+  <title>코끼리</title>
+  <style>
+    * {
+      font-family: 'Orbit', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* 가로 가운데 정렬 추가 */
+      align-items: center; /* 세로 가운데 정렬 추가 */
+      background: radial-gradient(
+              circle farthest-corner at center top,
+              #071021,
+              #19324a
+      );
+      z-index: -1;
+      /* background-color: #fff;
+      background-image:
+      linear-gradient(#eee .1em, transparent .1em);
+      background-size: 100% 1.2em; */
+    }
+
+    #stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #f6f6f6;
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: twinkle 2s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0.5;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    /* 카드 전체 속성 */
+    .card {
+      background-color: #f0f0f0;
+      padding: 30px 60px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.5);
+      height: 90%;
+      width: 70%;
+    }
+
+    .line {
+      height: 0.3%;
+      background-color: transparent;
+      background-color: rgba(200, 200, 200, 0.2);
+    }
+
+    /* 카드 상단부 - 제목과 설명*/
+
+    /* 카드 제목 */
+    .card-title {
+      font-size: 22px;
+      width: auto;
+      box-sizing: border-box;
+      margin: 0 0 5px 0;
+    }
+
+    h1 {
+      font-size: 22px;
+    }
+
+    /* 컬럼 */
+    .card-title4 {
+      font-size: 15px;
+      margin: 0 0 10px;
+    }
+
+    /* 담당자 제목 */
+    .card-title3 {
+      font-size: 20px;
+      width: auto;
+      box-sizing: border-box;
+      margin: 10px 0 10px 0;
+    }
+
+    /* 댓글 제목 */
+    .card-title5 {
+      font-size: 20px;
+      width: auto;
+      box-sizing: border-box;
+      margin: 0 0 10px 0;
+    }
+
+    /* 카드 제목 수정 */
+    .edit-title {
+      font-size: 22px;
+      margin: 0;
+      padding: 0;
+      background-color: transparent;
+      border: none;
+      box-sizing: border-box;
+      resize: none;
+      outline: none;
+    }
+
+    .card-title-section {
+      display: flex;
+      align-items: center; /* 수직 가운데 정렬 */
+      justify-content: space-between; /* 각 요소 사이의 간격을 최대한 늘림 */
+      margin-bottom: 10px;
+      height: 9%;
+      width: 100%;
+    }
+
+    .card-buttons {
+      width: 50%;
+      display: flex;
+      align-items: center; /* 수직 가운데 정렬 */
+      justify-content: flex-end; /* 요소들을 오른쪽으로 정렬 */
+    }
+
+    .card-buttons button {
+      padding: 5px 10px;
+    }
+
+    .card-description-wrapper {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+
+    /*.card-description-wrapper > p:nth-child(1) {*/
+    /*  text-align: center;*/
+    /*}*/
+
+    .card-description-wrapper > p {
+      width: 100%;
+      height: 50px;
+      padding: 10px;
+      margin: 0px 5px 16px 5px;
+      color: #000000;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: none;
+      background-color: transparent;
+      background-color: rgba(200, 200, 200, 0.2);
+      box-sizing: border-box; /* 수정한 부분 */
+    }
+
+    .card-description-wrapper > textarea {
+      width: 100%;
+      height: 50px;
+      padding: 10px;
+      margin: 0px 5px 16px 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: none;
+      background-color: transparent;
+      background-color: rgba(200, 200, 200, 0.2);
+      box-sizing: border-box; /* 수정한 부분 */
+      outline: none;
+    }
+
+
+    /* 사용자 선택 */
+
+    .user-select {
+      width: 50%;
+      height: 20%;
+    }
+
+    .date-section {
+      display: flex;
+      justify-content: end;
+      width: 40%;
+    }
+
+
+
+    /* 카드 중반부 - user 설정 */
+
+    .user-selection {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .user-input-wrapper{
+      margin-top: 10px;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .user-selection input {
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: none;
+      box-sizing: border-box;
+      resize: none;
+      outline: none;
+      background-color: transparent;
+      background-color: rgba(200, 200, 200, 0.2);
+    }
+
+    .user-list {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 90%;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-list-item {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .user-list-item:hover {
+      background-color: #f0f0f0;
+    }
+
+    .selected-users {
+      margin-top: 10px;
+    }
+
+    .selected-user {
+      display: inline-block;
+      padding: 5px 10px;
+    }
+
+    /* 카드 하반부 - 댓글 작성 및 조회 */
+    .comment-section {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .comment-section > h2 {
+      margin-top: 0px;
+    }
+
+    .comment-submit-section{
+      display: flex;
+      height: 6vh;
+      flex-direction: row;
+      margin-bottom: 10px;
+    }
+
+    .comment-input {
+      width: 90%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      resize: none;
+      box-sizing: border-box;
+      background-color: transparent;
+      background-color: rgba(200, 200, 200, 0.2);
+      outline: none;
+      overflow: hidden;
+    }
+
+    .comment-list {
+      max-height: 30vh;
+      overflow-y: auto;
+    }
+
+    .comment-list::-webkit-scrollbar {
+      margin-left: 3px;
+      width: 10px;
+    }
+
+    .comment-list::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    .comment-list::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background-color: #6c757d;
+    }
+
+    .comment-list::-webkit-scrollbar-button {
+      width: 0;
+      height: 0;
+    }
+
+    .comment_one {
+      height: 12vh;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 5px;
+      margin-right: 5px;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .comment_one > div:nth-child(1) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 7%;
+    }
+
+    .comment_one > div:nth-child(2) {
+      display: flex; /* Flexbox 사용 */
+      flex-direction: column; /* 가로로 길게 정렬 */
+      width: 83%;
+    }
+
+    .comment_one > div:nth-child(3) {
+      display: flex; /* Flexbox 사용 */
+      flex-direction: column; /* 가로로 길게 정렬 */
+      justify-content: space-between;
+      width: 10%;
+      height: 100%;
+    }
+
+    .comment_one > div > img {
+      border-radius: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      margin: auto;
+    }
+
+    .comment_one > div > p {
+      width: 90%;
+      margin: auto 0 auto 10px;
+    }
+
+    .comment_one > div > p:nth-child(1) {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .comment_one > div > p:nth-child(2) {
+      font-size: 14px;
+    }
+
+    .edit-form{
+      width: 100%;
+      display: flex;
+    }
+
+    #updatecomment {
+      margin-left: 10px;
+      margin-right: 20px;
+      width: 90%;
+      box-sizing: border-box;
+      background-color: transparent;
+      background-color: rgba(200, 200, 200, 0.2);
+      outline: none;
+      resize: none;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .edit-form-button{
+      display: flex; /* Flexbox 사용 */
+      flex-direction: column; /* 가로로 길게 정렬 */
+      justify-content: space-between;
+      width: 10%;
+    }
+
+    .btn-secondary {
+      width: 10%;
+      margin-left: 2%;
+      padding: 10px;
+    }
+
+    .btn-secondary.updateBtn,
+    .btn-secondary.deleteBtnn,
+    .btn-secondary.submitBtn,
+    .btn-secondary.cancelBtn {
+      width: 100%;
+      padding: 3px 10px;
+    }
+
+    .btn-secondary.date {
+      padding: 5px 10px;
+    }
+
+    /* 달력 */
+    #datepickerContainer {
+      z-index: 1;
+      position: relative;
+    }
+
+    #datepicker {
+      position: absolute;
+    }
+
+    .date-section {
+      width: 60%;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .date-section > p {
+      margin: auto 20px;
+    }
+
+    .date{
+      width: 20%;
+    }
+
+    .deleteCard {
+      width: 25%;
+    }
+
+    .gotoBoard {
+      width: 10%;
+    }
+  </style>
+</head>
+<body>
+<body>
+<div id="stars-container"></div>
+
+<div class="card">
+  <div class="card-title-section">
+    <h1 id="card-title" th:class="${card.boardid}" class="card-title" th:text="${card.title}" onclick="enableEditMode2()">Card Title</h1>
+    <input id="edit-title"  class="edit-title" style="display:none;"/>
+    <div class="card-buttons">
+      <div class="date-section">
+        <div id="datepickerContainer" style="display: none;">
+          <div id="datepicker"></div>
+        </div>
+        <p id="selectedDateText" th:text="${card.expiredAt}"></p>
+      </div>
+      <button class="btn btn-secondary date" id="showDatePicker">마감일</button>
+      <button class="btn btn-secondary deleteCard" data-bs-toggle="modal" th:data-bs-target="'#staticBackdrop'+${card.cardid}" >카드 삭제</button>
+      <!--삭제 모달창 -->
+      <div class="modal fade" th:id="'staticBackdrop'+${card.cardid}" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel" th:text="|카드이름 : ${card.title}|"></h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              삭제하시겠습니까? 되돌릴 수 없습니다
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger btn-delete" th:id="${card.cardid}"  th:onclick="'deleteCard(\'' + ${card.boardid} + '\')'" >삭제</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">취소</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--삭제 모달창 종료-->
+      <button class="btn btn-secondary gotoBoard" th:onclick="'redirectToBoard(\'' + ${card.boardid} + '\')'">X</button>
+    </div>
+  </div>
+
+  <div class="card-description-wrapper">
+<!--    <h4 class="card-title4" th:text="${card.columntitle}">in column</h4>-->
+    <p id="card-description" th:class="${card.boardid}" th:text="${card.content}" onclick="enableEditMode()"></p>
+    <textarea id="edit-description" style="display:none;"></textarea>
+  </div>
+
+  <div class="line"></div>
+
+  <div class="selected-users-wrapper">
+    <h1 class="card-title3">담당자</h1>
+    <div class="selected-users" id="selectedUsers">
+      <div th:each="user : ${boardusers}" th:if="${user.selected}" class="btn btn-light selected-user">
+        <span th:text="${user.username}"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="user-selection">
+    <div class="user-input-wrapper">
+      <input class="user-input" type="text" placeholder="사용자 추가하기">
+      <button class="btn btn-secondary" onclick="sendUser()" style="width: 10%;">유저 추가</button>
+
+    </div>
+    <div class="user-list" id="userList">
+      <div th:each="user : ${boardusers}" class="user-list-item">
+        <span th:text="${user.username}"></span> : <span th:text="${user.nickname}"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 모달 토스트 메시지 -->
+  <div class="modal fade" id="myToastModal" data-backdrop="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          담당자 변경 완료 !
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="line"></div>
+
+  <div class="comment-section">
+    <h2 class="card-title5">댓글</h2>
+    <div class="comment-submit-section">
+      <textarea class="comment-input" placeholder="내용" id="createcomment"></textarea>
+      <button class="btn btn-secondary" onclick="comment()">댓글 작성</button>
+    </div>
+    <div class="comment-section">
+      <div class="comment-list" id="commentList">
+        <div th:each="comment : ${comments}" class="comment">
+          <div class="comment_one">
+            <div class="comment_head">
+              <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png">
+            </div>
+            <div class="comment_body">
+              <p class="comment-author" th:text="${comment.username}">작성자</p>
+              <p class="comment-date" th:text="${comment.createdAt}">날짜</p>
+              <p class="comment-content" th:text="${comment.content}">댓글 내용</p>
+            </div>
+            <div class="comment_bottom">
+              <button class="btn btn-secondary updateBtn">수정</button>
+              <button class="btn btn-secondary deleteBtnn" data-bs-toggle="modal" th:data-bs-target="'#staticBack'+${comment.id}" >삭제</button>
+
+              <!--댓글 삭제 모달창 -->
+              <div class="modal fade" th:id="'staticBack'+${comment.id}" aria-labelledby="exampleModalLabell" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabell">댓글 삭제</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      댓글을 삭제하시겠습니까?
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-danger deleteBtn" th:id="${comment.id}" >삭제</button>
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">취소</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--댓글 삭제 모달창 종료-->
+
+            </div>
+
+            <div class="edit-form" style="display: none">
+              <input id="updatecomment" th:placeholder="${comment.content}"/>
+              <div class="edit-form-button">
+                <button class="btn btn-secondary submitBtn" th:id="${comment.id}">저장</button>
+                <button class="btn btn-secondary cancelBtn">취소</button>
+              </div>
+            </div>
+          </div>
+          <!--한 댓글 종료-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+
+  function deleteCard(boardId) {
+    // id는 cardid값임
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/cards/", "");
+
+    console.log(id);
+    console.log("boardId", boardId);
+    console.log("cardId", id);
+
+    Swal.fire({
+      title: '정말 삭제하시겠습니까?',
+      text: '다시 되돌릴 수 없습니다.',
+      icon: 'warning',
+
+      showCancelButton: true, // cancel버튼 보이기. 기본은 원래 없음
+      confirmButtonColor: '#d33', // confrim 버튼 색깔 지정
+      cancelButtonColor: '#3085d6', // cancel 버튼 색깔 지정
+      confirmButtonText: '삭제', // confirm 버튼 텍스트 지정
+      cancelButtonText: '취소', // cancel 버튼 텍스트 지정
+
+      reverseButtons: false, // 버튼 순서 거꾸로
+
+    }).then(result => {
+      // 만약 Promise리턴을 받으면,
+      if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+        $.ajax({
+          type:"DELETE",
+          url:`/api/boards/${boardId}/columns/cards/${id}`,
+          contentType:"application/json",
+          success: function () {
+            Swal.fire({
+              icon: 'success',
+              title: '삭제가 완료되었습니다'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = `http://localhost:8080/api/boards/${boardId}`;
+              }
+            });
+          },
+          error: function () {
+            window.location.href = `http://localhost:8080/api/boards/${boardId}`;
+          }
+        })
+      } else {
+
+      }
+    });
+
+  }
+  function redirectToBoard(boardId) {
+    console.log(boardId);
+    var url = '/api/boards/' + boardId;
+    window.location.href = url;
+  }
+
+  // 서버로 마감일 데이터 전송
+  $(document).ready(function() {
+    $("#showDatePicker").click(function() {
+      $("#datepickerContainer").show();
+      $("#datepicker").datepicker({
+        dateFormat: "yy-mm-dd", // 년-월-일 형식
+        onSelect: function(dateText) {
+          $("#selectedDateText").text(dateText);
+          $("#datepicker").hide();
+          sendDataToServer(dateText);
+        }
+      });
+    });
+  });
+
+  function sendDataToServer(date) {
+    // id는 cardid값임
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/cards/", "");
+    console.log(id);
+
+    // 클래스 이름 가져오기
+    const className = cardTitle.className;
+    console.log(className); // 클래스 이름 출력
+
+    console.log(date);
+
+    $.ajax({
+      type:"PUT",
+      url: `/api/cards/${id}`,
+      contentType: "application/json",
+      data: JSON.stringify({expiredAt: date}),
+      success: function(response, status, xhr) {
+        console.log("PATCH 요청이 성공했습니다.");
+        if (xhr.status === 200) {
+          window.location.href = `http://localhost:8080/api/cards/${id}`;
+        } else {
+          // 다른 상태 코드에 따라 처리
+          Swal.fire({
+            icon: 'error',
+            title: '누구세요?'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = `http://localhost:8080/api/cards/${id}`;
+            }
+          });
+        }
+      },
+
+      error: function(xhr, status, error) {
+        // 요청이 실패한 경우 처리할 로직을 작성합니다.
+        console.log("PATCH 요청이 실패했습니다.");
+        console.log(xhr.responseText);
+        Swal.fire({
+          icon: 'error',                         // Alert 타입
+          title: '회원만 작성 가능합니다'        // Alert 제목
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `http://localhost:8080/api/cards/${id}`;
+          }
+        });
+      }
+    });
+  }
+
+  // 카드 제목 수정
+
+  const cardTitle = document.getElementById('card-title');
+  const editTitle = document.getElementById('edit-title');
+
+  cardTitle.addEventListener('click', enableEditMode2);
+
+  function enableEditMode2() {
+    cardTitle.style.display = 'none';
+    editTitle.style.display = 'block';
+    editTitle.value = cardTitle.textContent;
+    editTitle.focus();
+  }
+
+  editTitle.addEventListener('blur', saveChanges2);
+  editTitle.addEventListener('keydown', checkEnterKey2);
+
+  function saveChanges2() {
+    editTitle.style.display = 'block';
+    editTitle.style.display = 'none';
+
+    const newTitle = editTitle.value;
+
+    // id는 cardid값임
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/cards/", "");
+    console.log(id);
+
+    // 클래스 이름 가져오기
+    /* const className = cardTitle.className;
+    console.log(className); // 클래스 이름 출력 */
+
+    $.ajax({
+      type:"PUT",
+      url: `/api/cards/${id}`,
+      contentType: "application/json",
+      data: JSON.stringify({title: newTitle}),
+      success: function(response, status, xhr) {
+        console.log("PATCH 요청이 성공했습니다.");
+        if (xhr.status === 200) {
+          window.location.href = `http://localhost:8080/api/cards/${id}`;
+        } else {
+          // 다른 상태 코드에 따라 처리
+          Swal.fire({
+            icon: 'error',
+            title: '누구세요?'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = `http://localhost:8080/api/cards/${id}`;
+            }
+          });
+        }
+      },
+
+      error: function(xhr, status, error) {
+        // 요청이 실패한 경우 처리할 로직을 작성합니다.
+        console.log("PATCH 요청이 실패했습니다.");
+        console.log(xhr.responseText);
+        Swal.fire({
+          icon: 'error',                         // Alert 타입
+          title: '회원만 작성 가능합니다'        // Alert 제목
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `http://localhost:8080/api/cards/${id}`;
+          }
+        });
+      }
+    });
+    cardTitle.textContent = newTitle; // 수정 내용을 <p> 태그에 반영
+  }
+
+  function checkEnterKey2(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      saveChanges2();
+    }
+  }
+
+  // 카드 설명 변경
+  const cardDescription = document.getElementById('card-description');
+  const editDescription = document.getElementById('edit-description');
+
+  cardDescription.addEventListener('click', enableEditMode);
+
+  function enableEditMode() {
+    cardDescription.style.display = 'none';
+    editDescription.style.display = 'block';
+    editDescription.value = cardDescription.textContent;
+    editDescription.focus();
+  }
+
+  editDescription.addEventListener('blur', saveChanges);
+  editDescription.addEventListener('keydown', checkEnterKey);
+
+  function saveChanges() {
+    cardDescription.style.display = 'block';
+    editDescription.style.display = 'none';
+
+    const newDescription = editDescription.value;
+
+    // id는 cardid값임
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/cards/", "");
+    console.log(id);
+
+    $.ajax({
+      type:"PUT",
+      url: `/api/cards/${id}`,
+      contentType: "application/json",
+      data: JSON.stringify({content: newDescription}),
+      success: function(response, status, xhr) {
+        console.log("selected-user 요청이 성공했습니다.");
+        if (xhr.status === 200) {
+          window.location.href = `http://localhost:8080/api/cards/${id}`;
+        } else {
+          // 다른 상태 코드에 따라 처리
+          Swal.fire({
+            icon: 'error',
+            title: '누구세요?'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = `http://localhost:8080/api/cards/${id}`;
+            }
+          });
+        }
+      },
+
+      error: function(xhr, status, error) {
+        // 요청이 실패한 경우 처리할 로직을 작성합니다.
+        console.log("PATCH 요청이 실패했습니다.");
+        console.log(xhr.responseText);
+        Swal.fire({
+          icon: 'error',                         // Alert 타입
+          title: '회원만 작성 가능합니다'        // Alert 제목
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `http://localhost:8080/api/cards/${id}`;
+          }
+        });
+      }
+    });
+    cardDescription.textContent = newDescription; // 수정 내용을 <p> 태그에 반영
+  }
+
+  function checkEnterKey(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      saveChanges();
+    }
+  }
+
+  const userInput = document.querySelector('.user-input');
+  const userList = document.getElementById('userList');
+  const selectedUsers = document.getElementById('selectedUsers');
+
+  const userBtns = document.querySelectorAll('.selected-user');
+
+  userBtns.forEach(button => {
+    button.addEventListener('click', function () {
+      button.remove();
+    })
+  });
+
+  userInput.addEventListener('focus', function() {
+    userList.style.display = 'block';
+  });
+
+  userInput.addEventListener('blur', function() {
+    setTimeout(() => {
+      userList.style.display = 'none';
+    }, 200);
+  });
+
+  userList.addEventListener('click', function(event) {
+    if (event.target.classList.contains('user-list-item')) {
+      const selectedUser = document.createElement('div');
+      selectedUser.className = 'btn btn-light selected-user';
+      selectedUser.textContent = event.target.querySelector('span:first-child').textContent; // 첫 번째 span 태그 안의 텍스트
+      selectedUser.addEventListener('click', function() {
+        selectedUser.remove();
+      });
+      selectedUsers.appendChild(selectedUser);
+      userInput.value = '';
+    }
+  });
+
+  window.addEventListener('click', function(event) {
+    if (!event.target.matches('.user-input')) {
+      userList.style.display = 'none';
+    }
+  });
+
+  function sendUser() {
+    // id는 cardid값임
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/cards/", "");
+    console.log(id);
+
+    // 클래스 이름 가져오기
+    const className = cardDescription.className;
+    console.log(className); // 클래스 이름 출력
+
+    const selectedUsers = document.querySelectorAll('.selected-user');
+    const selectedUserNames = Array.from(selectedUsers).map(user => user.textContent.trim());
+
+    console.log(selectedUserNames); // 선택된 사용자들의 username 값이 담긴 배열
+
+    const existingSelectedUsers = document.querySelectorAll('.selected-users .selected-user');
+    if (existingSelectedUsers.length === 0) {
+      console.log("No existing selected users.");
+    } else {
+      existingSelectedUsers.forEach(user => {
+        const spanElement = user.querySelector('span');
+        if (spanElement) {
+          const username = spanElement.textContent;
+          console.log("Existing selected user:", username);
+        } else {
+          console.log("No username found for this user element.");
+        }
+      });
+    }
+
+
+    // AJAX 요청을 통해 서버로 데이터 전송
+    $.ajax({
+      type:"PATCH",
+      url: `/api/cards/${id}`,
+      contentType: "application/json",
+      data: JSON.stringify({ cardusernames: selectedUserNames }),
+      success: function(response) {
+        // 모달을 표시하고 1초 후에 숨깁니다.
+        $('#myToastModal').modal('show');
+
+        setTimeout(function() {
+          $('#myToastModal').modal('hide');
+          window.location.href = `http://localhost:8080/api/cards/${id}`;
+        }, 1000);
+      },
+      error: function(error) {
+        // 에러 처리 로직
+      }
+    });
+  }
+
+  // 댓글 작성하기
+  function comment() {
+    let commentcontent = $('#createcomment').val();
+    console.log("commentcontent");
+
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/cards/", "");
+
+    $.ajax({
+      type:"POST",
+      url: `/api/cards/${id}/comments`,
+      contentType: "application/json",
+      data: JSON.stringify({content: commentcontent}),
+      success: function(response, status, xhr) {
+        // 요청이 성공한 경우 처리할 로직을 작성합니다.
+        console.log("POST 요청이 성공했습니다.");
+
+        // 서버 응답이 성공적으로 왔을 때 처리
+        if (xhr.status === 200) {
+          // 서버의 상태 코드가 200(성공)인 경우
+          window.location.href = `http://localhost:8080/api/cards/${id}`;
+        } else {
+          // 다른 상태 코드에 따라 처리
+          Swal.fire({
+            icon: 'error',
+            title: '회원만 작성 가능합니다'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = `http://localhost:8080/api/cards/${id}`;
+            }
+          });
+        }
+      },
+      error: function(xhr, status, error) {
+        // 요청이 실패한 경우 처리할 로직
+        console.log("POST 요청이 실패했습니다.");
+        console.log(xhr.responseText);
+        Swal.fire({
+          icon: 'error',
+          title: '회원만 작성 가능합니다'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `http://localhost:8080/api/cards/${id}`;
+          }
+        });
+      }
+    });
+
+  }
+
+  // 댓글 수정창 오픈 버튼
+  const updateBtns = document.querySelectorAll('.updateBtn');
+  updateBtns.forEach(button => {
+    button.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      const commentOne = button.closest('.comment_one');
+      const commentHead = commentOne.querySelector('.comment_head');
+      const commentBody = commentOne.querySelector('.comment_body');
+      const commentBottom = commentOne.querySelector('.comment_bottom');
+
+      const editForm = commentOne.querySelector('.edit-form');
+
+      // 댓글 내용 부분 숨김
+      commentBody.style.display = 'none';
+      commentBottom.style.display = 'none';
+
+      // 수정 폼 부분 표시
+      editForm.style.display = 'flex';
+    });
+  });
+
+  // 댓글 수정 취소 버튼
+  const cancelBtns = document.querySelectorAll('.cancelBtn');
+  cancelBtns.forEach(button => {
+    button.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      const commentOne = button.closest('.comment_one');
+      const commentHead = commentOne.querySelector('.comment_head');
+      const commentBody = commentOne.querySelector('.comment_body');
+      const commentBottom = commentOne.querySelector('.comment_bottom');
+
+      const editForm = commentOne.querySelector('.edit-form');
+
+      // 댓글 내용 부분 표시
+      commentBody.style.display = 'flex';
+      commentBottom.style.display = 'flex';
+
+      // 수정 폼 부분 숨김
+      editForm.style.display = 'none';
+    });
+  });
+
+  // 댓글 수정 버튼
+  const submitBtns = document.querySelectorAll('.submitBtn');
+  submitBtns.forEach(button => {
+    button.addEventListener('click', function () {
+      const form = button.closest('.edit-form');
+      const updatecomment = form.querySelector('#updatecomment');
+      const value = updatecomment.value;
+
+      // id는 cardid값
+      let url = window.location.href;
+      let id = url.replace("http://localhost:8080/api/cards/", "");
+      console.log("cardid: ",id);
+
+      let commentId = button.id; // comment.id 값을 가져옴
+      console.log("commentid: ", commentId);
+
+      console.log("commentContent: ", value);
+
+      $.ajax({
+        type: "PUT",
+        url: `/api/cards/comments/${commentId}`,
+        contentType: "application/json",
+        data: JSON.stringify({content: value}),
+        success: function(response, status, xhr) {
+
+          // 요청이 성공한 경우 처리할 로직을 작성합니다.
+          console.log("PUT 요청이 성공했습니다.");
+
+          // 서버 응답이 성공적으로 왔을 때 처리
+          if (xhr.status === 200) {
+            // 서버의 상태 코드가 200(성공)인 경우
+            window.location.href = `http://localhost:8080/api/cards/${id}`;
+          } else {
+            // 다른 상태 코드에 따라 처리
+            Swal.fire({
+              icon: 'error',                         // Alert 타입
+              title: '작성자만 수정 가능합니다.'        // Alert 제목
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = `http://localhost:8080/api/cards/${id}`;
+              }
+            });
+          }
+        },
+        error: function(xhr, status, error) {
+          // 요청이 실패한 경우 처리할 로직을 작성합니다.
+          console.log("POST 요청이 실패했습니다.");
+          console.log(xhr.responseText);
+          Swal.fire({
+            icon: 'error',                         // Alert 타입
+            title: '작성자만 수정 가능합니다'        // Alert 제목
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = `http://localhost:8080/api/cards/${id}`;
+            }
+          });
+        }
+      });
+
+    })
+  });
+
+  // 댓글 삭제 버튼
+  const deleteBtns = document.querySelectorAll('.deleteBtn');
+  deleteBtns.forEach(button => {
+    button.addEventListener('click', function () {
+      // id는 cardid값임
+      let url = window.location.href;
+      let id = url.replace("http://localhost:8080/api/cards/", "");
+      console.log(id);
+
+      let commentId = button.id; // comment.id 값을 가져옴
+      console.log(commentId);
+
+      $.ajax({
+        type: "DELETE",
+        url: `/api/cards/comments/${commentId}`,
+        contentType: "application/json",
+        success: function(response, status, xhr) {
+          if (xhr.status === 200) {
+            window.location.href = `http://localhost:8080/api/cards/${id}`;
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: '작성자만 삭제 가능합니다.'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = `http://localhost:8080/api/cards/${id}`;
+              }
+            });
+          }
+        },
+        error: function(xhr, status, error) {
+          console.log("DELETE 요청이 실패했습니다.");
+          console.log(xhr.responseText);
+          Swal.fire({
+            icon: 'error',
+            title: '작성자만 삭제 가능합니다'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = `http://localhost:8080/api/cards/${id}`;
+            }
+          });
+        }
+      });
+
+    })
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("stars-container");
+
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.left = `${Math.random() * 100}vw`;
+      star.style.top = `${Math.random() * 100}vh`;
+      container.appendChild(star);
+    }
+  });
+</script>
+</body>
+</html>
