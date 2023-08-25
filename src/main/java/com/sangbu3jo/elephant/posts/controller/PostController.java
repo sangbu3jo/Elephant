@@ -28,13 +28,14 @@ public class PostController {
 
         try {
             postService.createPost(userDetails.getUser(), postRequestDto);
-            return ResponseEntity.status(200).body("Success");
+            return ResponseEntity.status(200).body("게시글이 생성되었습니다.");
         } catch (RejectedExecutionException e) {
             return ResponseEntity.status(400).body("생성 권한이 없습니다.");
+        } catch (NullPointerException nullPointerException) {
+            return ResponseEntity.status(400).body("게시글을 입력해주세요.");
         }
-
-
     }
+
 
     //게시글 수정
     @PutMapping("/posts/{post_id}")
@@ -45,11 +46,14 @@ public class PostController {
         Post post = postRepository.findById(post_id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
-        //post fk user_id 값과 로그인한 user id값 비교
-        if (userDetails.getUser().getId().equals(post.getUser().getId())) {
-            postService.modifiedPost(postRequestDto, post_id);
-            return ResponseEntity.status(200).body("Success");
-        } else return ResponseEntity.status(400).body("수정 권한이 없습니다.");
+        try {
+            postService.modifiedPost(postRequestDto, post_id, userDetails.getUser());
+            return ResponseEntity.status(200).body("게시글이 변경되었습니다.");
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.status(400).body("게시글을 변경에 실패했습니다.");
+        } catch (NullPointerException nullPointerException) {
+            return ResponseEntity.status(400).body("값을 입력해주세요");
+        }
     }
 
 
@@ -62,17 +66,12 @@ public class PostController {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
         //post fk user_id 값과 로그인한 user id값 비교
-
         if (userDetails.getUser().getId().equals(post.getUser().getId())) {
             postService.deletePost(post);
             return ResponseEntity.status(200).body("Success");
         } else return ResponseEntity.status(400).body("삭제 권한이 없습니다.");
 
     }
-
-
-
-
 
 
 }

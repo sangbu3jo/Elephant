@@ -2,22 +2,20 @@ package com.sangbu3jo.elephant.posts.dto;
 
 import com.sangbu3jo.elephant.posts.entity.Category;
 import com.sangbu3jo.elephant.posts.entity.Post;
-import com.sangbu3jo.elephant.posts.entity.PostComment;
+import com.sangbu3jo.elephant.users.entity.User;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 @Getter
-
 public class PostResponseDto {
-
+    private Long id;
     private String title;
     private String content;
     private Category category;
+    private String username;
     private String files;
     private Boolean completed;
     private Integer view_cnt;
@@ -26,7 +24,9 @@ public class PostResponseDto {
     private List<PostCommentResponseDto> postCommentList;
 
     public PostResponseDto(Post post) {
+        this.id = post.getId();
         this.title = post.getTitle();
+        this.username = post.getUser().getUsername();
         this.content = post.getContent();
         this.category = post.getCategory();
         this.completed = post.getCompleted();
@@ -41,5 +41,6 @@ public class PostResponseDto {
 
 
     }
+
 
 }

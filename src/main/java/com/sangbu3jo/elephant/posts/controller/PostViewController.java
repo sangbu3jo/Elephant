@@ -1,18 +1,18 @@
 package com.sangbu3jo.elephant.posts.controller;
 
-import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
 import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
-import com.sangbu3jo.elephant.users.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController //나중에 바꿔야 함
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class PostViewController {
@@ -22,38 +22,107 @@ public class PostViewController {
     private final PostService postService;
 
     //메인페이지에서 섹션을 나눠서 각 카테고리마다 5개 정도 가져오기
-//    @GetMapping("/posts/categories")
-//    public List<PostResponseDto> getAllPosts(@RequestBody PostRequestDto postRequestDto) {
-//
-//        return postService.getAllPosts(postRequestDto.getSelectNum());
-//
-//    }
+    @GetMapping("/posts/categories")
+    public String getAllPosts(Model model) {
+
+        List<PostResponseDto> postResponseDtoList = postService.getAllPosts();
+
+        model.addAttribute("mainPage", postResponseDtoList);
+
+        return "mainPage";
+
+    }
 
     //게시글 카테고리 별 전체 조회
-    @GetMapping("/posts/categories/{category}/{page_num}")
-    public List<PostResponseDto> getCategoryPost(@PathVariable Integer category,
-                                                 @PathVariable Integer page_num) {
+    //pagination
+    @GetMapping("/posts/categories/{category}")
+    public String getCategoryPost(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "isAsc", defaultValue = "true") Boolean isAsc,
+            @PathVariable Integer category,
+            Model model) {
+
+        Page<PostResponseDto> postResponseDtoList = postService.getCategoryPost(category,
+                page,
+                size,
+                sortBy,
+                isAsc);
+        model.addAttribute("category", postResponseDtoList);
 
 
-        return postService.getCategoryPost(category, page_num);
+        return "category";
 
     }
 
-    //게시글 카테고리 별 검색 조회
+
+    //게시글 카테고리 검색 조회
     //슬라이스 구현
-    @GetMapping("/posts/categories/{category}/titles/{page_num}")
-    public List<PostResponseDto> getSearchTitle(@PathVariable Integer category,
-                                                @PathVariable Integer page_num,
-                                                @RequestBody PostRequestDto requestDto) {
+    @GetMapping("/posts/categories/{category}/titles")
+    public String getSearchTitle(@PathVariable Integer category,
+                                 @RequestParam("title") String title,
+                                 Model model) {
 
-        return postService.getSearchTitle(category, page_num, requestDto.getTitle());
+        List<PostResponseDto> postResponseDtoList = postService.getSearchTitle(category, title);
+
+        model.addAttribute("searchedPage", postResponseDtoList);
+
+        return "searchedPage";
+    }
+    //게시글 상세(단건 조회) 페이지
+    @GetMapping("/posts/{post_id}")
+    public String getPost(@PathVariable Long post_id,
+                          @AuthenticationPrincipal UserDetailsImpl userDetails,
+                          Model model) {
+        PostResponseDto postResponseDto = postService.getPost(post_id, userDetails.getUser());
+        model.addAttribute("post", postResponseDto);
+        return "post";
     }
 
-    //게시글 상세 페이지
-    @GetMapping("/posts/{post_id}")
-    public PostResponseDto getPost(@PathVariable Long post_id,
-                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.getPost(post_id, userDetails.getUser());
+
+    //프로젝트
+    @GetMapping("/posts/project")
+    public String getProject(Model model){
+
+        List<PostResponseDto> postResponseDtoList = postService.getProject();
+        model.addAttribute("project", postResponseDtoList);
+        return "mainPage";
+    }
+
+    //스터디
+    @GetMapping("/posts/study")
+    public String getStudy(Model model){
+
+        List<PostResponseDto> postResponseDtoList = postService.getStudy();
+        model.addAttribute("study", postResponseDtoList);
+        return "mainPage";
+    }
+
+    //문제은행
+    @GetMapping("/posts/exam")
+    public String getExam(Model model){
+
+        List<PostResponseDto> postResponseDtoList = postService.getExam();
+        model.addAttribute("exam", postResponseDtoList);
+        return "mainPage";
+    }
+
+    //게시글 생성 페이지로 이동
+    @GetMapping("/posts")
+    public String createPost() {
+        return "createPost";
+    }
+
+    //게시글 수정 페이지로 이동
+    @GetMapping("/posts/update/{post_id}")
+    public String updatePost(@PathVariable Long post_id,
+                             @AuthenticationPrincipal UserDetailsImpl userDetails,
+                             Model model) {
+
+        PostResponseDto postResponseDto = postService.getPost(post_id, userDetails.getUser());
+        model.addAttribute("updatePost", postResponseDto);
+        return "updatePost";
     }
 }
 

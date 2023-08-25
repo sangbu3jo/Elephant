@@ -11,18 +11,14 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+
+    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
     Page<Post> findAllByCategoryOrderByCreatedAtDesc(Category category, Pageable pageable);
 
 
-    Page<Post> findAllByCategoryOrderByCreatedAtAsc(Category category, Pageable pageable);
-
-    Page<Post> findAllByCategoryOrderByViewCntDesc(Category category, Pageable pageable);
-
-    Page<Post> findAllByCategoryOrderByCommentListDesc(Category category, Pageable pageable);
-
-//    Page<Post> findAllByTitleContainingOrderByCreatedAtDesc(String title, Pageable pageable);
-
     Slice<Post> findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(Category category, String title, Pageable pageable);
+
 
 
 }

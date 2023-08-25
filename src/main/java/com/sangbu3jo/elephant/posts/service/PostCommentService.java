@@ -1,6 +1,7 @@
 package com.sangbu3jo.elephant.posts.service;
 
 import com.sangbu3jo.elephant.posts.dto.PostCommentRequestDto;
+import com.sangbu3jo.elephant.posts.dto.PostCommentResponseDto;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.entity.PostComment;
 import com.sangbu3jo.elephant.posts.repository.PostCommentRepository;
@@ -31,6 +32,8 @@ public class PostCommentService {
 
        PostComment postComment = new PostComment(postCommentRequestDto,user ,post);
 
+
+
         postCommentRepository.save(postComment);
 
 
@@ -44,6 +47,8 @@ public class PostCommentService {
 
        //댓글 수정
         postComment.update(postCommentRequestDto);
+
+
     }
 
 
@@ -52,4 +57,22 @@ public class PostCommentService {
 
         postCommentRepository.delete(postComment);
     }
+
+    //댓글 단건 조회
+//    public PostCommentResponseDto getComment(Long id, User user) {
+//
+//        User commentUser = userRepository.findById(user.getId())
+//                .orElseThrow(()-> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
+//
+//        PostComment postComment = postCommentRepository.findById(id)
+//                .orElseThrow(()-> new IllegalArgumentException("해당 댓글을 찾아올 수 없습니다."));
+//
+//        PostCommentResponseDto postCommentResponseDto = new PostCommentResponseDto(postComment);
+//
+//        return postCommentResponseDto;
+//
+//
+//
+//
+//    }
 }

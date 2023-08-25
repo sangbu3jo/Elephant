@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/5856/5856675.png"/>
+
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap" rel="stylesheet">
+    <style>
+
+        /* 수정된 스타일 */
+        .delete-button {
+            position: fixed; /* 고정 위치 */
+            top: 10px; /* 위에서 10px 떨어진 위치 */
+            right: 10px; /* 오른쪽에서 10px 떨어진 위치 */
+            background-color: red; /* 빨간색 배경색 */
+            color: white; /* 흰색 텍스트 색상 */
+            padding: 5px 10px; /* 버튼 내부 여백 조정 */
+            border: none; /* 테두리 제거 */
+            cursor: pointer; /* 마우스 커서 모양 변경 (손가락 모양) */
+            border-radius: 5px; /* 둥근 모서리 */
+            font-size: 12px; /* 텍스트 크기 작게 설정 */
+        }
+
+        .delete-button:hover {
+            background-color: darkred; /* 마우스 오버 시 배경색 변경 */
+        }
+
+        #update-post-button {
+            position: fixed; /* 고정 위치 */
+            top: 10px; /* 위에서 10px 떨어진 위치 */
+            right: 100px; /* 오른쪽에서 10px 떨어진 위치 */
+            background-color: blue; /* 빨간색 배경색 */
+            color: white; /* 흰색 텍스트 색상 */
+            padding: 5px 10px; /* 버튼 내부 여백 조정 */
+            border: none; /* 테두리 제거 */
+            cursor: pointer; /* 마우스 커서 모양 변경 (손가락 모양) */
+            border-radius: 5px; /* 둥근 모서리 */
+            font-size: 12px; /* 텍스트 크기 작게 설정 */
+        }
+
+        /* 모달 레이어 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
+    </style>
+
+
+</head>
+
+
+<body>
+
+
+<button id="update-post-button">게시글 수정</button>
+
+<!-- 게시물 삭제 버튼 -->
+
+<button type="button" id="delete-button" class="delete-button" onclick="deletePost()">게시물 삭제</button>
+
+
+<div id="post-content">
+    <h1 th:text="${post.title}"></h1>
+    <h5 th:text="${#strings.substring(post.username, 0, 5) + '*****'}"></h5>
+    <h3 th:text="${post.category}"></h3>
+    <p th:text="${post.content}"></p>
+    <!-- 조회수 앞에 "조회수" 추가하여 출력 -->
+    <h5 th:text="'조회수 ' + ${post.view_cnt}"></h5>
+
+    <h5 th:if="${post.category != post.category.PREVIOUS_EXAM}">
+        <span th:if="${post.completed == false}">모집중</span>
+        <span th:if="${post.completed == true}">모집완료</span>
+    </h5>
+    <h5 th:text="'작성날짜 ' + ${post.createdAt}">생성 날짜</h5>
+
+
+    <h2>댓글 작성</h2>
+    <form id="comment-form">
+        <div class="form-group">
+            <label for="comment-content">댓글 내용</label>
+            <input type="text" id="comment-content" name="comment-content" class="input-field" placeholder="댓글을 입력하세요">
+        </div>
+        <button type="submit" class="submit-button">댓글 작성</button>
+    </form>
+
+    <!-- 댓글 목록 출력 -->
+    <h2>댓글</h2>
+    <div class="comment-container">
+        <ul>
+            <li th:each="comment : ${post.postCommentList}">
+                <div class="comment">
+                    <!-- 댓글 내용 -->
+                    <p th:text="${comment.content}"></p>
+                    <!-- 댓글 작성자 (앞 5글자만 표시) -->
+                    <h5 th:text="${#strings.substring(comment.username, 0, 5) + '*****'}"></h5>
+                    <!-- 댓글 작성 날짜 -->
+                    <h5 th:text="'작성날짜 ' + ${comment.createdAt}">댓글 작성 날짜</h5>
+                    <!-- 댓글 수정 날짜 -->
+                    <h5 th:text="'수정날짜 ' + ${comment.modifiedAt}">댓글 수정 날짜</h5>
+
+                    <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정</button>
+
+                    <button class="delete-comment" th:attr="onclick='deleteComment(' + ${comment.id} + ')'">댓글삭제
+                    </button>
+
+                    <div class="modal">
+                        <div class="modal-content">
+                            <!-- 모달 내용 -->
+                            <span class="close">&times;</span>
+                            <h2>댓글 수정</h2>
+                            <textarea id="commentTextarea"></textarea>
+                            <button id="saveComment">저장</button>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<script>
+    // 게시물 삭제 함수
+    function deletePost() {
+        const postId = window.location.href.split('/').pop(); // 현재 주소에서 postId 추출
+        if (confirm("게시물을 삭제하시겠습니까?")) {
+            $.ajax({
+                type: "DELETE",
+                url: "/api/posts/" + postId, // 삭제할 게시물의 URL
+                success: function (response) {
+                    console.log(response);
+                    // 삭제 성공 시 페이지 리로드 또는 다른 동작 수행
+                    window.location.href = "/api/posts/categories";
+                },
+                error: function (error) {
+                    console.error("게시물 삭제 실패:", error);
+                    // 오류 처리 (예: 오류 메시지 표시)
+                }
+            });
+        }
+    }
+
+    $("#update-post-button").click(function () {
+
+        const postUpdateId = window.location.href.split('/').pop();
+
+        // 게시글 정보 가져오기
+        const postTitle = $("h1").text();
+        const postContent = $("p").text();
+
+        console.log(postTitle);
+        // 게시글 수정 페이지로 이동
+        window.location.href = "/api/posts/update/" + postUpdateId;
+
+    });
+
+
+    let commentContent = null;
+
+    $("#comment-form").submit(function (event) {
+        event.preventDefault(); // 기본 폼 제출 동작 방지
+
+        const postId = window.location.href.split('/').pop(); // 현재 주소에서 postId 추출
+        const commentContent = $("#comment-content").val();
+
+        // Create an object with the comment data to send to the server
+        const commentData = {
+            content: commentContent
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/api/posts/" + postId + "/comments", // 댓글 생성 엔드포인트 URL
+            data: JSON.stringify(commentData),
+            contentType: "application/json",
+            success: function (response) {
+
+                console.log(response);
+                // 댓글 생성 성공 시 페이지 새로고침 또는 다른 동작 수행
+                window.location.reload();
+            },
+            error: function (error) {
+                console.error("댓글 생성 실패:", error);
+                // 오류 처리 (예: 오류 메시지 표시)
+            }
+        });
+    });
+
+
+    function deleteComment(commentId) {
+        // Ajax로 DELETE 요청 보내기
+        $.ajax({
+            url: `/api/posts/comments/${commentId}`,
+            type: "DELETE",
+            success: function (data) {
+                console.log(data);
+                // 삭제에 성공한 경우
+                // 화면에서 해당 댓글을 제거하거나 업데이트
+                const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
+                if (commentElement) {
+                    commentElement.remove(); // 해당 댓글을 화면에서 제거
+                }
+
+                window.location.reload();
+            },
+            error: function (error) {
+                console.error("댓글 삭제 실패");
+            }
+        });
+    }
+
+
+    // 수정 버튼 클릭 시
+    document.querySelectorAll('.update-comment').forEach(button => {
+        button.addEventListener('click', function () {
+
+            const commentId = this.getAttribute('data-comment-id'); // 수정 버튼의 data-comment-id 속성을 가져옴
+            console.log(commentId);
+
+            const modal = document.querySelector('.modal');
+            modal.style.display = 'block';
+
+            // 여기서 commentId를 사용하여 원하는 작업 수행
+            // commentId를 이용하여 댓글 내용을 가져오거나 다른 로직을 수행할 수 있음
+        });
+    });
+
+    // 모달 닫기 버튼 클릭 시
+    const closeBtn = document.querySelector('.close');
+    closeBtn.addEventListener('click', function () {
+        const modal = document.querySelector('.modal');
+        modal.style.display = 'none';
+    });
+
+    var commentSaveId = comment.id;
+    // 모달 저장 버튼 클릭 시
+    document.getElementById('saveComment').addEventListener('click', function (event) {
+        //function id 값 받아오고
+
+        // 모달 내용을 저장하는 로직을 추가하세요.
+        // 예를 들어, 수정된 댓글 내용을 서버로 전송할 수 있습니다.
+
+        const commentTextarea = document.getElementById('commentTextarea').value;
+        console.log(commentTextarea);
+
+        // const commentSaveId = document.getElementById('saveComment').getAttribute('data-comment-id');
+        // var commentSaveId = commentSave.attr("#data-comment-id").val();
+        // const commentSaveId = event.button.valueOf()
+        console.log(event.toString());
+        console.log(commentSaveId);
+
+        const postData = {
+            content: commentTextarea // 수정된 내용
+        };
+
+        $.ajax({
+            type: "PUT",
+            url: `/api/posts/comments/${commentSaveId}`, // 수정할 댓글의 URL
+            data: JSON.stringify(postData),
+            contentType: "application/json",
+            success: function (response) {
+                // 성공 시 서버의 응답을 처리합니다.
+                $("#result").text(response); // 성공 메시지를 표시합니다.
+
+                // 수정이 성공하면 모달을 닫을 수 있습니다.
+                const modal = document.getElementById('commentModal');
+                modal.style.display = 'none';
+            },
+            error: function (error) {
+                // 에러 시 에러 메시지를 처리합니다.
+                $("#result").text("에러 발생: " + error.responseText);
+            }
+        });
+    });
+
+
+</script>
+
+
+</body>
+</html>

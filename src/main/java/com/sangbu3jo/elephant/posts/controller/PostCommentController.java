@@ -32,6 +32,8 @@ public class PostCommentController {
             return ResponseEntity.status(200).body("댓글 생성 완료");
         } catch (RejectedExecutionException e) {
             return ResponseEntity.status(400).body("댓글 생성 실패");
+        } catch (NullPointerException nullPointerException) {
+            return ResponseEntity.status(400).body("댓글을 입력해주세요");
         }
     }
 
