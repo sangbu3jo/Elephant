@@ -64,7 +64,7 @@ public class NotificationService {
         notification.setUserId(userId);
         notification.setPostId(postId);
         notification.setContent("\uD83D\uDD14댓글알림\uD83D\uDD14<br>" + commentAuthor);
-        notification.setUrl("/post/" + postId);
+        notification.setUrl("http://localhost:8080/api/posts/" + postId);
         notification.setRead(false);
 
         notificationRepository.save(notification);
