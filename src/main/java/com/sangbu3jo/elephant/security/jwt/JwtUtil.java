@@ -95,6 +95,7 @@ public class JwtUtil {
 
     Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
     cookie.setPath("/");
+    cookie.setSecure(true);
     res.addCookie(cookie);
   }
 
@@ -105,6 +106,7 @@ public class JwtUtil {
     Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken); // Name-Value
     cookie.setPath("/");
     cookie.setHttpOnly(true);
+    cookie.setSecure(true);
     res.addCookie(cookie);
   }
 

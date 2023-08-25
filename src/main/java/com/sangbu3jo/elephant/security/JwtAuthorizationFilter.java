@@ -1,7 +1,6 @@
 package com.sangbu3jo.elephant.security;
 
 import com.sangbu3jo.elephant.auth.redis.RedisServiceImpl;
-import com.sangbu3jo.elephant.auth.service.AuthServiceImpl;
 import com.sangbu3jo.elephant.security.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -9,10 +8,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -41,7 +38,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
-        log.info("JwtAuthorizationFilter dofilterInternal " + AututhCNT++);
+        //log.info("JwtAuthorizationFilter dofilterInternal " + AututhCNT++);
         String AccesstokenValue = jwtUtil.getAccessTokenFromRequest(request);
         String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(request);
 
