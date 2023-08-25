@@ -1,35 +1,49 @@
 package com.sangbu3jo.elephant.security.jwt;
 
-import io.jsonwebtoken.*;
+import com.sangbu3jo.elephant.auth.redis.RefreshToken;
+import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-
 
 @Component
 public class JwtUtil {
   // Header KEY 값
   public static final String AUTHORIZATION_HEADER = "Authorization";
+  public static final String REFRESH_HEADER = "RefreshToken";
+  // 사용자 권한 값의 KEY
+  public static final String AUTHORIZATION_KEY = "auth";
 
   // Token 식별자
   public static final String BEARER_PREFIX = "Bearer ";
 
-  // 토큰 만료시간
-  private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+  // 엑세스 토큰 만료시간
+  private final long ACCESS_TOKEN_TIME = 60 * 1000L; // 10분
+
+  // 엑세스 토큰 만료시간
+  private final long REFRESH_TOKEN_TIME = 60 * 60 * 1000L; // 1시간
+
 
   @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
   private String secretKey;
@@ -45,32 +59,55 @@ public class JwtUtil {
     key = Keys.hmacShaKeyFor(bytes);
   }
 
-  // 토큰 생성
-  public String createToken(String username) {
+  // 엑세스 토큰 생성
+  public String createToken(String username, UserRoleEnum role) {
     Date date = new Date();
 
     return BEARER_PREFIX +
         Jwts.builder()
             .setSubject(username) // 사용자 식별자값(ID)
-            .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+            .claim(AUTHORIZATION_KEY, role) // 사용자 권한
+            .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME)) // 만료 시간
             .setIssuedAt(date) // 발급일
             .signWith(key, signatureAlgorithm) // 암호화 알고리즘
             .compact();
   }
 
-  // JWT Cookie 에 저장
-  public void addJwtToCookie(String token, HttpServletResponse res) {
-    try {
-      token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+  // refresh token 생성
+  public RefreshToken createRefreshToken(String username, UserRoleEnum role){
+//    return new RefreshToken(username, UUID.randomUUID().toString());
 
-      Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
-      cookie.setPath("/");
+    Date date = new Date();
 
-      // Response 객체에 Cookie 추가
-      res.addCookie(cookie);
-    } catch (UnsupportedEncodingException e) {
-      logger.error(e.getMessage());
-    }
+    return new RefreshToken(username,BEARER_PREFIX +
+        Jwts.builder()
+            .setSubject(username) // 사용자 식별자값(ID)
+            .claim(AUTHORIZATION_KEY, role) // 사용자 권한
+            .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME)) // 만료 시간
+            .setIssuedAt(date) // 발급일
+            .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+            .compact());
+  }
+
+  // JWT Cookie 에 access token 저장
+  public void addJwtToCookieAccessToken(String token, HttpServletResponse res) {
+    token = URLEncoder.encode(token, StandardCharsets.UTF_8).replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+
+    Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
+    cookie.setPath("/");
+    cookie.setSecure(true);
+    res.addCookie(cookie);
+  }
+
+  // JWT Cookie 에 refresh token 저장
+  public void addJwtToCookieRefreshToken(String refreshToken, HttpServletResponse res) {
+    refreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8).replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
+
+    Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken); // Name-Value
+    cookie.setPath("/");
+    cookie.setHttpOnly(true);
+    cookie.setSecure(true);
+    res.addCookie(cookie);
   }
 
   // JWT 토큰 substring
@@ -87,9 +124,7 @@ public class JwtUtil {
     try {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
       return true;
-    } catch (SecurityException | MalformedJwtException
-| SignatureException
- e) {
+    } catch (SecurityException | MalformedJwtException | SignatureException e) {
       logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
     } catch (ExpiredJwtException e) {
       logger.error("Expired JWT token, 만료된 JWT token 입니다.");
@@ -106,36 +141,58 @@ public class JwtUtil {
     return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
   }
 
-  // HttpServletRequest 에서 Cookie Value : JWT 가져오기
-  public String getTokenFromRequest(HttpServletRequest req) {
+  // 사용자 권한 가져오기
+  public UserRoleEnum getUserRole(Claims info) {
+    String roleValue = info.get(AUTHORIZATION_KEY).toString();
+    return roleValue.equals("USER") ? UserRoleEnum.USER : UserRoleEnum.ADMIN;
+  }
+
+
+  // HttpServletRequest 에서 Cookie Value : JWT access Token 가져오기
+  public String getAccessTokenFromRequest(HttpServletRequest req) {
     Cookie[] cookies = req.getCookies();
     if(cookies != null) {
       for (Cookie cookie : cookies) {
         if (cookie.getName().equals(AUTHORIZATION_HEADER)) {
-          try {
-            return URLDecoder.decode(cookie.getValue(), "UTF-8"); // Encode 되어 넘어간 Value 다시 Decode
-          } catch (UnsupportedEncodingException e) {
-            return null;
-          }
+          return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8); // Encode 되어 넘어간 Value 다시 Decode
         }
       }
     }
     return null;
   }
 
-  //로그아웃 쿠키 날짜를 0으로 만들어 만료시킴
-  public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
+
+  // HttpServletRequest 에서 Cookie Value : JWT refresh Token 가져오기
+  public String getRefreshTokenFromRequest(HttpServletRequest req) {
+    Cookie[] cookies = req.getCookies();
+    if(cookies != null) {
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals(REFRESH_HEADER)) {
+          return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8); // Encode 되어 넘어간 Value 다시 Decode
+        }
+      }
+    }
+    return null;
+  }
+
+
+  // 엑세스, 리프레시 쿠키 날짜를 0으로 만들어 만료시킴
+  public void deleteCookie(HttpServletRequest request, HttpServletResponse response) {
     Cookie[] cookies = request.getCookies();
     if (cookies == null) {
       return;
     }
     for (Cookie cookie : cookies) {
-      if (name.equals(cookie.getName())) {
-        cookie.setValue("");
+      if(cookie.getName().equals(AUTHORIZATION_HEADER)
+          | cookie.getName().equals(REFRESH_HEADER)){
+        cookie.setValue(""); // Clear the value of the cookie
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
       }
     }
   }
+
+
+
 }

@@ -7,4 +7,10 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
 public interface UserRepository extends JpaRepository<User,Long>, QuerydslPredicateExecutor<User> {
   Optional<User> findByUsername(String username);
+
+  Optional<Object> findByKakaoId(String kakaoId);
+  Optional<User> findByGoogleId(String googleId);
+  Optional<User> findByNaverId(String naverId);
+
+  boolean existsByUsername(String username);
 }

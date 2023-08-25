@@ -1,5 +1,7 @@
 package com.sangbu3jo.elephant.config;
 
+import com.sangbu3jo.elephant.auth.redis.RedisServiceImpl;
+import com.sangbu3jo.elephant.auth.redis.RefreshTokenRepository;
 import com.sangbu3jo.elephant.security.JwtAuthenticationFilter;
 import com.sangbu3jo.elephant.security.JwtAuthorizationFilter;
 import com.sangbu3jo.elephant.security.UserDetailsServiceImpl;
@@ -13,7 +15,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,8 +26,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final RedisServiceImpl redisService;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -40,14 +43,14 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, refreshTokenRepository);
         filter.setAuthenticationManager(authenticationManger(authenticationConfiguration));
         return filter;
     }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
+        return new JwtAuthorizationFilter(jwtUtil, redisService, userDetailsService);
     }
 
     @Bean
@@ -67,8 +70,6 @@ public class WebSecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/view/**").permitAll() // viewLoad URI 요청 모두 허가
                         .requestMatchers("/api/**").permitAll() // 회원가입, 로그인으로 시작하는 요청 모두 접근 허가
-                        .requestMatchers("/api/cards/**").permitAll()// 회원가입, 로그인으로 시작하는 요청 모두 접근 허가
-                        .requestMatchers("/api/posts/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 

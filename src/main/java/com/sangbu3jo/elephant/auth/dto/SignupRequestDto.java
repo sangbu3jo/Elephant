@@ -20,4 +20,8 @@ public class SignupRequestDto {
 
   private String introduction;
 
+  private boolean admin;
+
+  private String adminToken;
+
 }

@@ -1,5 +1,6 @@
 package com.sangbu3jo.elephant.security;
 
+import com.sangbu3jo.elephant.auth.redis.RedisServiceImpl;
 import com.sangbu3jo.elephant.security.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -7,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,33 +18,51 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@RequiredArgsConstructor
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final RedisServiceImpl redisService;
     private final UserDetailsServiceImpl userDetailsService;
+    public static int AututhCNT = 1;
 
-    public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
+/*    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    // 해당 필터를 거치지 않아야 할 url을 기재하여 처리할 수 있습니다.
+        String[] excludePath = {"/" , "/api/auth/login-page" , "/api/auth/login" , "/api/auth/signup",
+            "/api/auth/google/callback" , "/api/auth/kakao/callback" , "/api/auth/naver/callback"};
+        String path = request.getRequestURI();
+        return Arrays.stream(excludePath).anyMatch(path::startsWith);
+    }*/
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
+        //log.info("JwtAuthorizationFilter dofilterInternal " + AututhCNT++);
+        String AccesstokenValue = jwtUtil.getAccessTokenFromRequest(request);
+        String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(request);
 
-        String tokenValue = jwtUtil.getTokenFromRequest(request);
-
-        if (StringUtils.hasText(tokenValue)) {
+        if (StringUtils.hasText(AccesstokenValue)) {
             // JWT 토큰 substring
-            tokenValue = jwtUtil.substringToken(tokenValue);
-            log.info(tokenValue);
+            AccesstokenValue = jwtUtil.substringToken(AccesstokenValue);
+            refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
 
-            if (!jwtUtil.validateToken(tokenValue)) {
-                log.error("Token Error");
+            if (!jwtUtil.validateToken(AccesstokenValue)) {
+                log.error("Access Token does not valid.");
+
+                if(request.getRequestURI().equals("/api/auth/logout")){
+                    // 만료된 access token 을 갖고 로그아웃 요청 시 -> 토큰 모두 삭제
+                    redisService.deleteRefreshToken(request,response);
+                    return;
+                }
+
+                // 엑세스 토큰 재발급
+                redisService.generateAccessToken(request, response);
+                response.sendRedirect("/");
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
+            Claims info = jwtUtil.getUserInfoFromToken(AccesstokenValue);
 
             try {
                 setAuthentication(info.getSubject());
