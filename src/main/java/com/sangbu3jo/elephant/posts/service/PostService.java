@@ -229,11 +229,11 @@ public class PostService {
     //프로젝트 카테고리 조회
     public List<PostResponseDto> getProject() {
 
-        Pageable pageable = PageRequest.of(0, 1);
 
-        Slice<Post> projectList;
 
-        projectList = postRepository.findAllByCategoryOrderByCreatedAtDesc(project,pageable);
+        List<Post> projectList;
+
+        projectList = postRepository.findTop5ByCategoryOrderByCreatedAtDesc(project);
 
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
 
@@ -241,18 +241,19 @@ public class PostService {
             postResponseDtoList.add(new PostResponseDto(post));
         }
 
+
+
         return postResponseDtoList;
 
 
     }
+
     //스터디 카테고리 조회
     public List<PostResponseDto> getStudy() {
 
-        Pageable pageable = PageRequest.of(0, 3);
+        List<Post> projectList;
 
-        Slice<Post> projectList;
-
-        projectList = postRepository.findAllByCategoryOrderByCreatedAtDesc(study,pageable);
+        projectList = postRepository.findTop5ByCategoryOrderByCreatedAtDesc(study);
 
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
 
@@ -260,29 +261,31 @@ public class PostService {
             postResponseDtoList.add(new PostResponseDto(post));
         }
 
+
+
         return postResponseDtoList;
 
-
     }
+
     //문제은행 카테고리 조회
     public List<PostResponseDto> getExam() {
 
-        Pageable pageable = PageRequest.of(0, 2);
+            List<Post> projectList;
 
-        Slice<Post> projectList;
+            projectList = postRepository.findTop5ByCategoryOrderByCreatedAtDesc(previousExam);
 
-        projectList = postRepository.findAllByCategoryOrderByCreatedAtDesc(previousExam,pageable);
+            List<PostResponseDto> postResponseDtoList = new ArrayList<>();
 
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+            for (Post post : projectList) {
+                postResponseDtoList.add(new PostResponseDto(post));
+            }
 
-        for (Post post : projectList) {
-            postResponseDtoList.add(new PostResponseDto(post));
+
+
+            return postResponseDtoList;
+
+
         }
-
-        return postResponseDtoList;
-
-
-    }
 }
 
 
