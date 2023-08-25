@@ -13,14 +13,17 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class TimeStamped {
+
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-mm-dd")
     @CreatedDate
     @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "yyyy-mm-dd")
     @LastModifiedDate
     @Column
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime modifiedAt;
+
 }
