@@ -109,7 +109,7 @@ public class PostViewController {
     }
 
     //게시글 생성 페이지로 이동
-    @GetMapping("/posts")
+    @GetMapping("/post-page")
     public String createPost() {
         return "createPost";
     }

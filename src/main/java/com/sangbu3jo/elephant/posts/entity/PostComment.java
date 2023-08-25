@@ -38,4 +38,8 @@ public class PostComment extends TimeStamped {
     public void update(PostCommentRequestDto postCommentRequestDto) {
         this.content = postCommentRequestDto.getContent();
     }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

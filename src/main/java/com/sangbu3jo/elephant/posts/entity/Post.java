@@ -74,4 +74,16 @@ public class Post extends TimeStamped {
     public void setView_cnt(Integer viewCnt) {
         this.viewCnt = viewCnt;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
 }
