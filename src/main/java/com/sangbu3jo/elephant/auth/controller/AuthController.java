@@ -38,8 +38,9 @@ public class AuthController {
   // 로그아웃 메서드 구현
   @DeleteMapping("/auth/logout")
   public ResponseEntity<String> logout(
+      HttpServletRequest request, HttpServletResponse response,
       @AuthenticationPrincipal UserDetailsImpl userDetails){
-    String result = authService.logout(userDetails.getUser());
+    String result = authService.logout(request, response, userDetails.getUser());
     return ResponseEntity.ok(result);
   }
 

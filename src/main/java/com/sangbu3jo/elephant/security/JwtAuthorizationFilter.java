@@ -9,6 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final RedisServiceImpl redisService;
     private final UserDetailsServiceImpl userDetailsService;
+    public static int AututhCNT = 1;
 
 /*    @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -39,7 +41,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
-
+        log.info("JwtAuthorizationFilter dofilterInternal " + AututhCNT++);
         String AccesstokenValue = jwtUtil.getAccessTokenFromRequest(request);
         String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(request);
 
@@ -59,7 +61,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                 // 엑세스 토큰 재발급
                 redisService.generateAccessToken(request, response);
-
                 response.sendRedirect("/");
                 return;
             }

@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,8 +102,9 @@ public class JwtUtil {
   public void addJwtToCookieRefreshToken(String refreshToken, HttpServletResponse res) {
     refreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8).replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
-    Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken); // refreshToken
+    Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken); // Name-Value
     cookie.setPath("/");
+    cookie.setHttpOnly(true);
     res.addCookie(cookie);
   }
 
@@ -183,6 +183,8 @@ public class JwtUtil {
     for (Cookie cookie : cookies) {
       if(cookie.getName().equals(AUTHORIZATION_HEADER)
           | cookie.getName().equals(REFRESH_HEADER)){
+        cookie.setValue(""); // Clear the value of the cookie
+        cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
       }

@@ -6,6 +6,9 @@ $(document).ready(function () {
 /* 페이지 첫 로드 메서드 */
 function pageSetting() {  // main page 세팅
   const token = Cookies.get('Authorization');
+  const rtoken = Cookies.get('RefreshToken');
+  console.log(token);
+  console.log(rtoken);
 
   if(!token) {
     // 토큰 없을 경우, 로그인하지 않은 유저에게 보여줘야 할 내용을 처리하실 수 있습니다.
@@ -16,9 +19,8 @@ function pageSetting() {  // main page 세팅
 }
 
 
-function removeTokenAll() { // 토큰 모두 삭제
+function removeToken() { // 토큰 삭제
   Cookies.remove('Authorization', {path: '/'});
-  Cookies.remove('RefreshToken', {path: '/'});
 }
 
 
@@ -47,7 +49,7 @@ function logout() { // 로그아웃
     url: `/api/auth/logout`,
     contentType: "application/json",
     success: function (data) {
-      removeTokenAll();
+      removeToken();
       alert("로그아웃 성공");
       window.location.reload();
     },

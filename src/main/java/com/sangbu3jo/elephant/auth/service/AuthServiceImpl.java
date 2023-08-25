@@ -99,10 +99,11 @@ public class AuthServiceImpl implements AuthService {
 
 
   @Override
-  public String logout(User user) {
+  public String logout(HttpServletRequest request, HttpServletResponse response, User user) {
     // redis refresh token 삭제
     Boolean result = refreshTokenRepository.delete(user.getUsername());
     if(!result) { throw new IllegalArgumentException("RefreshToken couldn't deleted."); }
+    jwtUtil.deleteCookie(request,response);
     return "Logout 성공";
   }
 
