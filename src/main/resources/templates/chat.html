@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>Chat</title>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+
+  <style>
+    * {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+
+    html,body {
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(
+              circle farthest-corner at center top,
+              #071021,
+              #19324a
+      );
+      z-index: -1;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1.58;
+      color: #333;
+      height: 100%;
+    }
+
+    #stars-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #f6f6f6;
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: twinkle 2s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        opacity: 0.5;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .clearfix:after {
+      display: block;
+      content: "";
+      clear: both;
+    }
+
+    .form-control {
+      width: 100%;
+      min-height: 38px;
+      font-size: 15px;
+      border: 1px solid #c8c8c8;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    input {
+      padding-left: 10px;
+      outline: none;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 1.7em;
+    }
+
+    a {
+      color: #128ff2;
+    }
+
+    button {
+      box-shadow: none;
+      border: 1px solid transparent;
+      font-size: 14px;
+      outline: none;
+      line-height: 100%;
+      white-space: nowrap;
+      vertical-align: middle;
+      padding: 0.6rem 1rem;
+      border-radius: 2px;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+      min-height: 38px;
+    }
+
+    button.default {
+      background-color: #e8e8e8;
+      color: #333;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    button.primary {
+      background-color: #128ff2;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
+      color: #fff;
+    }
+
+    button.accent {
+      background-color: #ff4743;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
+      color: #fff;
+    }
+
+    /* 스크롤 속성 */
+    #messageArea {
+
+    }
+
+    #username-page {
+      text-align: center;
+    }
+
+    .username-page-container {
+      background: #fff;
+      box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+      border-radius: 2px;
+      width: 100%;
+      max-width: 500px;
+      display: inline-block;
+      margin-top: 42px;
+      vertical-align: middle;
+      position: relative;
+      padding: 35px 55px 35px;
+      min-height: 250px;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      margin-top: -160px;
+    }
+
+    .username-page-container .username-submit {
+      margin-top: 10px;
+    }
+
+
+    #chat-page {
+      position: relative;
+      height: 100%;
+    }
+
+    .chat-container {
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #fff;
+      box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
+      margin-top: 30px;
+      height: calc(100% - 60px);
+      position: relative;
+      border-radius: 10px;
+    }
+
+    #chat-page ul {
+      list-style-type: none;
+      background-color: #FFF;
+      margin: 0;
+      overflow: auto;
+      overflow-y: scroll;
+      padding: 0 20px 0px 20px;
+      height: calc(100% - 150px);
+    }
+
+    #chat-page ul::-webkit-scrollbar {
+
+    }
+
+    #chat-page #messageForm {
+      padding: 20px;
+    }
+
+    #chat-page ul li {
+      line-height: 1.5rem;
+      padding: 10px 20px;
+      margin: 0;
+      border-bottom: 1px solid #f4f4f4;
+    }
+
+    #chat-page ul li p {
+      margin: 0;
+    }
+
+    #chat-page .event-message {
+      width: 100%;
+      text-align: center;
+      clear: both;
+    }
+
+    #chat-page .event-message p {
+      color: #777;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+
+    #chat-page .chat-message {
+      padding-left: 68px;
+      position: relative;
+    }
+
+    #chat-page .chat-message2 {
+      text-align: right;
+      padding-right: 68px;
+      position: relative;
+    }
+
+    #chat-page .chat-message i {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      overflow: hidden;
+      left: 10px;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 18px;
+      line-height: 42px;
+      color: #fff;
+      text-align: center;
+      border-radius: 50%;
+      font-style: normal;
+      text-transform: uppercase;
+    }
+
+    #chat-page .chat-message2 i {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      overflow: hidden;
+      right: 10px;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 18px;
+      line-height: 42px;
+      color: #fff;
+      text-align: center;
+      border-radius: 50%;
+      font-style: normal;
+      text-transform: uppercase;
+    }
+
+    #chat-page .chat-message span {
+      color: #333;
+      font-weight: bold;
+    }
+
+    #chat-page .chat-message2 span {
+      color: #333;
+      font-weight: bold;
+    }
+
+    #chat-page .chat-message p {
+      color: #43464b;
+    }
+
+    #chat-page .chat-message2 p {
+      color: #43464b;
+    }
+
+    #messageForm .input-group input {
+      float: left;
+      width: calc(100% - 85px);
+    }
+
+    #messageForm .input-group button {
+      float: left;
+      width: 80px;
+      height: 38px;
+      margin-left: 5px;
+    }
+
+    .chat-header {
+      text-align: center;
+      padding: 15px;
+      border-bottom: 1px solid #ececec;
+    }
+
+    .chat-header h2 {
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .connecting {
+      padding-top: 5px;
+      text-align: center;
+      color: #777;
+      position: absolute;
+      top: 65px;
+      width: 100%;
+    }
+
+
+    @media screen and (max-width: 730px) {
+
+      .chat-container {
+        margin-left: 10px;
+        margin-right: 10px;
+        margin-top: 10px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .chat-container {
+        height: calc(100% - 30px);
+      }
+
+      .username-page-container {
+        width: auto;
+        margin-left: 15px;
+        margin-right: 15px;
+        padding: 25px;
+      }
+
+      #chat-page ul {
+        height: calc(100% - 120px);
+      }
+
+      #messageForm .input-group button {
+        width: 65px;
+      }
+
+      #messageForm .input-group input {
+        width: calc(100% - 70px);
+      }
+
+      .chat-header {
+        padding: 10px;
+      }
+
+      .connecting {
+        top: 60px;
+      }
+
+      .chat-header h2 {
+        font-size: 1.1em;
+      }
+    }
+
+  </style>
+
+</head>
+<body>
+<noscript>
+  <h2>Sorry! Your browser doesn't support Javascript</h2>
+</noscript>
+
+<div id="stars-container"></div>
+
+<!--<div id="username-page">-->
+<!--  <div class="username-page-container">-->
+<!--    <h1 class="title">Type your username</h1>-->
+<!--    <form id="usernameForm" name="usernameForm">-->
+<!--      <div class="form-group">-->
+<!--        <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />-->
+<!--      </div>-->
+<!--      <div class="form-group">-->
+<!--        <button type="submit" class="accent username-submit">Start Chatting</button>-->
+<!--      </div>-->
+<!--    </form>-->
+<!--  </div>-->
+<!--</div>-->
+
+<div id="chat-page" class="hidden">
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2 th:text="${board.title}"></h2>
+    </div>
+<!--    <div class="connecting">-->
+<!--      Connecting...-->
+<!--    </div>-->
+    <ul id="messageArea">
+
+    </ul>
+    <form id="messageForm" name="messageForm">
+      <div class="form-group">
+        <div class="input-group clearfix">
+          <input type="text" id="message" placeholder="메시지 입력..." autocomplete="off" class="form-control"/>
+          <button type="submit" class="primary">전송</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+</body>
+
+<script>
+    // console.log = function() {};
+    // 이걸 쓰면 콘솔에서 아무런 내역이 출력되지 않는다고 한다.. 진짜인가;
+
+    // https://m.blog.naver.com/qjawnswkd/222283176175
+    'use strict';
+
+    var username = '[[${username}]]';
+    var nickname = '[[${nickname}]]';
+
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/chat/", "");
+    var chatRoomId = id;
+
+    $(document).ready(function() {
+        connect();
+    });
+
+    // var usernamePage = document.querySelector('#username-page');
+    // var usernameForm = document.querySelector('#usernameForm');
+
+    // 전체 페이지
+    var chatPage = document.querySelector('#chat-page');
+
+    // 메시지를 입력하는 부분
+    var messageInput = document.querySelector('#message');
+    // 메시지를 로딩하는 부분
+    var messageArea = document.querySelector('#messageArea');
+    // 연결 확인하는 부분
+    var connectingElement = document.querySelector('.connecting');
+
+    var stompClient = null;
+
+    function connect() {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, onConnected, onError);
+    }
+
+    // websocket이 연결된 경우 (확인 완료)
+    function onConnected() {
+        // Subscribe 해당 토픽을 구독함 (해당 boardid 에 대해서 구독)
+        stompClient.subscribe("/topic/" + chatRoomId, onMessageReceived);
+
+        console.log("구독");
+        // Tell your username to the server
+        stompClient.send("/app/chat/adduser",
+              {},
+              JSON.stringify({nickname:nickname, username:username, type: 'ENTER', chatRoomId: chatRoomId})
+        )
+        // 연결이 되면 대화창을 추가하는건가 ?
+        // connectingElement.classList.add('hidden');
+    }
+
+    // websocket이 연결에 실패한 경우 (확인 완료 - 오류가 나지 않음)
+    function onError(error) {
+        connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+        connectingElement.style.color = 'red';
+    }
+
+    function onMessageReceived(payload) {
+        var chat = JSON.parse(payload.body);
+
+        console.log(chat.type); // 이 콘솔 찍히는거 확인함 (Enter의 경우)
+
+        var messageElement = document.createElement('li');
+
+        if(chat.type === 'ENTER') {
+            messageElement.classList.add('event-message');
+            // 이거 안해도 되는거 아닌가 ?
+            chat.content = chat.username + chat.message;
+        } else if (chat.type === 'LEAVE') {
+            messageElement.classList.add('event-message');
+            chat.content = chat.username + chat.message;
+        } else {
+
+            if (chat.username === username) {
+                messageElement.classList.add('chat-message2');
+
+                var avatarElement = document.createElement('i');
+                var avatarText = document.createTextNode(chat.nickname[0]);
+                avatarElement.appendChild(avatarText);
+                avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
+
+                var avatarElement = document.createElement('i');
+                var avatarText = document.createTextNode(chat.nickname[0]);
+                avatarElement.appendChild(avatarText);
+                avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
+
+                messageElement.appendChild(avatarElement);
+
+                var usernameElement = document.createElement('span');
+                var usernameText = document.createTextNode(chat.nickname);
+                usernameElement.appendChild(usernameText);
+                messageElement.appendChild(usernameElement);
+            } else {
+                messageElement.classList.add('chat-message');
+
+                var avatarElement = document.createElement('i');
+                var avatarText = document.createTextNode(chat.nickname[0]);
+                avatarElement.appendChild(avatarText);
+                avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
+
+                var avatarElement = document.createElement('i');
+                var avatarText = document.createTextNode(chat.nickname[0]);
+                avatarElement.appendChild(avatarText);
+                avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
+
+                messageElement.appendChild(avatarElement);
+
+                var usernameElement = document.createElement('span');
+                var usernameText = document.createTextNode(chat.nickname);
+                usernameElement.appendChild(usernameText);
+                messageElement.appendChild(usernameElement);
+            }
+        }
+
+        var textElement = document.createElement('p');
+        var messageText = document.createTextNode(chat.message);
+        textElement.appendChild(messageText);
+
+        messageElement.appendChild(textElement);
+
+        messageArea.appendChild(messageElement);
+        messageArea.scrollTop = messageArea.scrollHeight;
+    }
+
+    // usernameForm이 동작할 때 connect가 동작하도록 되어있으니
+    // usernameForm이 동작하지 않아도 connect가 동작하도록 변경하면 됨.
+    var messageForm = document.querySelector('#messageForm');
+    messageForm.addEventListener('submit', sendMessage, true)
+
+    // 메세지를 보낼 때마다 실행할 함수
+    function sendMessage(event) {
+        // 메세지 입력 필드에 입력된 값을 가져옴
+        var messageContent = messageInput.value.trim();
+
+        // 메세지가 존재하고 (공백이 아니고), 웹 소캣이 연결된 경우에만 메시지를 전송함
+        if(messageContent && stompClient) {
+            console.log(messageInput.value);
+
+            var chatMessage = {
+                chatRoomId: chatRoomId,
+                username: username,
+                nickname: nickname,
+                message: messageInput.value,
+                type: 'TALK'
+            };
+
+            // json으로 감싸서 서버로 전송
+            stompClient.send("/app/chat/sending", {}, JSON.stringify(chatMessage));
+
+            // messageInput 필드를 공백으로 처리
+            messageInput.value = '';
+        }
+
+        event.preventDefault();
+    }
+
+    // 사용자 프로필 설정 (Random Color)
+    function getAvatarColor(messageSender) {
+        var hash = 0;
+        for (var i = 0; i < messageSender.length; i++) {
+            hash = 31 * hash + messageSender.charCodeAt(i);
+        }
+
+        var index = Math.abs(hash % colors.length);
+        return colors[index];
+    }
+
+    // 아바타 프로필 컬러 랜덤 설정
+    var colors = [
+        '#2196F3', '#32c787', '#00BCD4', '#ff5652',
+        '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.getElementById("stars-container");
+
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            container.appendChild(star);
+        }
+    });
+
+</script>
+</html>
