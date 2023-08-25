@@ -1,10 +1,14 @@
 package com.sangbu3jo.elephant.users.entity;
 
 
+import com.sangbu3jo.elephant.posts.entity.Post;
+import com.sangbu3jo.elephant.posts.entity.PostComment;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 // lombok
@@ -48,6 +52,9 @@ public class User {
   @Enumerated(value = EnumType.STRING)
   private UserRoleEnum role;
 
+//  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+//  private List<Post> posts = new ArrayList<>();
+
   @Builder
   public User(String username, String password, String nickname, String intruduction, UserRoleEnum role) {
     this.username = username;
@@ -63,5 +70,20 @@ public class User {
     this.nickname = nickname;
     this.googleId = googleId;
   }
-  
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public void setNickname(String nickname) {
+    this.nickname = nickname;
+  }
+
+  public void setIntroduction(String introduction) {
+    this.introduction = introduction;
+  }
+
+  public void setRole(UserRoleEnum role) {
+    this.role = role;
+  }
 }

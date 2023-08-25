@@ -31,6 +31,8 @@ public class BoardController {
     private final BoardService boardService;
     private final ColumnsService columnsService;
 
+
+    //
     // 프로젝트 생성
     @ResponseBody
     @PostMapping("/boards")
