@@ -2,6 +2,8 @@ package com.sangbu3jo.elephant.chat.dto;
 
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class ChatMessageRequestDto {
 
@@ -11,6 +13,7 @@ public class ChatMessageRequestDto {
     private String nickname; // 클라이언트에서 표시용
     private String username; // 서버와 통신용
     private String message;
+    private LocalDateTime sendTime;
 
     public void setMessage (String message) {
         this.message = message;
@@ -21,10 +24,7 @@ public class ChatMessageRequestDto {
         this.username = username;
         this.type = type;
         this.chatRoomId = chatRoomId;
-    }
-
-    public enum MessageType{
-        ENTER, TALK, LEAVE;
+        this.sendTime = LocalDateTime.now();
     }
 
 }
