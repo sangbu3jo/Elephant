@@ -1,10 +1,12 @@
 package com.sangbu3jo.elephant.posts.controller;
 
 import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
+import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -85,28 +87,33 @@ public class PostViewController {
     @GetMapping("/posts/project")
     public String getProject(Model model){
 
-        List<PostResponseDto> postResponseDtoList = postService.getProject();
-        model.addAttribute("project", postResponseDtoList);
+        List<PostResponseDto> projResponseDtoList = postService.getProject();
+        List<PostResponseDto> stuResponseDtoList = postService.getStudy();
+        List<PostResponseDto> exaResponseDtoList = postService.getExam();
+        model.addAttribute("project", projResponseDtoList);
+        model.addAttribute("study", stuResponseDtoList);
+        model.addAttribute("exam", exaResponseDtoList);
+
         return "mainPage";
     }
 
-    //스터디
-    @GetMapping("/posts/study")
-    public String getStudy(Model model){
-
-        List<PostResponseDto> postResponseDtoList = postService.getStudy();
-        model.addAttribute("study", postResponseDtoList);
-        return "mainPage";
-    }
-
-    //문제은행
-    @GetMapping("/posts/exam")
-    public String getExam(Model model){
-
-        List<PostResponseDto> postResponseDtoList = postService.getExam();
-        model.addAttribute("exam", postResponseDtoList);
-        return "mainPage";
-    }
+//    //스터디
+//    @GetMapping("/posts/study")
+//    public String getStudy(Model model){
+//
+//        Slice<PostResponseDto> postResponseDtoList = postService.getStudy();
+//        model.addAttribute("study", postResponseDtoList);
+//        return "mainPage";
+//    }
+//
+//    //문제은행
+//    @GetMapping("/posts/exam")
+//    public String getExam(Model model){
+//
+//        List<PostResponseDto> postResponseDtoList = postService.getExam();
+//        model.addAttribute("exam", postResponseDtoList);
+//        return "mainPage";
+//    }
 
     //게시글 생성 페이지로 이동
     @GetMapping("/post-page")
