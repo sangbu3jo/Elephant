@@ -45,8 +45,8 @@ public class HomeViewController {
     @GetMapping("/main")
     public String getProject(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
         Boolean admin = false;
-        if ((userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) && userDetails != null) {
-            admin = true;
+        if (userDetails != null){
+            admin = userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN);
         }
         model.addAttribute("admin", admin);
         List<PostResponseDto> projResponseDtoList = postService.getProject();
