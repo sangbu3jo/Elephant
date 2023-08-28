@@ -12,6 +12,9 @@ import com.sangbu3jo.elephant.boarduser.dto.BoardUserResponseDto;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUserRoleEnum;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
+import com.sangbu3jo.elephant.notification.entity.Notification;
+import com.sangbu3jo.elephant.notification.repository.NotificationRepository;
+import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.users.entity.QUser;
 import com.sangbu3jo.elephant.users.entity.User;
@@ -20,11 +23,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j(topic = "보드 서비스")
 @Service
@@ -35,6 +43,7 @@ public class BoardService {
     private final BoardUserRepository boardUserRepository;
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory;
+    private final NotificationService notificationService;
 
     // 보드 생성
     @Transactional
@@ -104,6 +113,17 @@ public class BoardService {
             boardUserRepository.save(boardUsermember);
         }
 
+        // 유저가 초대받은 링크를 클릭하여 프로젝트에 참여할때 보드에 존재하는 유저들에게 알림 전송
+        String notificationContent = user.getNickname() + "님이 \"" + board.getTitle() + "\" 프로젝트에 참여하셨습니다.";
+
+        List<BoardUser> boardUsers = boardUserRepository.findAllByBoardId(boardId);
+        for(BoardUser boardUsers2 : boardUsers){
+            User members = boardUsers2.getUser();
+            if(!members.getId().equals(user.getId())){
+                notificationService.addUserAndSendNotification(members.getId(), boardId, notificationContent);
+            }
+        }
+
         if (userDetails != null) {
             if (userDetails.getUser().getUsername().equals(username)) {
                 // 해당 보드 페이지로 넘어가도록
@@ -114,6 +134,24 @@ public class BoardService {
         // 로그인 되어있지 않다면 로그인 페이지로 넘어가도록 설정 (html)
         return "loginsignup";
     }
+
+    // 보드 만료 알림 전송
+    @Scheduled(fixedDelay = 21600000) // 6시간 마다 알림
+    public void sendExpirationNotifications() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+        List<Board> boards = boardRepository.findByExpiredAt(tomorrow);
+
+
+        for (Board board : boards) {
+                String notificationContent = "보드 \"" + board.getTitle() + "\" 가 마감까지 얼마남지 않았습니다. (24시간 미만)";
+                List<BoardUser> boardUsers = boardUserRepository.findAllByBoardId(board.getId());
+                for (BoardUser boardUser : boardUsers) {
+                    notificationService.addUserAndSendNotification(boardUser.getUser().getId(), board.getId(), notificationContent);
+                }
+            }
+        }
+
 
     // 프로젝트 유저 리스트
     public List<BoardUserResponseDto> findBoardUsers(Long boardId) {

@@ -4,6 +4,7 @@ import com.sangbu3jo.elephant.board.entity.Board;
 import com.sangbu3jo.elephant.board.repository.BoardRepository;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
+import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class EmailService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final BoardUserRepository boardUserRepository;
+    private final NotificationService notificationService;
 
     public ResponseEntity<String> confirming(Long boardId, EmailUserDto emailUserDto, User user) {
         // user는 초대하는 사람 (user)
@@ -49,10 +51,15 @@ public class EmailService {
             for (User user1: users) {
                 try {
                     sendEmail(board, user1.getUsername(), user);
+                    // 초대받은 사용자에게 알람 보내기
+                    String notificationContent = user.getNickname() + "님이 회원님을 \"" + board.getTitle() + "\" 프로젝트에 초대하셨습니다. 가입하신 이메일을 확인해주세요.";
+                    notificationService.inviteAndSendNotification(user1.getId(), notificationContent);
+
                 } catch (Exception e) {
 //                    return ResponseEntity.badRequest().body("사용자 초대 실패");
                 }
             }
+
             return ResponseEntity.ok().body("사용자 초대 완료!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("가입되어 있지 않은 사용자는 초대할 수 없습니다.");

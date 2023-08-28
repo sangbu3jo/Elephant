@@ -21,7 +21,6 @@ public class Notification{
     private Long id;
 
     private Long userId;
-    private Long postId;
     private String content;
     private String url;
     private boolean isRead;
@@ -38,10 +37,6 @@ public class Notification{
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public void setPostId(Long postId) {
-        this.postId = postId;
     }
 
     public void setContent(String content) {
