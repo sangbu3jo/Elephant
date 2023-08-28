@@ -38,7 +38,6 @@ public class PostService {
 
 
         //게시물 생성
-
         Post post = new Post(postRequestDto, user);
 
         //category 나누기

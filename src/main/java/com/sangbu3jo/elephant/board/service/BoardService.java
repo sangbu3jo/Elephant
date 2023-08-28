@@ -112,7 +112,7 @@ public class BoardService {
         }
 
         // 로그인 되어있지 않다면 로그인 페이지로 넘어가도록 설정 (html)
-        return "loginsignup";
+        return "login-page";
     }
 
     // 프로젝트 유저 리스트

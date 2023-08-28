@@ -4,6 +4,7 @@ import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
@@ -20,20 +21,19 @@ import java.util.List;
 public class PostViewController {
 
     //RequestParam 방식 이용 프론트에서 값을 받아올 때
-
     private final PostService postService;
 
-    //메인페이지에서 섹션을 나눠서 각 카테고리마다 5개 정도 가져오기
-    @GetMapping("/posts/categories")
-    public String getAllPosts(Model model) {
-
-        List<PostResponseDto> postResponseDtoList = postService.getAllPosts();
-
-        model.addAttribute("mainPage", postResponseDtoList);
-
-        return "mainPage";
-
-    }
+//    //메인페이지에서 섹션을 나눠서 각 카테고리마다 5개 정도 가져오기
+//    @GetMapping("/posts/categories")
+//    public String getAllPosts(Model model) {
+//
+//        List<PostResponseDto> postResponseDtoList = postService.getAllPosts();
+//
+//        model.addAttribute("mainPage", postResponseDtoList);
+//
+//        return "mainPage";
+//
+//    }
 
     //게시글 카테고리 별 전체 조회
     //pagination
@@ -80,21 +80,6 @@ public class PostViewController {
         PostResponseDto postResponseDto = postService.getPost(post_id, userDetails.getUser());
         model.addAttribute("post", postResponseDto);
         return "post";
-    }
-
-
-    //프로젝트
-    @GetMapping("/posts/project")
-    public String getProject(Model model){
-
-        List<PostResponseDto> projResponseDtoList = postService.getProject();
-        List<PostResponseDto> stuResponseDtoList = postService.getStudy();
-        List<PostResponseDto> exaResponseDtoList = postService.getExam();
-        model.addAttribute("project", projResponseDtoList);
-        model.addAttribute("study", stuResponseDtoList);
-        model.addAttribute("exam", exaResponseDtoList);
-
-        return "mainPage";
     }
 
 //    //스터디

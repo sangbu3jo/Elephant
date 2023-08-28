@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "JwtAuthenticationFilter 로그인 및 JWT 생성")
   public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -31,6 +32,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
   @Override
   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
     log.info("JwtAuthenticationFilter attemptAuthentication " + AuthenCNT++);
+    String AccessTokenValue = jwtUtil.getAccessTokenFromRequest(request);
+    String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(request);
+
+    if (StringUtils.hasText(AccessTokenValue)||StringUtils.hasText(refreshTokenValue)) {
+      jwtUtil.deleteCookie(request,response);
+    }
+
     try {
       LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
 

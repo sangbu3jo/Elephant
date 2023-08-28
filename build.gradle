@@ -78,6 +78,9 @@ dependencies {
 //    implementation 'org.springframework:spring-messaging:6.0.3'
 //    implementation 'org.springframework.security:spring-security-messaging:6.0.2'
 
+    // MongoDB 의존성
+    'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
