@@ -28,7 +28,7 @@ public class S3Service {
     public Long keepPost(MultipartFile image, PostRequestDto postRequestDto, Category category, User user) throws IOException {
 
 
-        Post post = new Post(postRequestDto,user);
+        Post post = new Post(postRequestDto, user);
 
         if (!image.isEmpty()) {
             String storedFileName = s3UploaderService.upload(image, "image");
@@ -39,15 +39,9 @@ public class S3Service {
 
         post.setCompleted(false);
 
-//       Post newPost = new Post(post,user);
-
-
-
-
-
         //저장
-        Post savedFile = postRepository.save(post);
+        post = postRepository.save(post);
 
-        return savedFile.getId();
+        return post.getId();
     }
 }

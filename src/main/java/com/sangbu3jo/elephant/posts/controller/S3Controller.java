@@ -1,12 +1,9 @@
 package com.sangbu3jo.elephant.posts.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
 import com.sangbu3jo.elephant.posts.entity.Category;
-import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.service.S3Service;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -52,15 +49,15 @@ public class S3Controller {
     @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
     @PostMapping(value = "/api/posts/newFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Long saveFile(
-                         @RequestParam(value = "image") MultipartFile image,
-                         @RequestParam(value = "category") Category category,
-                         @ModelAttribute PostRequestDto postRequestDto,
-                         @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+            @RequestParam(value = "image") MultipartFile image,
+            @RequestParam(value = "category") Category category,
+            @ModelAttribute PostRequestDto postRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
 //        PostRequestDto postRequestDto = new ObjectMapper().readValue(request.getInputStream(),PostRequestDto.class);
 
         // 파일 업로드를 통해 게시물을 저장하고 게시물 ID를 반환
-        Long postId = s3Service.keepPost(image, postRequestDto, category, userDetails.getUser());
+        Long postId = s3Service.keepPost(image, postRequestDto,category, userDetails.getUser());
 
         return postId;
     }
