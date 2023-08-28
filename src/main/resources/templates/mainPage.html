@@ -1,146 +1,635 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/5856/5856675.png"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>코끼리</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
+    <script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+    <!-- 로고 -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
 
     <style>
-        /* CSS 스타일링 */
-        body {
-            font-family: 'IBM Plex Sans KR', sans-serif;
+        @font-face {
+            font-family: 'TheJamsil5Bold';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
         }
 
-        #create-post-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: #007bff;
-            color: white;
+        * {
+            font-family : 'TheJamsil5Bold', cursive;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            color: #101014;
+            background-color: #f5f5fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 가로 가운데 정렬 추가 */
+            align-items: center; /* 세로 가운데 정렬 추가 */
+        }
+
+        /* 상단 메뉴 */
+        .top {
+            height: 15vh;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            background-color: transparent;
             border: none;
-            padding: 10px 20px;
+        }
+
+        .right {
+            height: 100%;
+            width: 35%;
+            padding-left: 30px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .middle {
+            height: 100%;
+            width: 30%;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .middle img {
+            margin-right: 5px;
+        }
+
+        .left {
+            height: 100%;
+            width: 35%;
+            padding-right: 30px;
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+            align-items: center;
+        }
+
+
+
+
+        /* 알림 */
+        .notification-icon {
+            font-size: 30px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .notification-icon div {
+            position: relative;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-3px);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translateX(3px);
+            }
+        }
+
+        .new-notification {
+            color: red;
+            animation: shake 1.5s infinite; /* 흔들기 애니메이션 적용 */
+        }
+
+        .nobadge {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .notification-list {
+            position: absolute;
+            top: 100px; /* Adjust the top position to your preference */
+            right: 70px;
+            width: 295px;
+            background-color: white;
+            border: 1px solid #ddd;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            max-height: 700px;
+            overflow-y: auto;
+            display: none;
+            z-index: 10;
+            margin-top: 45px; /* 헤더의 높이만큼 여백 추가 */
+        }
+        .notification-list-header {
+            background-color: #ccc;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            position: fixed;
+            top: 100px;
+            width: 13%; /* 가로 너비를 꽉 채우도록 설정 */
+            z-index: 9998; /* 헤더 위에 배치 */
+        }
+        .notification-list-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            background-color: white;
+        }
+        .notification-list-item.read {
+            background-color: #f0f0f0;
+        }
+
+
+        /* 하단 게시판 */
+
+        .bottom {
+            height: 85vh;
+            width: 100%;
+        }
+
+        .bottom-container {
+            height: 100%;
+            padding: 0 50px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bottom-top {
+            padding-top: 20px;
+            height: 50%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .bottom-bottom {
+            padding-bottom: 20px;
+            height: 50%;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .bottom-top-left,
+        .bottom-top-right,
+        .bottom-bottom-left,
+        .bottom-bottom-right {
+            padding: 10px 30px;
+            height: 100%;
+            width: 50%;
+        }
+
+        /*하단 게시판*/
+        .list-group-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .list-group-item span:nth-child(1) {
+            width: 50%;
+        }
+        .list-group-item span:nth-child(2) {
+            width: 35%;
+        }
+
+        .badge-bg-primary-rounded-pill {
+            width: 15%;
+        }
+
+        .bg-primary {
+            background-color: #ccc !important;
+        }
+
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a:hover {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .category-title {
+            font-size: 18px;
+        }
+
+        .sidemenu{
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidemenu div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .list-group-item {
+            background-color: transparent;
             cursor: pointer;
         }
 
+        .offcanvas{
+            background-color: #f5f5fa;
+        }
+
+        .mini-list{
+            font-size: 14px;
+            color: #a9a9a9;
+        }
 
     </style>
+
 </head>
 <body>
-<h1>코끼리</h1>
-
-<!-- 게시글 생성 버튼 -->
-<button id="create-post-button">게시글 생성</button>
-
-
-<div id="category-list" style="float: right;">
-    <ul>
-        <li><a href="/api/posts/categories/1">협업 프로젝트</a></li>
-        <li><a href="/api/posts/categories/2">스터디 모집</a></li>
-        <li><a href="/api/posts/categories/3">문제은행</a></li>
-    </ul>
-</div>
-
-<h2>메인 페이지</h2>
-
-<!--<div id="container">-->
-<!--    <div id="post-list">-->
-<!--        <form method="get" action="/api/posts/project">-->
-<!--            <ul>-->
-<!--                <li th:each="project, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
-<!--                    &lt;!&ndash;                <a>&ndash;&gt;-->
-<!--                    <h2 th:text="${project.title}"></h2>-->
-<!--                    <h3 th:text="${project.category}"></h3>-->
-<!--                    <a th:href="@{'/api/posts/' + ${project.id}}">-->
-<!--                        자세히 보기-->
-<!--                    </a>-->
-
-<div id="post-list">
-    <ul>
-        <li th:each="project : ${projects}">
-            <!--                <a>-->
-            <h2 th:text="${project.title}"></h2>
-            <h3 th:text="${project.category}"></h3>
-            <a th:href="@{'/api/posts/' + ${project.id}}">
-                자세히 보기
-            </a>
-
-        </li>
-    </ul>
-</div>
-
-<div id="study-list">
-    <li th:each="study : ${studys}">
-        <!--                <a>-->
-        <h2 th:text="${study.title}"></h2>
-        <h3 th:text="${study.category}"></h3>
-        <a th:href="@{'/api/posts/' + ${study.id}}">
-            자세히 보기
+<!-- 상단 메뉴 (+ 네비게이션 메뉴)-->
+<div class="top">
+    <div class="right">
+        <a id="login" onclick="redirectToLoginPage()">
+            <button>로그인</button>
         </a>
+        <a id="logout" onclick="logout()">
+            <button>로그아웃</button>
+        </a>
+        <a id="keeplogin" onclick="refreshAccessToken()">
+            <button>로그인 연장</button>
+        </a>
+    </div>
+    <div class="middle">
+        <!-- 가운데 코끼리 글씨 및 로고  -->
+        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px;"> <!-- 로고 이미지 추가 -->
+        <div style="text-align: center;">
+            코끼리
+        </div>
+    </div>
+    <div class="left">
+        <!-- 알림, 우측 메뉴 슬라이드 -->
+        <div class="notification-icon">
+            <div style="position: relative;">
+                <i class="far fa-bell" style="color: #cfcfcf;"></i>
+                <span id="notificationBadge" class="nobadge" style="display:none;"></span>
+            </div>
+        </div>
 
-    </li>
-    </ul>
+        <div style="text-align: center;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+            <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png" style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+        </div>
+
+        <div class="offcanvas offcanvas-start w-25" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+            <div class="offcanvas-header" style = "text-align: center; align-items:center;">
+                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+                    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+                    코끼리
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="list-group list-group-flush">
+                <!-- 카테고리 버튼과 하위 메뉴 -->
+                <button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#categoryMenu">게시판 카테고리</button>
+                <div id="categoryMenu" class="collapse">
+                    <a href="/api/posts/categories/1" class="list-group-item list-group-item-action mini-list">협업 인원 모집</a>
+                    <a href="/api/posts/categories/2" class="list-group-item list-group-item-action mini-list">스티디원 모집</a>
+                    <a href="/api/posts/categories/3" class="list-group-item list-group-item-action mini-list">질문</a>
+                    <a href="/api/posts/categories/4" class="list-group-item list-group-item-action mini-list">자유게시판</a>
+                </div>
+
+                <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
+                <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a> <!--서버에서 admin 여부 true/false로 가져오기-->
+
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<div id="exam-list">
-    <ul>
-        <li th:each="exam : ${exams}">
-            <!--                <a>-->
-            <h2 th:text="${exam.title}"></h2>
-            <h3 th:text="${exam.category}"></h3>
-            <a th:href="@{'/api/posts/' + ${exam.id}}">
-                자세히 보기
-            </a>
-
-        </li>
-    </ul>
+<!-- 나머지 내용 -->
+<div class="notification-list" id="notificationList">
+    <div class="notification-list-header">알림</div>
 </div>
 
-<!--    <div id="study-list">-->
-<!--        <form method="get" action="/api/posts/study">-->
-<!--            <ul>-->
-<!--                <li th:each="study, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
-<!--                    &lt;!&ndash;                <a>&ndash;&gt;-->
-<!--                    <h2 th:text="${study.title}"></h2>-->
-<!--                    <h3 th:text="${study.category}"></h3>-->
-<!--                    <a th:href="@{'/api/posts/' + ${study.id}}">-->
-<!--                        자세히 보기-->
 
-<!--                    </a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </form>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<div id="exam-list">-->
-<!--    <form method="get" action="/api/posts/exam">-->
-<!--        <ul>-->
-<!--            <li th:each="exam, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
+<!-- 하단 게시판 -->
+<div class="bottom">
+    <div class="bottom-container">
+        <div class="bottom-top">
+            <div class="bottom-top-left">
+                <a class = "category-title" href="/api/posts/categories/1">협업 인원 모집</a>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="project : ${projects}"  th:onclick="'gotoPost(\'' + ${project.id} + '\')'">
+                        <span th:text="${project.title}">제목</span>
+                        <span th:text="${project.nickname}">작성자</span>
+                        <span class="badge bg-primary rounded-pill" th:text="|조회수: ${project.view_cnt}|">조회수: 1</span>
+                    </li>
 
-<!--                <h2 th:text="${exam.title}"></h2>-->
-<!--                <h3 th:text="${exam.category}"></h3>-->
-<!--                <a th:href="@{'/api/posts/' + ${exam.id}}">자세히 보기-->
+                </ul>
+            </div>
+            <div class="bottom-top-right">
+                <a  class = "category-title" href="/api/posts/categories/2">스터디원 모집</a>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="study : ${studies}"  th:onclick="'gotoPost(\'' + ${study.id} + '\')'">
+                        <span th:text="${study.title}">제목</span>
+                        <span th:text="${study.nickname}">작성자</span>
+                        <span class="badge bg-primary rounded-pill" th:text="|조회수: ${study.view_cnt}|">조회수: 1</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
-<!--                </a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </form>-->
-<!--</div>-->
+        <div class="bottom-bottom">
+            <div class="bottom-bottom-left">
+                <a class = "category-title" href="/api/posts/categories/3">질문</a>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        th:each="exam : ${exams}"  th:onclick="'gotoPost(\'' + ${exam.id} + '\')'">
+                        <span th:text="${exam.title}">제목</span>
+                        <span th:text="${exam.nickname}">작성자</span>
+                        <span class="badge bg-primary rounded-pill" th:text="|조회수: ${exam.view_cnt}|">조회수: 1</span>
+                    </li>
+                </ul>
+            </div>
 
-<script>
-    // 게시글 생성 버튼 클릭 이벤트 핸들러
-    $("#create-post-button").click(function () {
-        // 게시글 생성 페이지로 이동
-        window.location.href = "/api/post-page";
-    });
-</script>
+            <div class="bottom-bottom-right">
+                <a class = "category-title" href="/api/posts/categories/4">자유게시판</a>
+                <!--                <ul class="list-group list-group-flush">-->
+                <!--                    <li class="list-group-item d-flex justify-content-between align-items-center"-->
+                <!--                        th:each="project : ${projectList}"  th:onclick="'gotoPost(\'' + ${project.id} + '\')'">-->
+                <!--                        <span th:text="${project.title}">제목</span>-->
+                <!--                        <span th:text="${project.nickname}">작성자</span>-->
+                <!--                        <span class="badge bg-primary rounded-pill">조회수: 1</span>-->
+                <!--                    </li>-->
+                <!--                </ul>-->
+            </div>
+        </div>
+    </div>
+
+</div>
 
 </body>
+
+<script>
+    function gotoPost(postid) {
+        console.log(postid);
+        window.location.href = '/api/post' + postid; // 클릭된 리스트 아이템에 맞는 링크로 이동
+    }
+
+    $(document).ready(function() {
+        pageSetting();
+
+        const notificationIcon = document.querySelector('.notification-icon');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const notificationList = document.getElementById('notificationList');
+        let isNotificationListOpen = false;
+        let notificationsList = []; // 알림 데이터를 저장할 리스트
+        let userId = null; // 사용자 아이디 변수 추가
+
+        // 알림 데이터를 서버에서 불러와서 목록에 추가하는 함수
+        const fetchNotifications = async (userId) => {
+            try {
+                const response = await fetch(`/api/notifications/list/${userId}`);
+                if (response.ok) {
+                    const notifications = await response.json();
+                    notificationsList = notifications;
+                    updateNotificationList();
+                    updateNotificationIcon();
+                } else {
+                    console.error('Error fetching notifications:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+
+        // 사용자 정보를 불러오는 함수
+        const fetchUserInfo = async () => {
+            try {
+                const response = await fetch('/api/get-user-info');
+                if (response.ok) {
+                    const userData = await response.json();
+                    if (userData && userData.id) {
+                        userId = userData.id;
+                        loadNotificationsFromServer(userId);
+                    }
+                } else {
+                    console.error('Error fetching user info:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+            }
+        };
+
+        // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
+        fetchUserInfo();
+
+        // 알림 목록 업데이트 함수
+        const updateNotificationList = () => {
+            notificationList.innerHTML = ''; // 목록 초기화
+            notificationsList.forEach(notification => {
+                addNotificationToList(notification);
+            });
+            const listHeader = document.createElement('div');
+            listHeader.className = 'notification-list-header';
+            listHeader.innerText = '알림';
+            notificationList.insertBefore(listHeader, notificationList.firstChild);
+        };
+
+        // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
+        const formatTimeAgo = (notificationTime) => {
+            const currentTime = new Date();
+            const timeDifference = currentTime - new Date(notificationTime);
+
+            if (timeDifference < 60000) { // 1분 미만
+                return "방금 전";
+            } else if (timeDifference < 3600000) { // 1시간 미만
+                const minutes = Math.floor(timeDifference / 60000);
+                return `${minutes}분 전`;
+            } else if (timeDifference < 86400000) { // 24시간 미만
+                const hours = Math.floor(timeDifference / 3600000);
+                return `${hours}시간 전`;
+            } else {
+                const days = Math.floor(timeDifference / 86400000);
+                return `${days}일 전`;
+            }
+        };
+
+        // 알림 아이템 추가 함수
+        const addNotificationToList = (notification) => {
+            const listItem = document.createElement('div');
+            listItem.className = notification.read ? 'notification-list-item read' : 'notification-list-item unread';
+            const timeAgo = formatTimeAgo(notification.createdAt);
+            listItem.innerHTML = `${notification.content}<br><span class="notification-time">${timeAgo}</span>`;
+            listItem.onclick = () => {
+                handleNotificationItemClick(notification, listItem);
+            };
+            notificationList.insertBefore(listItem, notificationList.firstChild);
+        };
+
+        // 알림 읽음 처리 함수
+        const markNotificationAsRead = (notification, listItem) => {
+            if (!notification.read) {
+                notification.read = true;
+                listItem.classList.remove('unread');
+                listItem.classList.add('read');
+                updateNotificationIcon();
+
+                // AJAX 요청으로 서버에 알림 읽음 처리 요청 보내기
+                $.post(`/api/mark-notification-as-read/${notification.id}`)
+            }
+        };
+
+        // 알림 아이템 클릭 처리 함수
+        const handleNotificationItemClick = (notification, listItem) => {
+            markNotificationAsRead(notification, listItem);
+            window.location.href = notification.url;
+        };
+
+        // 알림 아이콘 업데이트 함수
+        const updateNotificationIcon = () => {
+            const unreadCount = notificationsList.filter(notification => !notification.read).length;
+            if (unreadCount > 0) {
+                notificationIcon.classList.add('new-notification');
+                notificationBadge.style.display="inline";
+                notificationBadge.innerText = unreadCount.toString();
+            } else {
+                notificationIcon.classList.remove('new-notification');
+                notificationBadge.style.display="none";
+                // notificationBadge.innerText = '';
+            }
+        };
+
+        // 종모양 아이콘 클릭 시 알림 목록 표시/숨기기
+        notificationIcon.addEventListener('click', () => {
+            updateNotificationList();
+            if (!isNotificationListOpen) {
+                notificationList.style.display = 'block';
+                isNotificationListOpen = true;
+            } else {
+                notificationList.style.display = 'none';
+                isNotificationListOpen = false;
+            }
+        });
+
+        // 페이지 로드 시 알림 데이터를 가져와서 표시
+        const loadNotificationsFromServer = (userId) => {
+            fetchNotifications(userId);
+        };
+
+        fetchUserInfo().then(() => {
+            const sse = new EventSource(`/api/notifications/${userId}`);
+            sse.onmessage = (event) => {
+                const notification = JSON.parse(event.data);
+                notificationsList.push(notification);
+                addNotificationToList(notification);
+                updateNotificationIcon();
+            };
+        });
+
+
+    });
+
+    function removeToken() { // 토큰 삭제
+        Cookies.remove('Authorization', {path: '/'});
+    }
+
+    /* 서버 통신 메서드 */
+    function refreshAccessToken() { // 엑세스 토큰 갱신
+        $.ajax({
+            type: "GET",
+            url: `/api/auth/refresh/access-token`,
+            contentType: "application/json",
+            success: function (data) {
+                console.log(data);
+                alert("로그인 연장 성공");
+            },
+            error: function (data) {
+                console.log(data);
+                alert("로그인 연장 실패 \n 재로그인 부탁드립니다.");
+                redirectToLoginPage();
+            }
+        });
+    }
+
+
+    /* 페이지 첫 로드 메서드 */
+    function pageSetting() {  // main page 세팅
+        const token = Cookies.get('Authorization');
+        const rtoken = Cookies.get('RefreshToken');
+        console.log(token);
+        console.log(rtoken);
+
+        const loginBtn = document.getElementById('login');
+        const logoutBtn = document.getElementById('logout');
+        const keeploginBtn = document.getElementById('keeplogin');
+
+        if(!token) {
+            loginBtn.style.display = "inline-block";
+            logoutBtn.style.display = "none";
+            keeploginBtn.style.display = "none";
+        } else {
+            loginBtn.style.display = "none";
+        }
+
+    }
+
+    function logout() { // 로그아웃
+        $.ajax({
+            type: "DELETE",
+            url: `/api/auth/logout`,
+            contentType: "application/json",
+            success: function (data) {
+                removeToken();
+                alert("로그아웃 성공");
+                window.location.reload();
+            },
+            error: function () {
+                alert("로그아웃 실패");
+                window.location.reload();
+            }
+        });
+    }
+
+    function redirectToLoginPage() {
+        window.location.href = "/api/auth/login-page";
+    }
+
+
+</script>
 </html>
