@@ -322,7 +322,7 @@
                 <div id="categoryMenu" class="collapse">
                     <a href="/api/posts/categories/1" class="list-group-item list-group-item-action mini-list">협업 인원 모집</a>
                     <a href="/api/posts/categories/2" class="list-group-item list-group-item-action mini-list">스티디원 모집</a>
-                    <a href="/api/posts/categories/3" class="list-group-item list-group-item-action mini-list">질문</a>
+                    <a href="/api/posts/categories/3" class="list-group-item list-group-item-action mini-list">문제은행</a>
                     <a href="/api/posts/categories/4" class="list-group-item list-group-item-action mini-list">자유게시판</a>
                 </div>
 
@@ -408,7 +408,7 @@
 <script>
     function gotoPost(postid) {
         console.log(postid);
-        window.location.href = '/api/post' + postid; // 클릭된 리스트 아이템에 맞는 링크로 이동
+        window.location.href = '/api/posts/' + postid; // 클릭된 리스트 아이템에 맞는 링크로 이동
     }
 
     $(document).ready(function() {

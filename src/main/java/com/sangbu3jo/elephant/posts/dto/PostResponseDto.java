@@ -2,7 +2,6 @@ package com.sangbu3jo.elephant.posts.dto;
 
 import com.sangbu3jo.elephant.posts.entity.Category;
 import com.sangbu3jo.elephant.posts.entity.Post;
-import com.sangbu3jo.elephant.users.entity.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -33,7 +32,7 @@ public class PostResponseDto {
         this.category = post.getCategory();
         this.completed = post.getCompleted();
         this.files = post.getFiles();
-        this.view_cnt = post.getViewCnt();
+        this.view_cnt = post.getViewCnt()==null ? 0 : post.getViewCnt();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.postCommentList = post.getCommentList().stream()

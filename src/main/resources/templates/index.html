@@ -8,17 +8,15 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
             integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
             crossorigin="anonymous"></script>
-    <script type="application/javascript" src="/js/main.js"></script>
 
     <title>Elephant</title>
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
-    <link rel="stylesheet" href="/static/css/index.css">
-
-
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
 </head>
+
 <body>
 <div>
-    <header>
+    <header id="flexHeader">
         <a href="/">
 <!--
                         <img class="logo" src="images/elephant2.png">
@@ -29,10 +27,12 @@
 
         <div class="menu">
             <ul>
-                <li>Home</li>
-                <li>Category</li>
-                <li>Project</li>
-                <li>Login</li>
+                <li><a class="nav-link" href="/main">Home</a></li>
+                <li><a class="nav-link" href="/api/posts/categories/1">Project</a></li>
+                <li><a class="nav-link" href="/api/posts/categories/2">Study</a></li>
+                <li><a class="nav-link" href="/api/posts/categories/3">Exam</a></li>
+                <li><a class="nav-link" href="/api/posts/categories/4">Etc</a></li>
+                <li><a class="nav-link" href="/api/auth/login-page">Login</a></li>
             </ul>
         </div>
     </header>
@@ -41,7 +41,7 @@
         <h1> Let's Collaborate with us. </h1>
         <h2> Study And Take the exam with other ones. </h2>
         <h2> Join a project with nice people. </h2>
-        <a href="/"> >> Go To Join << </a>
+        <a href="/main"> >> Go To Join << </a>
     </div>
 </div>
 
