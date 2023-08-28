@@ -522,7 +522,7 @@
     // websocket이 연결된 경우 (확인 완료)
     function onConnected() {
         // Subscribe 해당 토픽을 구독함 (해당 boardid 에 대해서 구독)
-      stompClient.subscribe("/user/topic/" + chatRoomId, onMessages);
+        stompClient.subscribe("/user/topic/" + chatRoomId, onMessages);
         stompClient.subscribe("/topic/" + chatRoomId, onMessageReceived);
 
         console.log("구독");

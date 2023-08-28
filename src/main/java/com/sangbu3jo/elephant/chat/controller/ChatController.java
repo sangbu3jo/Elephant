@@ -13,13 +13,17 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -50,7 +54,6 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("chatRoomId", chatMessageRequestDto.getChatRoomId());
         headerAccessor.getSessionAttributes().put("nickname", chatMessageRequestDto.getNickname());
         headerAccessor.getSessionAttributes().put("username", chatMessageRequestDto.getUsername());
-        headerAccessor.getSessionAttributes().put("sessionId", headerAccessor.getSessionId());
 
         // 두 개의 case를 분리해야 함 ->
         Boolean user = chatRoomService.findUsersInChatRoom(chatMessageRequestDto.getUsername(), chatMessageRequestDto.getChatRoomId());

@@ -42,14 +42,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // sock.js를 통해 STOMP가 동작하지 않는 환경에서도 가능하도록
         // setAllowedOrigins("*")로 모든 오리진(Origin)에서의 접근을 허용
         // 웹이 아니라 앱을 통해서 채팅 기능을 구현하는 경우, withSockJS()를 사용하면 동작하지 않으므로 제외해야 함 (현재는 웹이므로 설정 유지)
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("*")/*.setHandshakeHandler(new CustomHandshakeHandler())*/.withSockJS();
                                     // 원래는 /ws        // 설정해둔 url의 도메인을 적어주어야 함!
     }
 
     /**
      * 클라이언트의 인바운드 채널에 대한 설정을 구성하는 메서드
      * interceptors() 메서드를 사용해 stompHandler(커스텀)를 등록해 클라이언트의 WebSocket 연결 이전 처리 작업을 수행 가능하게 함
-     * 올바른 권한이 있는 사용자인지 확인하는 로직을 추가하기 위함임
+     * 올바른 권한이 있는 사용자인지 확인하는 로직을 추가하기 위함임 -> Filter에서 처리하니 우선 제외
      */
 //    @Override
 //    public void configureClientInboundChannel(ChannelRegistration registration) {
