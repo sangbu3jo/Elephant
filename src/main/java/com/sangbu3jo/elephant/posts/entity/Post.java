@@ -29,7 +29,7 @@ public class Post extends TimeStamped {
     @Column(nullable = false, length = 1000)
     private String content;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
 //    @Enumerated(value = EnumType.STRING)
 //    private Category category;
     @Column(nullable = false)
@@ -39,8 +39,6 @@ public class Post extends TimeStamped {
 
     @Column
     private String files;
-
-
 
 
     @Column(nullable = false)
@@ -64,13 +62,6 @@ public class Post extends TimeStamped {
         this.user = user;
 
 
-    }
-    public Post(Post post, User user) {
-        this.title = post.getTitle();
-        this.content = post.getContent();
-        this.files = post.getFiles();
-        this.completed = post.getCompleted();
-        this.user = user;
     }
 
 

@@ -71,11 +71,9 @@ public class PostService {
 
     //게시물 수정
     @Transactional
-    public void modifiedPost(PostRequestDto postRequestDto, Long postID, User user) {
+    public void modifiedPost(Post post, PostRequestDto postRequestDto) {
 
-        //게시물
-        Post post = postRepository.findById(postID)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+
 
         //category 나누기
         if (postRequestDto.getCategory().equals(Category.COOPERATION_PROJECT)) {
