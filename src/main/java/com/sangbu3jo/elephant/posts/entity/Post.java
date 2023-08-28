@@ -6,6 +6,7 @@ import com.sangbu3jo.elephant.users.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,13 @@ public class Post extends TimeStamped {
     @Column(nullable = false)
     private String title;
 
+
     @Column(nullable = false, length = 1000)
     private String content;
 
+//    @Column(nullable = false)
+//    @Enumerated(value = EnumType.STRING)
+//    private Category category;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Category category;
@@ -34,6 +39,8 @@ public class Post extends TimeStamped {
 
     @Column
     private String files;
+
+
 
 
     @Column(nullable = false)
@@ -52,18 +59,25 @@ public class Post extends TimeStamped {
     public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
-        this.files = postRequestDto.getFiles();
+//        this.files = postRequestDto.getFiles();
         this.completed = postRequestDto.getCompleted();
         this.user = user;
 
 
+    }
+    public Post(Post post, User user) {
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.files = post.getFiles();
+        this.completed = post.getCompleted();
+        this.user = user;
     }
 
 
     public void updatePost(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
-        this.files = postRequestDto.getFiles();
+//        this.files = postRequestDto.getFiles();
         this.completed = postRequestDto.getCompleted();
     }
 
@@ -86,4 +100,9 @@ public class Post extends TimeStamped {
     public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
+
+    public void setFiles(String files) {
+        this.files = files;
+    }
+
 }

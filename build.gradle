@@ -78,6 +78,11 @@ dependencies {
 //    implementation 'org.springframework:spring-messaging:6.0.3'
 //    implementation 'org.springframework.security:spring-security-messaging:6.0.2'
 
+    //aws3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
