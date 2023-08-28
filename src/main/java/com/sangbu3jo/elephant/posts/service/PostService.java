@@ -42,12 +42,12 @@ public class PostService {
         Post post = new Post(postRequestDto, user);
 
         //category 나누기
-        if (postRequestDto.getCategory() == 1) {
+        if (postRequestDto.getCategory().equals(1)) {
             post.setCategory(project);
-        } else if (postRequestDto.getCategory() == 2) {
+        } else if (postRequestDto.getCategory().equals(2)) {
             post.setCategory(study);
 
-        } else if (postRequestDto.getCategory() == 3) {
+        } else if (postRequestDto.getCategory().equals(3)) {
             post.setCategory(previousExam);
         } else {
             throw new NullPointerException("해당 카테고리를 존재하지 않습니다.");
@@ -75,13 +75,13 @@ public class PostService {
 
         if (user.getId().equals(post.getUser().getId())) {
             switch (postRequestDto.getCategory()) {
-                case 1:
+                case "1":
                     post.setCategory(project);
                     break;
-                case 2:
+                case "2":
                     post.setCategory(study);
                     break;
-                case 3:
+                case "3":
                     post.setCategory(previousExam);
                     break;
                 default:

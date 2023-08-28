@@ -15,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class HomeController {
+public class HomeViewController {
 
     private final PostService postService;
 
@@ -45,7 +45,7 @@ public class HomeController {
     @GetMapping("/main")
     public String getProject(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
         Boolean admin = false;
-        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+        if ((userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) && userDetails != null) {
             admin = true;
         }
         model.addAttribute("admin", admin);

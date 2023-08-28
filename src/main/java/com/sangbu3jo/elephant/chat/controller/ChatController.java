@@ -45,21 +45,25 @@ public class ChatController {
     @MessageMapping("/chat/adduser")
     public void enterUser(@Payload ChatMessageRequestDto chatMessageRequestDto, SimpMessageHeaderAccessor headerAccessor) {
         log.info("서버로 요청 넘어옴을 확인");
-        log.info(chatMessageRequestDto.getChatRoomId().toString()); // 이게 왜 null 이라는거지 갑자기 .. 빡치네 ..
+        log.info(chatMessageRequestDto.getChatRoomId().toString()); // 이게 왜 null 이라는거지 갑자기 .. 열받네 ..
         // 연결하면서 put 해주어야 함
         headerAccessor.getSessionAttributes().put("chatRoomId", chatMessageRequestDto.getChatRoomId());
         headerAccessor.getSessionAttributes().put("nickname", chatMessageRequestDto.getNickname());
         headerAccessor.getSessionAttributes().put("username", chatMessageRequestDto.getUsername());
+        headerAccessor.getSessionAttributes().put("sessionId", headerAccessor.getSessionId());
 
         // 두 개의 case를 분리해야 함 ->
         Boolean user = chatRoomService.findUsersInChatRoom(chatMessageRequestDto.getUsername(), chatMessageRequestDto.getChatRoomId());
         if (user) {
             chatMessageRequestDto.setMessage(chatMessageRequestDto.getNickname() + "님이 입장하셨습니다 :D");
             messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto);
-        } /*else {
+        } else {
+            String sessionId = headerAccessor.getSessionId();
+            log.info(sessionId);
             List<ChatMessageResponseDto> messages = chatRoomService.getMessages(chatMessageRequestDto.getChatRoomId());
-            messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), messages);
-        }*/
+            messagingTemplate.convertAndSendToUser(sessionId, "/topic/" + chatMessageRequestDto.getChatRoomId(), messages);
+//            messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), messages);
+        }
     }
 
     @MessageMapping("/chat/sending")

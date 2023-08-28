@@ -10,7 +10,7 @@ public class PostRequestDto {
 
     private String title;
     private String content;
-    private int category;
+    private String category;
     private String files;
     private Boolean completed = false;
 
