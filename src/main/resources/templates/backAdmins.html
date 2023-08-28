@@ -1,125 +1,461 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Back User Page</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-        }
-        .header {
-            background-color: #555;
-            color: white;
-            text-align: center;
-            padding: 10px;
-        }
-        .feature-container {
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-        }
-        .feature {
-            width: 6%;
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 1px 10px;
-            margin: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            font-size: 15px;
-            text-align: center;
-        }
-        /* 새로 추가한 스타일 */
-        .user-info-container {
-            display: flex;
-            flex-direction: column; /* 세로 정렬로 변경 */
-            justify-content: flex-start;
-            align-items: center; /* 가로 정렬을 중앙에서 시작하도록 변경 */
-            width: 30%;
-            height: 80vh;
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: fixed;
-            top: 55%; /* 55%에서 50%로 변경 */
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Back User Page</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        .user-info {
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-            width : 90%;
-        }
-        /* 수정 및 삭제 버튼 스타일 */
-        .edit-delete-buttons {
-            margin-left: auto; /* 우측으로 정렬 */
-            margin-top: auto;
-            display: flex;
-            flex-direction: row;
-        }
-        .edit-delete-buttons button {
-            margin-left: 5px;
-            margin-top: 5px;
-            padding: 5px 15px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .user-checkbox {
-            margin-right: 10px;
-        }
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-        .user-info-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            width: 80%;
-            justify-content: flex-start; /* 요소들을 왼쪽 정렬로 유지 */
-            align-items: flex-start; /* 요소들을 위쪽 정렬로 유지 */
-        }
-    </style>
+  <link crossorigin="anonymous"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx"
+        rel="stylesheet">
+  <script crossorigin="anonymous"
+          integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+  <!-- 로고 -->
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"/>
+
+  <style>
+    /* 수연님 상단바 css 추가 */
+    @font-face {
+      font-family: 'TheJamsil5Bold';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    * {
+      font-family: 'TheJamsil5Bold', cursive;
+    }
+
+    html, body {
+      /*height: 100%;*/
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      color: #101014;
+      background-color: #f5f5fa;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* 가로 가운데 정렬 추가 */
+      align-items: center; /* 세로 가운데 정렬 추가 */
+    }
+
+    /* 상단 메뉴 */
+    .top {
+      color: white;
+      text-align: center;
+      padding: 10px;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
+    }
+
+    .right {
+      height: 100%;
+      width: 35%;
+      padding-left: 30px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .middle {
+      height: 100%;
+      width: 30%;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+    }
+
+    .middle img {
+      margin-right: 5px;
+    }
+
+    .left {
+      height: 100%;
+      width: 35%;
+      padding-right: 30px;
+      display: flex;
+      flex-direction: row;
+      justify-content: end;
+      align-items: center;
+    }
+
+
+    /* 알림 */
+    .notification-icon {
+      font-size: 30px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .notification-icon div {
+      position: relative;
+    }
+
+    @keyframes shake {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-3px);
+      }
+      20%, 40%, 60%, 80% {
+        transform: translateX(3px);
+      }
+    }
+
+    .new-notification {
+      color: red;
+      animation: shake 1.5s infinite; /* 흔들기 애니메이션 적용 */
+    }
+
+    .nobadge {
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      padding: 4px 8px;
+      font-size: 12px;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .notification-list {
+      position: absolute;
+      top: 100px; /* Adjust the top position to your preference */
+      right: 70px;
+      width: 295px;
+      background-color: white;
+      border: 1px solid #ddd;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      max-height: 700px;
+      overflow-y: auto;
+      display: none;
+      z-index: 10;
+      margin-top: 45px; /* 헤더의 높이만큼 여백 추가 */
+    }
+
+    .notification-list-header {
+      background-color: #ccc;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      position: fixed;
+      top: 100px;
+      width: 13%; /* 가로 너비를 꽉 채우도록 설정 */
+      z-index: 9998; /* 헤더 위에 배치 */
+    }
+
+    .notification-list-item {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      background-color: white;
+    }
+
+    .notification-list-item.read {
+      background-color: #f0f0f0;
+    }
+
+    .bottom {
+      width: 100%;
+      margin: 10px;
+      display: flex;
+    }
+
+    /*하단 게시판*/
+    .list-group-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .list-group-item span:nth-child(1) {
+      width: 50%;
+    }
+
+    .list-group-item span:nth-child(2) {
+      width: 35%;
+    }
+
+    .badge-bg-primary-rounded-pill {
+      width: 15%;
+    }
+
+    .bg-primary {
+      background-color: #ccc !important;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    a:hover {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .category-title {
+      font-size: 18px;
+    }
+
+    .sidemenu {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidemenu div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .list-group-item {
+      background-color: transparent;
+      cursor: pointer;
+    }
+
+    .offcanvas {
+      background-color: #f5f5fa;
+    }
+
+    .mini-list {
+      font-size: 14px;
+      color: #a9a9a9;
+    }
+
+
+    /* 아래는 건욱님 css 코드 */
+    .header {
+      background-color: #555;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .feature-container {
+      width: 16%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .feature {
+      background-color: white;
+      border: 1px solid #ddd;
+      padding: 1px 10px;
+      margin: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      font-size: 15px;
+      text-align: center;
+    }
+
+    /* 새로 추가한 스타일 */
+    .user-info-container {
+      display: flex;
+      flex-direction: column; /* 세로 정렬로 변경 */
+      justify-content: flex-start;
+      align-items: center; /* 가로 정렬을 중앙에서 시작하도록 변경 */
+      width: 50%;
+      height: 100vh;
+      background-color: white;
+      border: 1px solid #ddd;
+      margin: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ /*     position: fixed;
+      top: 55%; !* 55%에서 50%로 변경 *!
+      left: 50%;
+      transform: translate(-50%, -50%);*/
+    }
+
+    .user-info {
+      padding: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+      width: 90%;
+    }
+
+    .pagination{
+      margin-left: auto; /* 우측으로 정렬 */
+      display: contents;
+
+    }
+
+    /* 수정 및 삭제 버튼 스타일 */
+    .edit-delete-buttons {
+      margin-left: auto; /* 우측으로 정렬 */
+      margin-top: auto;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .edit-delete-buttons button {
+      margin-left: 5px;
+      margin-top: 5px;
+      padding: 5px 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .user-checkbox {
+      margin-right: 10px;
+    }
+
+    .user-info-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      width: 80%;
+      justify-content: flex-start; /* 요소들을 왼쪽 정렬로 유지 */
+      align-items: flex-start; /* 요소들을 위쪽 정렬로 유지 */
+    }
+  </style>
 </head>
 <body>
-<div class="header">
-    <h1>코끼리</h1>
-</div>
-<div class="feature-container">
-    <div class="feature" id="userManagement">
-        <h2>회원 관리</h2>
+
+<!-- 상단 메뉴 (+ 네비게이션 메뉴)-->
+<div class="top">
+  <div class="right">
+    <a id="login" onclick="redirectToLoginPage()">
+      <button>로그인</button>
+    </a>
+    <a id="logout" onclick="logout()">
+      <button>로그아웃</button>
+    </a>
+    <a id="keeplogin" onclick="refreshAccessToken()">
+      <button>로그인 연장</button>
+    </a>
+  </div>
+  <div class="middle">
+    <!-- 가운데 코끼리 글씨 및 로고  -->
+    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
+         style="width: 35px; height: 35px;"> <!-- 로고 이미지 추가 -->
+    <div style="text-align: center;">
+      코끼리
     </div>
-    <div class="feature" id="postManagement">
-        <h2>게시물 관리</h2>
+  </div>
+  <div class="left">
+    <!-- 알림, 우측 메뉴 슬라이드 -->
+    <div class="notification-icon">
+      <div style="position: relative;">
+        <i class="far fa-bell" style="color: #cfcfcf;"></i>
+        <span id="notificationBadge" class="nobadge" style="display:none;"></span>
+      </div>
     </div>
-    <div class="feature" id="commentManagement">
-        <h2>댓글 관리</h2>
+
+    <div style="text-align: center;" type="button" data-bs-toggle="offcanvas"
+         data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+      <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png"
+           style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
     </div>
+
+    <div class="offcanvas offcanvas-start w-25" data-bs-scroll="true" tabindex="-1"
+         id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+      <div class="offcanvas-header" style="text-align: center; align-items:center;">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel" style="color:#000">
+          <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
+               style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+          코끼리
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+      </div>
+
+      <div class="list-group list-group-flush">
+        <!-- 카테고리 버튼과 하위 메뉴 -->
+        <button class="list-group-item list-group-item-action" data-bs-toggle="collapse"
+                data-bs-target="#categoryMenu">게시판 카테고리
+        </button>
+        <div id="categoryMenu" class="collapse">
+          <a href="/api/posts/categories/1"
+             class="list-group-item list-group-item-action mini-list">협업 인원 모집</a>
+          <a href="/api/posts/categories/2"
+             class="list-group-item list-group-item-action mini-list">스티디원 모집</a>
+          <a href="/api/posts/categories/3"
+             class="list-group-item list-group-item-action mini-list">문제은행</a>
+          <a href="/api/posts/categories/4"
+             class="list-group-item list-group-item-action mini-list">자유게시판</a>
+        </div>
+
+        <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
+        <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+        <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자
+          페이지</a> <!--서버에서 admin 여부 true/false로 가져오기-->
+
+
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
 
-<!-- 새로 추가한 내용 -->
-<div class="user-info-container">
+<!-- 나머지 내용 -->
+<div class="notification-list" id="notificationList">
+  <div class="notification-list-header">알림</div>
+</div>
+
+<div class="bottom">
+  <div class="feature-container">
+    <div class="feature" id="userManagement">
+      <h2 style="font-size: 1.4rem;
+        margin: 10px;">회원 관리</h2>
+    </div>
+    <div class="feature" id="postManagement">
+      <h2 style="font-size: 1.4rem;
+        margin: 10px;">게시물 관리</h2>
+    </div>
+    <div class="feature" id="commentManagement">
+      <h2 style="font-size: 1.4rem;
+        margin: 10px;">댓글 관리</h2>
+    </div>
+  </div>
+
+  <!-- 새로 추가한 내용 -->
+  <div class="user-info-container">
     <!-- 유저 정보를 출력할 공간 -->
     <div class="user-info-list">
-        <!-- 여기에 각 페이지별로 유저 정보가 출력될 것입니다. -->
+      <!-- 여기에 각 페이지별로 유저 정보가 출력될 것입니다. -->
     </div>
 
     <!-- 페이지 네비게이션 -->
-    <div class="pagination" style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);">
-        <!-- 페이지 번호 버튼들이 여기에 생성될 것입니다. -->
+    <div class="pagination">
+        <!-- style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);"-->
+      <!-- 페이지 번호 버튼들이 여기에 생성될 것입니다. -->
     </div>
 
     <div class="edit-delete-buttons">
-        <button id="editButton">권한 수정</button>
-        <button id="deleteButton">회원 삭제</button>
+      <button id="editButton">권한 수정</button>
+      <button id="deleteButton">회원 삭제</button>
     </div>
 
     <!-- 여러 개의 사용자 정보를 생성하여 표시 -->
@@ -134,435 +470,648 @@
     <!-- 추가적인 사용자 정보 표시 -->
 
     <!-- 수정 삭제 버튼을 여기에 이동 -->
-
+  </div>
 </div>
 
 
 <script>
-    const userPerPage = 7;
-    const userManagementButton = document.getElementById('userManagement');
-    const postManagementButton = document.getElementById('postManagement');
-    const commentManagementButton = document.getElementById('commentManagement');
-    const userInfoList = document.querySelector('.user-info-list');
-    const paginationContainer = document.querySelector('.pagination');
-    const editButton = document.getElementById('editButton');
-    const deleteButton = document.getElementById('deleteButton'); // 추가한 부분
+  // header js 추가
+  $(document).ready(function () {
+    pageSetting();
 
-    let currentPage = 1;
-    let totalUsers = 0;
-    let users = []; // 사용자 정보를 저장할 배열
-    let posts = [];
-    let comments = [];
+    const notificationIcon = document.querySelector('.notification-icon');
+    const notificationBadge = document.getElementById('notificationBadge');
+    const notificationList = document.getElementById('notificationList');
+    let isNotificationListOpen = false;
+    let notificationsList = []; // 알림 데이터를 저장할 리스트
+    let userId = null; // 사용자 아이디 변수 추가
 
-    // 새로 추가한 내용
-    editButton.style.display = 'none';
-    deleteButton.style.display = 'none';
-
-    userManagementButton.addEventListener('click', () => {
-        currentPage = 1;
-        users = [];
-        posts = [];
-        comments = [];
-        fetchAndRenderUsers();
-        editButton.textContent = '권한 수정';
-        deleteButton.textContent = '회원 삭제';
-        // 권한 수정, 회원 삭제 버튼 표시
-        editButton.style.display = 'block';
-        deleteButton.style.display = 'block';
-        // 다른 기능 버튼의 활성화 클래스 제거
-        postManagementButton.classList.remove('active');
-        commentManagementButton.classList.remove('active');
-        // 현재 기능 버튼에 활성화 클래스 추가
-        userManagementButton.classList.add('active');
-    });
-
-    postManagementButton.addEventListener('click', () => {
-        currentPage = 1;
-        users = [];
-        posts = [];
-        comments = [];
-        fetchAndRenderPosts();
-        editButton.textContent = '게시글 숨김';
-        deleteButton.textContent = '게시글 삭제';
-        // 권한 수정, 회원 삭제 버튼 표시
-        editButton.style.display = 'block';
-        deleteButton.style.display = 'block';
-        // 다른 기능 버튼의 활성화 클래스 제거
-        userManagementButton.classList.remove('active');
-        commentManagementButton.classList.remove('active');
-        // 현재 기능 버튼에 활성화 클래스 추가
-        postManagementButton.classList.add('active');
-    });
-
-    commentManagementButton.addEventListener('click', () => {
-        currentPage = 1;
-        users = [];
-        posts = [];
-        comments = [];
-        fetchAndRenderComments();
-        editButton.textContent = '댓글 숨김';
-        deleteButton.textContent = '댓글 삭제';
-        // 권한 수정, 회원 삭제 버튼 표시
-        editButton.style.display = 'block';
-        deleteButton.style.display = 'block';
-        // 다른 기능 버튼의 활성화 클래스 제거
-        userManagementButton.classList.remove('active');
-        postManagementButton.classList.remove('active');
-        // 현재 기능 버튼에 활성화 클래스 추가
-        commentManagementButton.classList.add('active');
-    });
-
-    paginationContainer.addEventListener('click', event => {
-        if (event.target.classList.contains('page-button')) {
-            currentPage = parseInt(event.target.dataset.page);
-
-            if (userManagementButton.classList.contains('active')) {
-                renderUsersForPage(currentPage);
-            } else if (postManagementButton.classList.contains('active')) {
-                renderPostsForPage(currentPage);
-            } else if (commentManagementButton.classList.contains('active')) {
-                renderCommentsForPage(currentPage);
-            }
+    // 알림 데이터를 서버에서 불러와서 목록에 추가하는 함수
+    const fetchNotifications = async (userId) => {
+      try {
+        const response = await fetch(`/api/notifications/list/${userId}`);
+        if (response.ok) {
+          const notifications = await response.json();
+          notificationsList = notifications;
+          updateNotificationList();
+          updateNotificationIcon();
+        } else {
+          console.error('Error fetching notifications:', response.status);
         }
-    });
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
 
-    // 수정 버튼 클릭 시 실행되는 함수
-    editButton.addEventListener('click', () => {
-        const checkedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
-
-        if (userManagementButton.classList.contains('active')) {
-            if (checkedCheckboxes.length === 1) {
-                if (confirm('회원의 권한을 변경시키겠습니까?')) {
-                    const userId = checkedCheckboxes[0].getAttribute('data-userid');
-                    const userRole = checkedCheckboxes[0].getAttribute('data-userrole');
-
-                    let newRole = '';
-
-                    if (userRole === 'USER') {
-                        newRole = 'ADMIN';
-                    } else if (userRole === 'ADMIN') {
-                        newRole = 'USER';
-                    }
-
-                    // 권한 수정 API 호출
-                    fetch(`/api/${userId}/auth`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            newRole: newRole // 새로운 권한 정보를 전달
-                        })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to update user authorization');
-                            }
-                            return response.text();
-                        })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderUsers();
-                        })
-                        .catch(error => console.error('Error updating user authorization:', error));
-                }
-            } else {
-                alert('하나의 유저를 선택해주세요.');
-            }
-        } else if (postManagementButton.classList.contains('active')) {
-            const checkedPostCheckbox = document.querySelector('.user-checkbox:checked');
-
-            if (checkedPostCheckbox) {
-                const postId = checkedPostCheckbox.getAttribute('data-postid');
-
-                // 게시글 정보를 가져와서 수정 창을 띄우기
-                fetch(`/api/posts/${postId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch post');
-                        }
-                        return response.json();
-                    })
-                    .then(post => {
-                        const shouldHide = confirm('게시글을 숨김 처리하시겠습니까?');
-
-                        if (shouldHide) {
-                            // 게시글 수정 API 호출
-                            fetch(`/api/posts/${postId}/admin`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    title: "숨김 처리된 게시글입니다.",
-                                    content: "숨김 처리된 게시글입니다.",
-                                    category: "",
-                                    completed: false
-                                })
-                            })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Failed to update post');
-                                    }
-                                    return response.text();
-                                })
-                                .then(responseText => {
-                                    alert(responseText);
-                                    fetchAndRenderPosts();
-                                })
-                                .catch(error => console.error('Error updating post:', error));
-                        }
-                    })
-                    .catch(error => console.error('Error fetching post:', error));
-            } else {
-                alert('수정할 게시글을 선택해주세요.');
-            }
-        } else if (commentManagementButton.classList.contains('active')) {
-            const checkedCommentCheckbox = document.querySelector('.user-checkbox:checked'); // 수정: user-checkbox -> comment-checkbox
-
-            if (checkedCommentCheckbox) {
-                const commentId = checkedCommentCheckbox.getAttribute('data-commentid');
-
-                const shouldHide = confirm('댓글을 숨김 처리하시겠습니까?');
-
-                if (shouldHide) {
-                    // 댓글 숨김 처리 API 호출
-                    fetch(`/api/posts/comments/${commentId}/admin`, { // 수정: '/api/posts/comments/' -> API 엔드포인트에 맞게 변경
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            content: "숨김 처리된 댓글입니다."
-                        })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to hide comment');
-                            }
-                            return response.text();
-                        })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderComments();
-                        })
-                        .catch(error => console.error('Error hiding comment:', error));
-                }
-            } else {
-                alert('숨김 처리할 댓글을 선택해주세요.');
-            }
+    // 사용자 정보를 불러오는 함수
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('/api/get-user-info');
+        if (response.ok) {
+          const userData = await response.json();
+          if (userData && userData.id) {
+            userId = userData.id;
+            loadNotificationsFromServer(userId);
+          }
+        } else {
+          console.error('Error fetching user info:', response.status);
         }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
+    fetchUserInfo();
+
+    // 알림 목록 업데이트 함수
+    const updateNotificationList = () => {
+      notificationList.innerHTML = ''; // 목록 초기화
+      notificationsList.forEach(notification => {
+        addNotificationToList(notification);
+      });
+      const listHeader = document.createElement('div');
+      listHeader.className = 'notification-list-header';
+      listHeader.innerText = '알림';
+      notificationList.insertBefore(listHeader, notificationList.firstChild);
+    };
+
+    // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
+    const formatTimeAgo = (notificationTime) => {
+      const currentTime = new Date();
+      const timeDifference = currentTime - new Date(notificationTime);
+
+      if (timeDifference < 60000) { // 1분 미만
+        return "방금 전";
+      } else if (timeDifference < 3600000) { // 1시간 미만
+        const minutes = Math.floor(timeDifference / 60000);
+        return `${minutes}분 전`;
+      } else if (timeDifference < 86400000) { // 24시간 미만
+        const hours = Math.floor(timeDifference / 3600000);
+        return `${hours}시간 전`;
+      } else {
+        const days = Math.floor(timeDifference / 86400000);
+        return `${days}일 전`;
+      }
+    };
+
+    // 알림 아이템 추가 함수
+    const addNotificationToList = (notification) => {
+      const listItem = document.createElement('div');
+      listItem.className = notification.read ? 'notification-list-item read'
+          : 'notification-list-item unread';
+      const timeAgo = formatTimeAgo(notification.createdAt);
+      listItem.innerHTML = `${notification.content}<br><span class="notification-time">${timeAgo}</span>`;
+      listItem.onclick = () => {
+        handleNotificationItemClick(notification, listItem);
+      };
+      notificationList.insertBefore(listItem, notificationList.firstChild);
+    };
+
+    // 알림 읽음 처리 함수
+    const markNotificationAsRead = (notification, listItem) => {
+      if (!notification.read) {
+        notification.read = true;
+        listItem.classList.remove('unread');
+        listItem.classList.add('read');
+        updateNotificationIcon();
+
+        // AJAX 요청으로 서버에 알림 읽음 처리 요청 보내기
+        $.post(`/api/mark-notification-as-read/${notification.id}`)
+      }
+    };
+
+    // 알림 아이템 클릭 처리 함수
+    const handleNotificationItemClick = (notification, listItem) => {
+      markNotificationAsRead(notification, listItem);
+      window.location.href = notification.url;
+    };
+
+    // 알림 아이콘 업데이트 함수
+    const updateNotificationIcon = () => {
+      const unreadCount = notificationsList.filter(notification => !notification.read).length;
+      if (unreadCount > 0) {
+        notificationIcon.classList.add('new-notification');
+        notificationBadge.style.display = "inline";
+        notificationBadge.innerText = unreadCount.toString();
+      } else {
+        notificationIcon.classList.remove('new-notification');
+        notificationBadge.style.display = "none";
+        // notificationBadge.innerText = '';
+      }
+    };
+
+    // 종모양 아이콘 클릭 시 알림 목록 표시/숨기기
+    notificationIcon.addEventListener('click', () => {
+      updateNotificationList();
+      if (!isNotificationListOpen) {
+        notificationList.style.display = 'block';
+        isNotificationListOpen = true;
+      } else {
+        notificationList.style.display = 'none';
+        isNotificationListOpen = false;
+      }
     });
 
+    // 페이지 로드 시 알림 데이터를 가져와서 표시
+    const loadNotificationsFromServer = (userId) => {
+      fetchNotifications(userId);
+    };
 
-
-    // 삭제 버튼 클릭 시 실행되는 함수
-    deleteButton.addEventListener('click', () => {
-        const checkedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
-
-        if (userManagementButton.classList.contains('active')) {
-            if (checkedCheckboxes.length === 1) {
-                const userId = checkedCheckboxes[0].getAttribute('data-userid');
-
-                if (confirm('회원을 탈퇴시키겠습니까?')) {
-                    fetch(`/api/${userId}/auth`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to delete user');
-                            }
-                            return response.text();
-                        })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderUsers();
-                        })
-                        .catch(error => console.error('Error deleting user:', error));
-                }
-            } else if (checkedCheckboxes.length === 0) {
-                alert('삭제할 유저를 선택해주세요.');
-            } else {
-                alert('하나의 유저만 선택해주세요.');
-            }
-        } else if (postManagementButton.classList.contains('active')) {
-            // 게시글 삭제 기능 추가
-            if (checkedCheckboxes.length === 1) {
-                const postId = checkedCheckboxes[0].getAttribute('data-postid');
-
-                if (confirm('게시글을 삭제하시겠습니까?')) {
-                    fetch(`/api/posts/${postId}/admin`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to delete post');
-                            }
-                            return response.text();
-                        })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderPosts();
-                        })
-                        .catch(error => console.error('Error deleting post:', error));
-                }
-            } else if (checkedCheckboxes.length === 0) {
-                alert('삭제할 게시글을 선택해주세요.');
-            } else {
-                alert('하나의 게시글만 선택해주세요.');
-            }
-        } else if (commentManagementButton.classList.contains('active')) {
-            const checkedCommentCheckbox = document.querySelector('.user-checkbox:checked');
-
-            if (checkedCommentCheckbox) {
-                const commentId = checkedCommentCheckbox.getAttribute('data-commentid');
-
-                if (confirm('댓글을 삭제하시겠습니까?')) {
-                    fetch(`/api/posts/comments/${commentId}/admin`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to delete comment');
-                            }
-                            return response.text();
-                        })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderComments(); // 삭제 후 댓글 목록을 다시 불러와서 렌더링
-                        })
-                        .catch(error => console.error('Error deleting comment:', error));
-                }
-            } else {
-                alert('삭제할 댓글을 선택해주세요.');
-            }
-        }
-
+    fetchUserInfo().then(() => {
+      const sse = new EventSource(`/api/notifications/${userId}`);
+      sse.onmessage = (event) => {
+        const notification = JSON.parse(event.data);
+        notificationsList.push(notification);
+        addNotificationToList(notification);
+        updateNotificationIcon();
+      };
     });
 
+  });
 
-    function fetchAndRenderUsers() {
-        fetch('/api/users', {
-            method: 'GET',
+  function removeToken() { // 토큰 삭제
+    Cookies.remove('Authorization', {path: '/'});
+  }
+
+  /* 서버 통신 메서드 */
+  function refreshAccessToken() { // 엑세스 토큰 갱신
+    $.ajax({
+      type: "GET",
+      url: `/api/auth/refresh/access-token`,
+      contentType: "application/json",
+      success: function (data) {
+        console.log(data);
+        alert("로그인 연장 성공");
+      },
+      error: function (data) {
+        console.log(data);
+        alert("로그인 연장 실패 \n 재로그인 부탁드립니다.");
+        redirectToLoginPage();
+      }
+    });
+  }
+
+  /* 페이지 첫 로드 메서드 */
+  function pageSetting() {  // main page 세팅
+    const token = Cookies.get('Authorization');
+    const rtoken = Cookies.get('RefreshToken');
+    console.log(token);
+    console.log(rtoken);
+
+    const loginBtn = document.getElementById('login');
+    const logoutBtn = document.getElementById('logout');
+    const keeploginBtn = document.getElementById('keeplogin');
+
+    if (!token) {
+      loginBtn.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+      keeploginBtn.style.display = "none";
+    } else {
+      loginBtn.style.display = "none";
+    }
+
+  }
+
+  function logout() { // 로그아웃
+    $.ajax({
+      type: "DELETE",
+      url: `/api/auth/logout`,
+      contentType: "application/json",
+      success: function (data) {
+        removeToken();
+        alert("로그아웃 성공");
+        window.location.reload();
+      },
+      error: function () {
+        alert("로그아웃 실패");
+        window.location.reload();
+      }
+    });
+  }
+
+  function redirectToLoginPage() {
+    window.location.href = "/api/auth/login-page";
+  }
+
+  const userPerPage = 7;
+  const userManagementButton = document.getElementById('userManagement');
+  const postManagementButton = document.getElementById('postManagement');
+  const commentManagementButton = document.getElementById('commentManagement');
+  const userInfoList = document.querySelector('.user-info-list');
+  const paginationContainer = document.querySelector('.pagination');
+  const editButton = document.getElementById('editButton');
+  const deleteButton = document.getElementById('deleteButton'); // 추가한 부분
+
+  let currentPage = 1;
+  let totalUsers = 0;
+  let users = []; // 사용자 정보를 저장할 배열
+  let posts = [];
+  let comments = [];
+
+  // 새로 추가한 내용
+  editButton.style.display = 'none';
+  deleteButton.style.display = 'none';
+
+  userManagementButton.addEventListener('click', () => {
+    currentPage = 1;
+    users = [];
+    posts = [];
+    comments = [];
+    fetchAndRenderUsers();
+    editButton.textContent = '권한 수정';
+    deleteButton.textContent = '회원 삭제';
+    // 권한 수정, 회원 삭제 버튼 표시
+    editButton.style.display = 'block';
+    deleteButton.style.display = 'block';
+    // 다른 기능 버튼의 활성화 클래스 제거
+    postManagementButton.classList.remove('active');
+    commentManagementButton.classList.remove('active');
+    // 현재 기능 버튼에 활성화 클래스 추가
+    userManagementButton.classList.add('active');
+  });
+
+  postManagementButton.addEventListener('click', () => {
+    currentPage = 1;
+    users = [];
+    posts = [];
+    comments = [];
+    fetchAndRenderPosts();
+    editButton.textContent = '게시글 숨김';
+    deleteButton.textContent = '게시글 삭제';
+    // 권한 수정, 회원 삭제 버튼 표시
+    editButton.style.display = 'block';
+    deleteButton.style.display = 'block';
+    // 다른 기능 버튼의 활성화 클래스 제거
+    userManagementButton.classList.remove('active');
+    commentManagementButton.classList.remove('active');
+    // 현재 기능 버튼에 활성화 클래스 추가
+    postManagementButton.classList.add('active');
+  });
+
+  commentManagementButton.addEventListener('click', () => {
+    currentPage = 1;
+    users = [];
+    posts = [];
+    comments = [];
+    fetchAndRenderComments();
+    editButton.textContent = '댓글 숨김';
+    deleteButton.textContent = '댓글 삭제';
+    // 권한 수정, 회원 삭제 버튼 표시
+    editButton.style.display = 'block';
+    deleteButton.style.display = 'block';
+    // 다른 기능 버튼의 활성화 클래스 제거
+    userManagementButton.classList.remove('active');
+    postManagementButton.classList.remove('active');
+    // 현재 기능 버튼에 활성화 클래스 추가
+    commentManagementButton.classList.add('active');
+  });
+
+  paginationContainer.addEventListener('click', event => {
+    if (event.target.classList.contains('page-button')) {
+      currentPage = parseInt(event.target.dataset.page);
+
+      if (userManagementButton.classList.contains('active')) {
+        renderUsersForPage(currentPage);
+      } else if (postManagementButton.classList.contains('active')) {
+        renderPostsForPage(currentPage);
+      } else if (commentManagementButton.classList.contains('active')) {
+        renderCommentsForPage(currentPage);
+      }
+    }
+  });
+
+  // 수정 버튼 클릭 시 실행되는 함수
+  editButton.addEventListener('click', () => {
+    const checkedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+
+    if (userManagementButton.classList.contains('active')) {
+      if (checkedCheckboxes.length === 1) {
+        if (confirm('회원의 권한을 변경시키겠습니까?')) {
+          const userId = checkedCheckboxes[0].getAttribute('data-userid');
+          const userRole = checkedCheckboxes[0].getAttribute('data-userrole');
+
+          let newRole = '';
+
+          if (userRole === 'USER') {
+            newRole = 'ADMIN';
+          } else if (userRole === 'ADMIN') {
+            newRole = 'USER';
+          }
+
+          // 권한 수정 API 호출
+          fetch(`/api/${userId}/auth`, {
+            method: 'PUT',
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              newRole: newRole // 새로운 권한 정보를 전달
+            })
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to update user authorization');
             }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch users');
-                }
-                return response.json();
-            })
-            .then(responseUsers => {
-                users = responseUsers; // 사용자 정보를 저장
-                totalUsers = users.length;
-                renderPagination();
-                userInfoList.innerHTML = '';
-                renderUsersForPage(currentPage);
-            })
-            .catch(error => console.error('Error fetching users:', error));
-    }
-
-    function fetchAndRenderPosts() {
-        fetch('/api/posts', {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch posts');
-                }
-                return response.json();
-            })
-            .then(responsePosts => {
-                posts = responsePosts; // 게시물 정보를 저장
-                totalPosts = posts.length;
-                renderPagination();
-                userInfoList.innerHTML = '';
-                renderPostsForPage(currentPage);
-            })
-            .catch(error => console.error('Error fetching posts:', error));
-    }
-
-    function fetchAndRenderComments() {
-        fetch('/api/comments', {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch comments');
-                }
-                return response.json();
-            })
-            .then(responseComments => {
-                comments = responseComments; // 댓글 정보를 저장
-                totalComments = comments.length;
-                renderPagination();
-                userInfoList.innerHTML = '';
-                renderCommentsForPage(currentPage);
-            })
-            .catch(error => console.error('Error fetching comments:', error));
-    }
-
-
-
-    function renderPagination() {
-        let totalPages;
-
-        if (userManagementButton.classList.contains('active')) {
-            totalPages = Math.ceil(users.length / userPerPage);
-        } else if (postManagementButton.classList.contains('active')) {
-            totalPages = Math.ceil(posts.length / userPerPage);
-        } else if (commentManagementButton.classList.contains('active')) {
-            totalPages = Math.ceil(comments.length / userPerPage);
+            return response.text();
+          })
+          .then(responseText => {
+            alert(responseText);
+            fetchAndRenderUsers();
+          })
+          .catch(error => console.error('Error updating user authorization:', error));
         }
+      } else {
+        alert('하나의 유저를 선택해주세요.');
+      }
+    } else if (postManagementButton.classList.contains('active')) {
+      const checkedPostCheckbox = document.querySelector('.user-checkbox:checked');
 
-        paginationContainer.innerHTML = '';
+      if (checkedPostCheckbox) {
+        const postId = checkedPostCheckbox.getAttribute('data-postid');
 
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.classList.add('page-button');
-            pageButton.textContent = i;
-            pageButton.dataset.page = i;
-            paginationContainer.appendChild(pageButton);
+        // 게시글 정보를 가져와서 수정 창을 띄우기
+        fetch(`/api/posts/${postId}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch post');
+          }
+          return response.json();
+        })
+        .then(post => {
+          const shouldHide = confirm('게시글을 숨김 처리하시겠습니까?');
+
+          if (shouldHide) {
+            // 게시글 수정 API 호출
+            fetch(`/api/posts/${postId}/admin`, {
+              method: 'PUT',
+              headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                title: "숨김 처리된 게시글입니다.",
+                content: "숨김 처리된 게시글입니다.",
+                category: "",
+                completed: false
+              })
+            })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to update post');
+              }
+              return response.text();
+            })
+            .then(responseText => {
+              alert(responseText);
+              fetchAndRenderPosts();
+            })
+            .catch(error => console.error('Error updating post:', error));
+          }
+        })
+        .catch(error => console.error('Error fetching post:', error));
+      } else {
+        alert('수정할 게시글을 선택해주세요.');
+      }
+    } else if (commentManagementButton.classList.contains('active')) {
+      const checkedCommentCheckbox = document.querySelector('.user-checkbox:checked'); // 수정: user-checkbox -> comment-checkbox
+
+      if (checkedCommentCheckbox) {
+        const commentId = checkedCommentCheckbox.getAttribute('data-commentid');
+
+        const shouldHide = confirm('댓글을 숨김 처리하시겠습니까?');
+
+        if (shouldHide) {
+          // 댓글 숨김 처리 API 호출
+          fetch(`/api/posts/comments/${commentId}/admin`, { // 수정: '/api/posts/comments/' -> API 엔드포인트에 맞게 변경
+            method: 'PUT',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              content: "숨김 처리된 댓글입니다."
+            })
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to hide comment');
+            }
+            return response.text();
+          })
+          .then(responseText => {
+            alert(responseText);
+            fetchAndRenderComments();
+          })
+          .catch(error => console.error('Error hiding comment:', error));
         }
+      } else {
+        alert('숨김 처리할 댓글을 선택해주세요.');
+      }
+    }
+  });
+
+  // 삭제 버튼 클릭 시 실행되는 함수
+  deleteButton.addEventListener('click', () => {
+    const checkedCheckboxes = document.querySelectorAll('.user-checkbox:checked');
+
+    if (userManagementButton.classList.contains('active')) {
+      if (checkedCheckboxes.length === 1) {
+        const userId = checkedCheckboxes[0].getAttribute('data-userid');
+
+        if (confirm('회원을 탈퇴시키겠습니까?')) {
+          fetch(`/api/${userId}/auth`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to delete user');
+            }
+            return response.text();
+          })
+          .then(responseText => {
+            alert(responseText);
+            fetchAndRenderUsers();
+          })
+          .catch(error => console.error('Error deleting user:', error));
+        }
+      } else if (checkedCheckboxes.length === 0) {
+        alert('삭제할 유저를 선택해주세요.');
+      } else {
+        alert('하나의 유저만 선택해주세요.');
+      }
+    } else if (postManagementButton.classList.contains('active')) {
+      // 게시글 삭제 기능 추가
+      if (checkedCheckboxes.length === 1) {
+        const postId = checkedCheckboxes[0].getAttribute('data-postid');
+
+        if (confirm('게시글을 삭제하시겠습니까?')) {
+          fetch(`/api/posts/${postId}/admin`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to delete post');
+            }
+            return response.text();
+          })
+          .then(responseText => {
+            alert(responseText);
+            fetchAndRenderPosts();
+          })
+          .catch(error => console.error('Error deleting post:', error));
+        }
+      } else if (checkedCheckboxes.length === 0) {
+        alert('삭제할 게시글을 선택해주세요.');
+      } else {
+        alert('하나의 게시글만 선택해주세요.');
+      }
+    } else if (commentManagementButton.classList.contains('active')) {
+      const checkedCommentCheckbox = document.querySelector('.user-checkbox:checked');
+
+      if (checkedCommentCheckbox) {
+        const commentId = checkedCommentCheckbox.getAttribute('data-commentid');
+
+        if (confirm('댓글을 삭제하시겠습니까?')) {
+          fetch(`/api/posts/comments/${commentId}/admin`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to delete comment');
+            }
+            return response.text();
+          })
+          .then(responseText => {
+            alert(responseText);
+            fetchAndRenderComments(); // 삭제 후 댓글 목록을 다시 불러와서 렌더링
+          })
+          .catch(error => console.error('Error deleting comment:', error));
+        }
+      } else {
+        alert('삭제할 댓글을 선택해주세요.');
+      }
     }
 
+  });
 
-    function renderUsersForPage(page) {
-        const startIndex = (page - 1) * userPerPage;
-        const endIndex = startIndex + userPerPage;
-        const usersToShow = users.slice(startIndex, endIndex);
+  function fetchAndRenderUsers() {
+    fetch('/api/users', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch users');
+      }
+      return response.json();
+    })
+    .then(responseUsers => {
+      users = responseUsers; // 사용자 정보를 저장
+      totalUsers = users.length;
+      renderPagination();
+      userInfoList.innerHTML = '';
+      renderUsersForPage(currentPage);
+    })
+    .catch(error => console.error('Error fetching users:', error));
+  }
 
-        userInfoList.innerHTML = '';
+  function fetchAndRenderPosts() {
+    fetch('/api/posts', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      return response.json();
+    })
+    .then(responsePosts => {
+      posts = responsePosts; // 게시물 정보를 저장
+      totalPosts = posts.length;
+      renderPagination();
+      userInfoList.innerHTML = '';
+      renderPostsForPage(currentPage);
+    })
+    .catch(error => console.error('Error fetching posts:', error));
+  }
 
-        usersToShow.forEach(user => {
-            const userDiv = document.createElement('div');
-            userDiv.classList.add('user-info');
-            userDiv.innerHTML = `
+  function fetchAndRenderComments() {
+    fetch('/api/comments', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch comments');
+      }
+      return response.json();
+    })
+    .then(responseComments => {
+      comments = responseComments; // 댓글 정보를 저장
+      totalComments = comments.length;
+      renderPagination();
+      userInfoList.innerHTML = '';
+      renderCommentsForPage(currentPage);
+    })
+    .catch(error => console.error('Error fetching comments:', error));
+  }
+
+  function renderPagination() {
+    let totalPages;
+
+    if (userManagementButton.classList.contains('active')) {
+      totalPages = Math.ceil(users.length / userPerPage);
+    } else if (postManagementButton.classList.contains('active')) {
+      totalPages = Math.ceil(posts.length / userPerPage);
+    } else if (commentManagementButton.classList.contains('active')) {
+      totalPages = Math.ceil(comments.length / userPerPage);
+    }
+
+    paginationContainer.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+      const pageButton = document.createElement('button');
+      pageButton.classList.add('page-button');
+      pageButton.textContent = i;
+      pageButton.dataset.page = i;
+      paginationContainer.appendChild(pageButton);
+    }
+  }
+
+  function renderUsersForPage(page) {
+    const startIndex = (page - 1) * userPerPage;
+    const endIndex = startIndex + userPerPage;
+    const usersToShow = users.slice(startIndex, endIndex);
+
+    userInfoList.innerHTML = '';
+
+    usersToShow.forEach(user => {
+      const userDiv = document.createElement('div');
+      userDiv.classList.add('user-info');
+      userDiv.innerHTML = `
         <table>
             <tr>
                 <td><input type="checkbox" class="user-checkbox" data-userid="${user.id}"></td>
@@ -581,22 +1130,22 @@
             </tr>
         </table>
     `;
-            userInfoList.appendChild(userDiv);
-        });
+      userInfoList.appendChild(userDiv);
+    });
 
-    }
+  }
 
-    function renderPostsForPage(page) {
-        const startIndex = (page - 1) * userPerPage;
-        const endIndex = startIndex + userPerPage;
-        const postsToShow = posts.slice(startIndex, endIndex);
+  function renderPostsForPage(page) {
+    const startIndex = (page - 1) * userPerPage;
+    const endIndex = startIndex + userPerPage;
+    const postsToShow = posts.slice(startIndex, endIndex);
 
-        userInfoList.innerHTML = '';
+    userInfoList.innerHTML = '';
 
-        postsToShow.forEach(post => {
-            const postDiv = document.createElement('div');
-            postDiv.classList.add('user-info');
-            postDiv.innerHTML = `
+    postsToShow.forEach(post => {
+      const postDiv = document.createElement('div');
+      postDiv.classList.add('user-info');
+      postDiv.innerHTML = `
             <table>
                 <tr>
                     <td><input type="checkbox" class="user-checkbox" data-postid="${post.id}"></td>
@@ -614,29 +1163,28 @@
                 </tr>
             </table>
         `;
-            userInfoList.appendChild(postDiv);
-        });
-    }
+      userInfoList.appendChild(postDiv);
+    });
+  }
 
-    // // 날짜 형식 변환 함수
-    // function formatDate(dateString) {
-    //     const date = new Date(dateString);
-    //     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-    // }
+  // // 날짜 형식 변환 함수
+  // function formatDate(dateString) {
+  //     const date = new Date(dateString);
+  //     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  // }
 
+  // 댓글 정보를 해당 페이지에 표시하는 함수
+  function renderCommentsForPage(page) {
+    const startIndex = (page - 1) * userPerPage;
+    const endIndex = startIndex + userPerPage;
+    const commentsToShow = comments.slice(startIndex, endIndex);
 
-    // 댓글 정보를 해당 페이지에 표시하는 함수
-    function renderCommentsForPage(page) {
-        const startIndex = (page - 1) * userPerPage;
-        const endIndex = startIndex + userPerPage;
-        const commentsToShow = comments.slice(startIndex, endIndex);
+    userInfoList.innerHTML = '';
 
-        userInfoList.innerHTML = '';
-
-        commentsToShow.forEach(comment => {
-            const commentDiv = document.createElement('div');
-            commentDiv.classList.add('user-info');
-            commentDiv.innerHTML = `
+    commentsToShow.forEach(comment => {
+      const commentDiv = document.createElement('div');
+      commentDiv.classList.add('user-info');
+      commentDiv.innerHTML = `
             <table>
                  <tr>
                     <td><input type="checkbox" class="user-checkbox" data-commentid="${comment.id}"></td>
@@ -654,12 +1202,12 @@
                     <td>${comment.postTitle}</td>
             </table>
         `;
-            userInfoList.appendChild(commentDiv);
-        });
-    }
+      userInfoList.appendChild(commentDiv);
+    });
+  }
 
-    // 최초 로딩 시에는 아무런 정보도 표시하지 않습니다.
-    renderUsersForPage(currentPage);
+  // 최초 로딩 시에는 아무런 정보도 표시하지 않습니다.
+  renderUsersForPage(currentPage);
 </script>
 
 </body>
