@@ -28,6 +28,8 @@ public class PostService {
     private final Category study = Category.DEVELOPMENT_STUDY;
     private final Category previousExam = Category.PREVIOUS_EXAM;
 
+    private final Category forumBoard = Category.FORUM_BOARD;
+
 
     //게시글 생성
     public PostResponseDto createPost(User user, PostRequestDto postRequestDto) {
@@ -38,17 +40,19 @@ public class PostService {
 
 
         //게시물 생성
-
         Post post = new Post(postRequestDto, user);
 
         //category 나누기
-        if (postRequestDto.getCategory() == 1) {
+        if (postRequestDto.getCategory().equals(Category.COOPERATION_PROJECT)) {
             post.setCategory(project);
-        } else if (postRequestDto.getCategory() == 2) {
+        } else if (postRequestDto.getCategory().equals(Category.DEVELOPMENT_STUDY)) {
             post.setCategory(study);
 
-        } else if (postRequestDto.getCategory() == 3) {
+        } else if (postRequestDto.getCategory().equals(Category.PREVIOUS_EXAM)) {
             post.setCategory(previousExam);
+        } else if (postRequestDto.getCategory().equals(Category.FORUM_BOARD)) {
+            post.setCategory(forumBoard);
+
         } else {
             throw new NullPointerException("해당 카테고리를 존재하지 않습니다.");
         }
@@ -73,34 +77,28 @@ public class PostService {
         Post post = postRepository.findById(postID)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
-        if (user.getId().equals(post.getUser().getId())) {
-            switch (postRequestDto.getCategory()) {
-                case 1:
-                    post.setCategory(project);
-                    break;
-                case 2:
-                    post.setCategory(study);
-                    break;
-                case 3:
-                    post.setCategory(previousExam);
-                    break;
-                default:
-                    throw new NullPointerException("해당 카테고리가 존재하지 않습니다.");
-            }
-            post.updatePost(postRequestDto);
+        //category 나누기
+        if (postRequestDto.getCategory().equals(Category.COOPERATION_PROJECT)) {
+            post.setCategory(project);
+        } else if (postRequestDto.getCategory().equals(Category.DEVELOPMENT_STUDY)) {
+            post.setCategory(study);
+
+        } else if (postRequestDto.getCategory().equals(Category.PREVIOUS_EXAM)) {
+            post.setCategory(previousExam);
+        } else if (postRequestDto.getCategory().equals(Category.FORUM_BOARD)) {
+            post.setCategory(forumBoard);
+
+        } else {
+            throw new NullPointerException("해당 카테고리를 존재하지 않습니다.");
         }
+
+        post.updatePost(postRequestDto);
     }
-
-
-
-
 
 
     //게시글 삭제
     @Transactional
     public void deletePost(Post post) {
-
-
 
 
         //삭제
@@ -122,7 +120,6 @@ public class PostService {
 
         //생성날짜 내림차순
         allPost = postRepository.findAllByOrderByCreatedAtDesc(pageable);
-
 
 
         for (Post post : allPost) {
@@ -159,10 +156,12 @@ public class PostService {
             case 3:
                 projectList = postRepository.findAllByCategoryOrderByCreatedAtDesc(Category.PREVIOUS_EXAM, pageable);
                 break;
+            case 4:
+                projectList = postRepository.findAllByCategoryOrderByCreatedAtDesc(Category.FORUM_BOARD, pageable);
+                break;
             default:
                 throw new IllegalArgumentException("해당 카테고리가 존재하지 않습니다.");
         }
-
 
 
         for (Post post : projectList) {
@@ -192,6 +191,9 @@ public class PostService {
                 break;
             case 3:
                 searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(previousExam, title, pageable);
+                break;
+            case 4:
+                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(forumBoard, title, pageable);
                 break;
             default:
                 throw new IllegalArgumentException("해당 카테고리가 존재하지 않습니다.");
@@ -225,10 +227,8 @@ public class PostService {
     }
 
 
-
     //프로젝트 카테고리 조회
     public List<PostResponseDto> getProject() {
-
 
 
         List<Post> projectList;
@@ -240,7 +240,6 @@ public class PostService {
         for (Post post : projectList) {
             postResponseDtoList.add(new PostResponseDto(post));
         }
-
 
 
         return postResponseDtoList;
@@ -262,7 +261,6 @@ public class PostService {
         }
 
 
-
         return postResponseDtoList;
 
     }
@@ -270,23 +268,38 @@ public class PostService {
     //문제은행 카테고리 조회
     public List<PostResponseDto> getExam() {
 
-            List<Post> projectList;
+        List<Post> projectList;
 
-            projectList = postRepository.findTop5ByCategoryOrderByCreatedAtDesc(previousExam);
+        projectList = postRepository.findTop5ByCategoryOrderByCreatedAtDesc(previousExam);
 
-            List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
 
-            for (Post post : projectList) {
-                postResponseDtoList.add(new PostResponseDto(post));
-            }
-
-
-
-            return postResponseDtoList;
-
-
+        for (Post post : projectList) {
+            postResponseDtoList.add(new PostResponseDto(post));
         }
+
+        return postResponseDtoList;
+
+    }
+
+    //자유게시판
+    public List<PostResponseDto> getForum() {
+
+        List<Post> projectList;
+
+        projectList = postRepository.findTop5ByCategoryOrderByCreatedAtDesc(forumBoard);
+
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+
+        for (Post post : projectList) {
+            postResponseDtoList.add(new PostResponseDto(post));
+        }
+
+        return postResponseDtoList;
+    }
 }
+
+
 
 
 

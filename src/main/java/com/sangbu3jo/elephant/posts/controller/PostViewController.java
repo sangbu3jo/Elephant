@@ -90,9 +90,11 @@ public class PostViewController {
         List<PostResponseDto> projResponseDtoList = postService.getProject();
         List<PostResponseDto> stuResponseDtoList = postService.getStudy();
         List<PostResponseDto> exaResponseDtoList = postService.getExam();
+        List<PostResponseDto> foruResponseDtoList = postService.getForum();
         model.addAttribute("project", projResponseDtoList);
         model.addAttribute("study", stuResponseDtoList);
         model.addAttribute("exam", exaResponseDtoList);
+        model.addAttribute("forum", foruResponseDtoList);
 
         return "mainPage";
     }
