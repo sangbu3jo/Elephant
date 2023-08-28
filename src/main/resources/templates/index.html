@@ -1,23 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <link rel="shortcut icon" href="#">
-  <meta name="viewport"
-        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="https://code.jquery.com/jquery-3.7.0.min.js"
-          integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
-          crossorigin="anonymous"></script>
-  <script type="application/javascript" src="/js/main.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-<!--  <link rel="stylesheet" href="/css/main.css">-->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-  <title>메인 페이지</title>
+    <meta charset="UTF-8"><link rel="shortcut icon" href="#">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+            crossorigin="anonymous"></script>
+    <script type="application/javascript" src="/js/main.js"></script>
+
+    <title>Elephant</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+    <link rel="stylesheet" href="/static/css/index.css">
+
+
 </head>
 <body>
+<div>
+    <header>
+        <a href="/">
+<!--
+                        <img class="logo" src="images/elephant2.png">
+-->
+            <img class="logo" src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
+                 alt="Button Icon">
+        </a>
 
-<button class="btn" id="tokenBtn" onclick="refreshAccessToken()">로그인 연장</button>
-<button class="btn" id="logoutBtn"  onclick="logout()">로그아웃</button>
+        <div class="menu">
+            <ul>
+                <li>Home</li>
+                <li>Category</li>
+                <li>Project</li>
+                <li>Login</li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="content">
+        <h1> Let's Collaborate with us. </h1>
+        <h2> Study And Take the exam with other ones. </h2>
+        <h2> Join a project with nice people. </h2>
+        <a href="/"> >> Go To Join << </a>
+    </div>
+</div>
+
 </body>
 </html>

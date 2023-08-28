@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,27 +28,27 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImpl userDetailsService;
     public static int AututhCNT = 1;
 
-/*    @Override
+    @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
     // 해당 필터를 거치지 않아야 할 url을 기재하여 처리할 수 있습니다.
-        String[] excludePath = {"/" , "/api/auth/login-page" , "/api/auth/login" , "/api/auth/signup",
-            "/api/auth/google/callback" , "/api/auth/kakao/callback" , "/api/auth/naver/callback"};
+        String[] excludePath = {"/api/auth/login-page" , "/api/auth/login"};
+/*        String[] excludePath = {"/" , "/api/auth/login-page" , "/api/auth/login" , "/api/auth/signup",
+            "/api/auth/google/callback" , "/api/auth/kakao/callback" , "/api/auth/naver/callback"};*/
         String path = request.getRequestURI();
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
-    }*/
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
-        //log.info("JwtAuthorizationFilter dofilterInternal " + AututhCNT++);
-        String AccesstokenValue = jwtUtil.getAccessTokenFromRequest(request);
+        String AccessTokenValue = jwtUtil.getAccessTokenFromRequest(request);
         String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(request);
 
-        if (StringUtils.hasText(AccesstokenValue)) {
+        if (StringUtils.hasText(AccessTokenValue)) {
             // JWT 토큰 substring
-            AccesstokenValue = jwtUtil.substringToken(AccesstokenValue);
+            AccessTokenValue = jwtUtil.substringToken(AccessTokenValue);
             refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
 
-            if (!jwtUtil.validateToken(AccesstokenValue)) {
+            if (!jwtUtil.validateToken(AccessTokenValue)) {
                 log.error("Access Token does not valid.");
 
                 if(request.getRequestURI().equals("/api/auth/logout")){
@@ -58,11 +59,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                 // 엑세스 토큰 재발급
                 redisService.generateAccessToken(request, response);
-                response.sendRedirect("/");
+                response.sendRedirect(request.getRequestURI());
                 return;
             }
 
-            Claims info = jwtUtil.getUserInfoFromToken(AccesstokenValue);
+            Claims info = jwtUtil.getUserInfoFromToken(AccessTokenValue);
 
             try {
                 setAuthentication(info.getSubject());
