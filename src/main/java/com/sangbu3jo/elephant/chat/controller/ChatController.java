@@ -3,6 +3,7 @@ package com.sangbu3jo.elephant.chat.controller;
 
 import com.sangbu3jo.elephant.board.dto.BoardResponseDto;
 import com.sangbu3jo.elephant.board.service.BoardService;
+import com.sangbu3jo.elephant.chat.dto.ChatMessageResponseDto;
 import com.sangbu3jo.elephant.chat.service.ChatRoomService;
 import com.sangbu3jo.elephant.chat.dto.ChatMessageRequestDto;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,21 +51,22 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("nickname", chatMessageRequestDto.getNickname());
         headerAccessor.getSessionAttributes().put("username", chatMessageRequestDto.getUsername());
 
-//        // return을 boolean으로 주자
-//        Boolean adduser = chatRoomService.addUserToChatRoom(chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto.getUsername());
-//
-//        if (adduser) {
-//            chatMessageRequestDto.setMessage(chatMessageRequestDto.getNickname() + "님이 입장하셨습니다 :D");
-//        }
-
-        chatMessageRequestDto.setMessage(chatMessageRequestDto.getNickname() + "님이 입장하셨습니다 :D");
-        messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto);
+        // 두 개의 case를 분리해야 함 ->
+        Boolean user = chatRoomService.findUsersInChatRoom(chatMessageRequestDto.getUsername(), chatMessageRequestDto.getChatRoomId());
+        if (user) {
+            chatMessageRequestDto.setMessage(chatMessageRequestDto.getNickname() + "님이 입장하셨습니다 :D");
+            messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto);
+        } /*else {
+            List<ChatMessageResponseDto> messages = chatRoomService.getMessages(chatMessageRequestDto.getChatRoomId());
+            messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), messages);
+        }*/
     }
 
     @MessageMapping("/chat/sending")
     public void sendMessage(@Payload ChatMessageRequestDto chatMessageRequestDto, SimpMessageHeaderAccessor headerAccessor) {
         log.info("메시지 전송 요청이 넘어온 것을 확인");
         headerAccessor.getSessionAttributes().put("chatRoomId", chatMessageRequestDto.getChatRoomId());
+        chatRoomService.saveChatMessage(chatMessageRequestDto);
         messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto);
     }
 
