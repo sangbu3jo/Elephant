@@ -33,7 +33,7 @@ public class AdminController {
     }
 
     // 게시물 전체 조회 API
-    @GetMapping("/posts")
+    @GetMapping("/post") // post랑 겹쳐서 url 수정함
     public ResponseEntity<List<PostResponseDto>> getAllUserPosts(@AuthenticationPrincipal UserDetailsImpl userDetails){
         List<PostResponseDto> posts = adminService.getAllUserPosts(userDetails.getUser());
         return ResponseEntity.ok(posts);
