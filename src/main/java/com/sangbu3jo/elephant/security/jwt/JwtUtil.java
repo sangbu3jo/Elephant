@@ -93,11 +93,26 @@ public class JwtUtil {
   public void addJwtToCookieAccessToken(String token, HttpServletResponse res) {
     token = URLEncoder.encode(token, StandardCharsets.UTF_8).replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
-    Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // Name-Value
+    // 방법1) HTTP 응답에 다양한 유형의 헤더를 추가하는 방법 -> addHeader
+/*    ResponseCookie responseCookie = ResponseCookie.from(AUTHORIZATION_HEADER, token)
+        .path("/")
+        .secure(true)
+        .maxAge(ACCESS_TOKEN_TIME)
+        .build();
+    res.addHeader("Set-Cookie",responseCookie.toString());*/
+
+    // 방법2) 응답 헤더에 쿠키를 넣은 형태로 응답함.
+    Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // 쿠키 생성
     cookie.setPath("/");
+    cookie.setMaxAge((int) ACCESS_TOKEN_TIME);
     cookie.setSecure(true);
     res.addCookie(cookie);
+
+/*    // 서버 -> 클라이언트 (HttpServletResponse 응답 헤더에 name-value 형태로 응답함.)
+    res.addHeader(AUTHORIZATION_HEADER, token);*/
+
   }
+
 
   // JWT Cookie 에 refresh token 저장
   public void addJwtToCookieRefreshToken(String refreshToken, HttpServletResponse res) {
@@ -105,6 +120,7 @@ public class JwtUtil {
 
     Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken); // Name-Value
     cookie.setPath("/");
+    cookie.setMaxAge((int)REFRESH_TOKEN_TIME);
     cookie.setHttpOnly(true);
     cookie.setSecure(true);
     res.addCookie(cookie);
