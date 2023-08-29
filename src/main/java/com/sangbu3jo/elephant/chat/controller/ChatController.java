@@ -3,9 +3,9 @@ package com.sangbu3jo.elephant.chat.controller;
 
 import com.sangbu3jo.elephant.board.dto.BoardResponseDto;
 import com.sangbu3jo.elephant.board.service.BoardService;
+import com.sangbu3jo.elephant.chat.dto.ChatMessageRequestDto;
 import com.sangbu3jo.elephant.chat.dto.ChatMessageResponseDto;
 import com.sangbu3jo.elephant.chat.service.ChatRoomService;
-import com.sangbu3jo.elephant.chat.dto.ChatMessageRequestDto;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,17 +13,14 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
-import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -46,6 +43,14 @@ public class ChatController {
         return "chat";
     }
 
+    @ResponseBody
+    @GetMapping("/api/chat/messages/{board_id}")
+    public List<ChatMessageResponseDto> getChatMessages(@PathVariable Long board_id) {
+        log.info("메세지 리스트 요청 넘어옴");
+        List<ChatMessageResponseDto> messages = chatRoomService.getMessages(board_id);
+        return messages;
+    }
+
     @MessageMapping("/chat/adduser")
     public void enterUser(@Payload ChatMessageRequestDto chatMessageRequestDto, SimpMessageHeaderAccessor headerAccessor) {
         log.info("서버로 요청 넘어옴을 확인");
@@ -60,13 +65,13 @@ public class ChatController {
         if (user) {
             chatMessageRequestDto.setMessage(chatMessageRequestDto.getNickname() + "님이 입장하셨습니다 :D");
             messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto);
-        } else {
+        } /*else {
             String sessionId = headerAccessor.getSessionId();
             log.info(sessionId);
             List<ChatMessageResponseDto> messages = chatRoomService.getMessages(chatMessageRequestDto.getChatRoomId());
             messagingTemplate.convertAndSendToUser(sessionId, "/topic/" + chatMessageRequestDto.getChatRoomId(), messages);
 //            messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), messages);
-        }
+        }*/
     }
 
     @MessageMapping("/chat/sending")
