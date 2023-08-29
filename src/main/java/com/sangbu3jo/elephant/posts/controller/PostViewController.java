@@ -1,19 +1,20 @@
 package com.sangbu3jo.elephant.posts.controller;
 
 import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
-import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,23 +40,23 @@ public class PostViewController {
     //pagination
     @GetMapping("/posts/categories/{category}")
     public String getCategoryPost(
-            @RequestParam(name = "page", defaultValue = "1") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size,
-            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
-            @RequestParam(name = "isAsc", defaultValue = "true") Boolean isAsc,
             @PathVariable Integer category,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(required = false, defaultValue = "0", value = "page") Integer pageNo,
+            Pageable pageable,
             Model model) {
 
-        Page<PostResponseDto> postResponseDtoList = postService.getCategoryPost(category,
-                page,
-                size,
-                sortBy,
-                isAsc);
-        model.addAttribute("category", postResponseDtoList);
+        Boolean admin = false;
+        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            admin = true;
+        }
 
+        pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
+        Page<PostResponseDto> postResponseDtoList = postService.getCategoryPost(category, pageable, pageNo);
+        model.addAttribute("categoryName", postResponseDtoList.getContent().get(0).getCategory());
+        model.addAttribute("posts", postResponseDtoList);
 
         return "category";
-
     }
 
 
@@ -64,7 +65,12 @@ public class PostViewController {
     @GetMapping("/posts/categories/{category}/titles")
     public String getSearchTitle(@PathVariable Integer category,
                                  @RequestParam("title") String title,
+                                 @AuthenticationPrincipal UserDetailsImpl userDetails,
                                  Model model) {
+        Boolean admin = false;
+        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            admin = true;
+        }
 
         List<PostResponseDto> postResponseDtoList = postService.getSearchTitle(category, title);
 
