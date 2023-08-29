@@ -91,7 +91,7 @@
                 success: function (response) {
                     $("#result").text(response); // 성공 메시지를 표시합니다.
 
-                    window.location.href = "/api/posts/categories"
+                    window.location.href = "/"
                 },
                 error: function (error) {
                     $("#result").text("에러 발생: " + error.responseText); // 에러 메시지를 표시합니다.
