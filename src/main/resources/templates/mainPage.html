@@ -337,6 +337,15 @@
 
     </div>
 
+
+<div id="category-list" style="float: right;">
+    <ul>
+        <li><a href="/api/posts/categories/1">협업 프로젝트</a></li>
+        <li><a href="/api/posts/categories/2">스터디 모집</a></li>
+        <li><a href="/api/posts/categories/3">문제은행</a></li>
+        <li><a href="/api/posts/categories/4">자유게시판</a></li>
+    </ul>
+
 </div>
 
 <!-- 나머지 내용 -->
@@ -403,7 +412,54 @@
 
 </div>
 
+
+<div id="forum-list">
+    <ul>
+        <li th:each="forum : ${forums}">
+            <!--                <a>-->
+            <h2 th:text="${forum.title}"></h2>
+            <h3 th:text="${forum.category}"></h3>
+            <a th:href="@{'/api/posts/' + ${forum.id}}">
+                자세히 보기
+            </a>
+
+        </li>
+    </ul>
+</div>
+
+<!--    <div id="study-list">-->
+<!--        <form method="get" action="/api/posts/study">-->
+<!--            <ul>-->
+<!--                <li th:each="study, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
+<!--                    &lt;!&ndash;                <a>&ndash;&gt;-->
+<!--                    <h2 th:text="${study.title}"></h2>-->
+<!--                    <h3 th:text="${study.category}"></h3>-->
+<!--                    <a th:href="@{'/api/posts/' + ${study.id}}">-->
+<!--                        자세히 보기-->
+
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div id="exam-list">-->
+<!--    <form method="get" action="/api/posts/exam">-->
+<!--        <ul>-->
+<!--            <li th:each="exam, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
+
+<!--                <h2 th:text="${exam.title}"></h2>-->
+<!--                <h3 th:text="${exam.category}"></h3>-->
+<!--                <a th:href="@{'/api/posts/' + ${exam.id}}">자세히 보기-->
+
+<!--                </a>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </form>-->
+<!--</div>-->
+
 </body>
+
 
 <script>
     function gotoPost(postid) {

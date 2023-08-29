@@ -82,6 +82,25 @@ public class PostViewController {
         return "post";
     }
 
+
+
+    //프로젝트
+    @GetMapping("/posts/project")
+    public String getProject(Model model){
+
+        List<PostResponseDto> projResponseDtoList = postService.getProject();
+        List<PostResponseDto> stuResponseDtoList = postService.getStudy();
+        List<PostResponseDto> exaResponseDtoList = postService.getExam();
+        List<PostResponseDto> foruResponseDtoList = postService.getForum();
+        model.addAttribute("project", projResponseDtoList);
+        model.addAttribute("study", stuResponseDtoList);
+        model.addAttribute("exam", exaResponseDtoList);
+        model.addAttribute("forum", foruResponseDtoList);
+
+        return "mainPage";
+    }
+
+
 //    //스터디
 //    @GetMapping("/posts/study")
 //    public String getStudy(Model model){
