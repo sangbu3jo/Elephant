@@ -1,8 +1,8 @@
 package com.sangbu3jo.elephant.posts.dto;
 
+import com.sangbu3jo.elephant.posts.entity.Category;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter

@@ -1,5 +1,6 @@
 package com.sangbu3jo.elephant.posts.service;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -54,28 +55,37 @@ public class S3UploaderService {
     private String putS3(File uploadFile, String fileName) {
         amazonS3.putObject(
                 new PutObjectRequest(bucket, fileName, uploadFile)
-                        .withCannedAcl(CannedAccessControlList.PublicRead)	// PublicRead 권한으로 업로드 됨
+                        .withCannedAcl(CannedAccessControlList.PublicRead)    // PublicRead 권한으로 업로드 됨
         );
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
     private void removeNewFile(File targetFile) {
-        if(targetFile.delete()) {
+        if (targetFile.delete()) {
             log.info("파일이 삭제되었습니다.");
-        }else {
+        } else {
             log.info("파일이 삭제되지 못했습니다.");
         }
     }
 
-    private Optional<File> convert(MultipartFile files) throws  IOException {
+    private Optional<File> convert(MultipartFile files) throws IOException {
         File convertFile = new File(files.getOriginalFilename());
-        if(convertFile.createNewFile()) {
+        if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(files.getBytes());
             }
             return Optional.of(convertFile);
         }
         return Optional.empty();
+    }
+
+    //file 삭제
+    public void fileDelete(String fileName) {
+        try {
+            amazonS3.deleteObject(this.bucket, (fileName).replace(File.separatorChar, '/'));
+        } catch (AmazonServiceException e) {
+            System.out.println(e.getErrorMessage());
+        }
     }
 
 }

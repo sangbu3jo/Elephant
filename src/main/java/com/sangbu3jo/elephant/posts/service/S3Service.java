@@ -24,6 +24,7 @@ public class S3Service {
 
     private final UserRepository userRepository;
 
+    //게시물 작성
     @Transactional
     public Long keepPost(MultipartFile image, PostRequestDto postRequestDto, Category category, User user) throws IOException {
 
@@ -40,8 +41,43 @@ public class S3Service {
         post.setCompleted(false);
 
         //저장
-        post = postRepository.save(post);
+        Post savePost = postRepository.save(post);
 
-        return post.getId();
+        return savePost.getId();
     }
+
+
+    @Transactional
+    public void modifiedPost(MultipartFile image,
+                             Category category,
+                             PostRequestDto postRequestDto,
+                             Post post) throws IOException {
+
+
+        if (category.equals(Category.COOPERATION_PROJECT)) {
+            post.setCategory(Category.COOPERATION_PROJECT);
+        } else if (category.equals(Category.DEVELOPMENT_STUDY)) {
+            post.setCategory(Category.DEVELOPMENT_STUDY);
+        } else if (category.equals(Category.PREVIOUS_EXAM)) {
+            post.setCategory(Category.PREVIOUS_EXAM);
+
+        } else if (category.equals(Category.FORUM_BOARD)) {
+            post.setCategory(Category.PREVIOUS_EXAM);
+        } else {
+            throw new NullPointerException("해당 카테고리를 존재하지 않습니다.");
+        }
+
+
+        if (!image.isEmpty()) {
+            String storedFileName = s3UploaderService.upload(image, "image");
+            post.setFiles(storedFileName);
+        }
+
+        post.updatePost(postRequestDto);
+
+
+    }
+
+
 }
+
