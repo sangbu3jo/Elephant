@@ -49,7 +49,6 @@ public class ChatRoomService {
                             ChatMessage.class
                     );*/
 
-
         List<ChatMessage> chatMessages = mongoTemplate.findAll(
                 ChatMessage.class,
                 chatRoomId.toString()

@@ -49,7 +49,7 @@ public class ChatController {
     @MessageMapping("/chat/adduser")
     public void enterUser(@Payload ChatMessageRequestDto chatMessageRequestDto, SimpMessageHeaderAccessor headerAccessor) {
         log.info("서버로 요청 넘어옴을 확인");
-        log.info(chatMessageRequestDto.getChatRoomId().toString()); // 이게 왜 null 이라는거지 갑자기 .. 열받네 ..
+        log.info(chatMessageRequestDto.getChatRoomId().toString());
         // 연결하면서 put 해주어야 함
         headerAccessor.getSessionAttributes().put("chatRoomId", chatMessageRequestDto.getChatRoomId());
         headerAccessor.getSessionAttributes().put("nickname", chatMessageRequestDto.getNickname());

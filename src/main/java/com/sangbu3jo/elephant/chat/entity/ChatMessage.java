@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 
 // mongodb에 저장할 내용
-@Document(collection = "ele")
+@Document/*(collection = "ele")*/
 @Data
 @Getter
 public class ChatMessage implements Serializable {
@@ -20,7 +20,6 @@ public class ChatMessage implements Serializable {
     @Id
     @Field(targetType = FieldType.OBJECT_ID)
     private String id;
-
     private String type; // 메시지 타입
     private Long chatRoomId;
     private String nickname; // 클라이언트에서 표시용

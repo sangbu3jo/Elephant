@@ -43,7 +43,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // setAllowedOrigins("*")로 모든 오리진(Origin)에서의 접근을 허용
         // 웹이 아니라 앱을 통해서 채팅 기능을 구현하는 경우, withSockJS()를 사용하면 동작하지 않으므로 제외해야 함 (현재는 웹이므로 설정 유지)
         registry.addEndpoint("/ws").setAllowedOriginPatterns("*")/*.setHandshakeHandler(new CustomHandshakeHandler())*/.withSockJS();
-                                    // 원래는 /ws        // 설정해둔 url의 도메인을 적어주어야 함!
+                                          // 설정해둔 url의 도메인을 적어주어야 함!
     }
 
     /**

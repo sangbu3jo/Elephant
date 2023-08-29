@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 public class ChatMessageRequestDto {
 
     private MessageType type; // 메시지 타입
-
     private Long chatRoomId;
     private String nickname; // 클라이언트에서 표시용
     private String username; // 서버와 통신용

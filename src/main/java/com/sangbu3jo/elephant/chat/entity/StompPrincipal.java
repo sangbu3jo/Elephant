@@ -13,3 +13,4 @@ public class StompPrincipal implements Principal {
         return null;
     }
 }
+
