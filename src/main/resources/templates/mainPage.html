@@ -457,7 +457,10 @@
         };
 
         // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
-        fetchUserInfo();
+        const token = Cookies.get('Authorization');
+        if(token){ // 토큰 있을 경우
+                fetchUserInfo();
+        }
 
         // 알림 목록 업데이트 함수
         const updateNotificationList = () => {

@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>코끼리</title>
+<!--  <script src="https://code.jquery.com/jquery-3.7.0.min.js"-->
+<!--          integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="-->
+<!--          crossorigin="anonymous"></script>-->
+<!--  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>-->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <link rel="stylesheet"
@@ -270,6 +274,7 @@
 
     /* 새로 추가한 스타일 */
     .user-info-container {
+      box-sizing: unset;
       display: flex;
       flex-direction: column; /* 세로 정렬로 변경 */
       justify-content: flex-start;
@@ -278,7 +283,7 @@
       height: 100vh;
       background-color: white;
       border: 1px solid #ddd;
-      margin: 10px;
+      margin-left: 10%;
       padding: 20px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 /*      position: fixed;
@@ -663,7 +668,7 @@
         success: function (data) {
           removeToken();
           alert("로그아웃 성공");
-          window.location.href("/");
+          window.location.href='/';
         },
         error: function () {
           alert("로그아웃 실패");
