@@ -40,11 +40,11 @@ public class PostViewController {
     //pagination
     @GetMapping("/posts/categories/{category}")
     public String getCategoryPost(
-            @PathVariable Integer category,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestParam(required = false, defaultValue = "0", value = "page") Integer pageNo,
-            Pageable pageable,
-            Model model) {
+                                 @PathVariable Integer category,
+                                 @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                 @RequestParam(required = false, defaultValue = "0", value = "page") Integer pageNo,
+                                 Pageable pageable,
+                                 Model model) {
 
         Boolean admin = false;
         if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
@@ -69,18 +69,27 @@ public class PostViewController {
     public String getSearchTitle(@PathVariable Integer category,
                                  @RequestParam("title") String title,
                                  @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                 @RequestParam(required = false, defaultValue = "0", value = "page") Integer pageNo,
+                                 Pageable pageable,
                                  Model model) {
         Boolean admin = false;
         if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
             admin = true;
         }
 
-        List<PostResponseDto> postResponseDtoList = postService.getSearchTitle(category, title);
-
-        model.addAttribute("searchedPage", postResponseDtoList);
+        Page<PostResponseDto> postResponseDtoList = postService.getSearchTitle(category, pageable, pageNo, title);
+        if(!postResponseDtoList.isEmpty()) {
+            model.addAttribute("categoryName",
+                postResponseDtoList.getContent().get(0).getCategory());
+            model.addAttribute("posts", postResponseDtoList);
+        }
 
         return "searchedPage";
     }
+
+
+
+
     //게시글 상세(단건 조회) 페이지
     @GetMapping("/posts/{post_id}")
     public String getPost(@PathVariable Long post_id,

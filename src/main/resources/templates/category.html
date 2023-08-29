@@ -119,16 +119,12 @@
 
     /* 알림 */
     .notification-icon {
-      width: 40px;
-      height: 40px;
       font-size: 30px;
       cursor: pointer;
       margin-right: 10px;
     }
 
     .notification-icon div {
-      width: 40px;
-      height: 40px;
       position: relative;
     }
 
@@ -630,10 +626,14 @@ margin-left: 25%; margin-top: 2%;">
   //titlecontaing 검색
   function searchByTitle() {
     // 검색어 가져오기
-    const category = window.location.href.split('/').pop(); //주소창에서 category값 받아오기
+    const currentURL = new URL(window.location.href);
+    const category = currentURL.pathname.split('/')[4]; // 주소창에서 category값 받아오기
     const searchInput = document.getElementById("search-input").value;
+    console.log(category);
+
+
     // 검색 결과 페이지로 이동
-    window.location.href = `/api/posts/categories/${category}/titles?title=${searchInput}`;
+    window.location.replace("/api/posts/categories/" +category +"/titles?title=" + searchInput);
   }
 
   // header js 추가
