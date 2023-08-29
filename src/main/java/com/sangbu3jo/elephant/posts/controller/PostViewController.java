@@ -53,8 +53,11 @@ public class PostViewController {
 
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         Page<PostResponseDto> postResponseDtoList = postService.getCategoryPost(category, pageable, pageNo);
-        model.addAttribute("categoryName", postResponseDtoList.getContent().get(0).getCategory());
-        model.addAttribute("posts", postResponseDtoList);
+        if(!postResponseDtoList.isEmpty()) {
+            model.addAttribute("categoryName",
+                postResponseDtoList.getContent().get(0).getCategory());
+            model.addAttribute("posts", postResponseDtoList);
+        }
 
         return "category";
     }

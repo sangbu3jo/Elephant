@@ -105,7 +105,7 @@
     <!-- 조회수 앞에 "조회수" 추가하여 출력 -->
     <h5 th:text="'조회수 ' + ${post.view_cnt}"></h5>
 
-    <h5 th:if="${post.category != post.category.PREVIOUS_EXAM}">
+    <h5 th:unless="${post.category == '문제 은행' || post.category == '자유 게시판'}">
         <span th:if="${post.completed == false}">모집중</span>
         <span th:if="${post.completed == true}">모집완료</span>
     </h5>

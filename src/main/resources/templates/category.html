@@ -153,6 +153,7 @@
     .list-group-item span:nth-child(1) {
       width: 50%;
     }
+
     .list-group-item span:nth-child(2) {
       width: 35%;
     }
@@ -215,7 +216,7 @@
       cursor: pointer;
     }
 
-    .offcanvas{
+    .offcanvas {
       background-color: #f5f5fa;
     }
 
@@ -240,7 +241,7 @@
       display: flex;
     }
 
-    .bottomonewrapper{
+    .bottomonewrapper {
       width: 100%;
       height: 100%;
       display: flex;
@@ -271,6 +272,7 @@
     .btn-primary {
       background-color: #e6e6e6;
     }
+
     /*bottom two*/
     .bottomtwo {
       height: 100%;
@@ -304,6 +306,7 @@
     }
 
     .pagination {
+      margin-top: 15%;
       display: flex;
       flex-wrap: wrap;
       list-style: none;
@@ -406,7 +409,7 @@
     .pagination {
       display: flex;
       align-items: center;
-      background: #ffffff;
+      background: transparent;
       color: #410358;
       padding: 10px 40px;
       border-radius: 6px;
@@ -525,6 +528,7 @@
 </div>
 
 
+<!--상단바 아래 제목과 게시글 영역-->
 <div class="bottom">
   <div class="bottomone">
     <div class="bottomonewrapper">
@@ -539,7 +543,8 @@
         <button onclick="searchByTitle()" style="
                 background-color: #e6e6e6; color: #1a1313;
                 border:none;
-    padding: 1%;" class="btn btn-primary">검색</button>
+    padding: 1%;" class="btn btn-primary">검색
+        </button>
       </div>
 
       <!-- 게시글 생성 버튼 -->
@@ -547,50 +552,35 @@
         <button type="button" class="btn btn-primary" id="create-post-button"
                 style="
                 background-color: #e6e6e6; color: #1a1313;
-                border:none;" data-bs-toggle="modal" data-bs-target="#exampleModal">게시글 생성</button>
+                border:none;" data-bs-toggle="modal" data-bs-target="#exampleModal">게시글 생성
+        </button>
       </div>
-
-
     </div>
-
   </div>
 
-
-<!--  <div id="see-area">
-      <div class="pagination">
-          정렬:
-          <select id="sorting" onchange="showPost()">
-              <option value="createdAt">작성일</option>
-              <option value="viewCnt">조회수</option>
-              <option value="comment">댓글수</option>
-          </select>
-          <input type="radio" name="isAsc" value="true" onchange="showPost()" checked/> 오름차순
-          <input type="radio" name="isAsc" value="false" onchange="showPost()"/> 내림차순
-      </div>
-      <div id="pagination" class="pagination"></div>
-      <br>
-      <div id="post-container">
-
-      </div>
-  </div>-->
-
-
-  <div id="post-list">
-    <ul>
-      <!-- 조회 결과를 동적으로 추가할 곳 -->
-      <li th:each="post : ${posts}">
-        <h2 th:text="${post.title}"></h2>
-        <h5 th:text="${post.category}"></h5>
-        <!--            <h3 th:text="${#strings.substring(post.content,0,10) + '....'}"></h3>-->
-        <h5 th:text="${post.createdAt}"></h5>
-        <a th:href="@{/api/posts/{postId}(postId=${post.id})}">자세히 보기</a>
-
+  <!--게시글 목록 코드-->
+  <div>
+    <ol class="list-group list-group" style="width: 50%;
+margin-left: 25%; margin-top: 2%;">
+      <li class="list-group-item d-flex justify-content-between align-items-start"
+          th:each="post, postIndex : ${posts}">
+        <div class="fw-bold-left" th:text="${postIndex.index + 1}"></div>
+        <div class="ms-3 me-auto" style="
+    text-align: left;
+">
+          <a th:href="@{/api/posts/{postId}(postId=${post.id})}">
+            <div class="fw-bold-left" th:text="|제목 : ${post.title}|"></div>
+            <span
+                th:text="|내용 : ${post.content.length() > 10 ? #strings.substring(post.content, 0, 10) + '...' : post.content}|"></span>
+          </a>
+        </div>
+        <span class="badge bg-primary rounded-pill" style="font-size: 15px; width: 10%;"
+              th:text="|조회수 : ${post.view_cnt}|"></span>
       </li>
-    </ul>
-
+    </ol>
   </div>
 
-
+  <!--페이징 처리 코드 -->
   <div class="bottomthree">
     <!-- 페이징처리 시작 -->
     <div th:if="${!posts.isEmpty()}">
@@ -617,7 +607,6 @@
         </li>
 
 
-
         <li class="page-item" th:classappend="${!posts.hasNext()} ? 'disabled'">
           <a class="page-link" th:href="@{|/page=${posts.getPageable().getPageNumber() + 2}|}">
             <span>다음</span>
@@ -627,26 +616,6 @@
     </div>
     <!-- 페이징처리 끝 -->
   </div>
-
-<!--  <div class="container">
-    <div class="pagination">
-      <button class="btn1">pre</button>
-      <ul class="paging-ul">
-        <li class="link" value="1">1</li>
-        <li class="link" value="2">2</li>
-        <li class="link" value="3">3</li>
-        <li class="link" value="4">4</li>
-        <li class="link" value="5">5</li>
-        <li class="link" value="6">6</li>
-        <li class="link" value="7">7</li>
-        <li class="link" value="8">8</li>
-        <li class="link" value="9">9</li>
-        <li class="link" value="10">10</li>
-      </ul>
-      <button class="btn1">next</button>
-
-    </div>
-  </div>-->
 
 </div>
 
@@ -666,9 +635,6 @@
     // 검색 결과 페이지로 이동
     window.location.href = `/api/posts/categories/${category}/titles?title=${searchInput}`;
   }
-
-
-
 
   // header js 추가
   $(document).ready(function () {
@@ -739,7 +705,7 @@
 
       // "전체 읽음" 버튼에 이벤트 리스너 연결
       const button = document.getElementById('markAllReadButton');
-      button.addEventListener('click', function() {
+      button.addEventListener('click', function () {
         const confirmResult = confirm('알림 전체 읽음처리 하시겠습니까?');
         if (confirmResult) {
           // 확인을 선택한 경우 서버에 요청 보내기
@@ -752,7 +718,6 @@
         }
 
       });
-
 
     };
 
@@ -778,7 +743,8 @@
     // 알림 아이템 추가 함수
     const addNotificationToList = (notification) => {
       const listItem = document.createElement('div');
-      listItem.className = notification.read ? 'notification-list-item read' : 'notification-list-item unread';
+      listItem.className = notification.read ? 'notification-list-item read'
+          : 'notification-list-item unread';
       const timeAgo = formatTimeAgo(notification.createdAt);
       listItem.innerHTML = `${notification.content}<br><span class="notification-time">${timeAgo}</span>`;
       listItem.onclick = () => {
@@ -811,11 +777,11 @@
       const unreadCount = notificationsList.filter(notification => !notification.read).length;
       if (unreadCount > 0) {
         notificationIcon.classList.add('new-notification');
-        notificationBadge.style.display="inline";
+        notificationBadge.style.display = "inline";
         notificationBadge.innerText = unreadCount.toString();
       } else {
         notificationIcon.classList.remove('new-notification');
-        notificationBadge.style.display="none";
+        notificationBadge.style.display = "none";
         // notificationBadge.innerText = '';
       }
     };
@@ -846,20 +812,22 @@
         updateNotificationIcon();
       };
     });
+
     // 알림 전체 읽음 처리 함수
     function markAllNotificationsAsRead() {
       $.post(`/api/mark-all-notifications-as-read/${userId}`)
-      .done(function(response) {
+      .done(function (response) {
         alert(response); // 성공 메시지 출력
         // 서버 응답에 따라 적절한 처리를 수행할 수 있습니다.
         // 예를 들어 알림 목록을 다시 가져와서 업데이트하는 등의 작업을 수행할 수 있습니다.
       })
-      .fail(function(response) {
+      .fail(function (response) {
         alert(response); // 오류 메시지 출력
       });
     }
 
   });
+
   function removeToken() { // 토큰 삭제
     Cookies.remove('Authorization', {path: '/'});
   }
@@ -923,7 +891,6 @@
   function redirectToLoginPage() {
     window.location.href = "/api/auth/login-page";
   }
-
 
 
 </script>
