@@ -62,9 +62,36 @@ public class NotificationService {
         LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
         notification.setCreatedAt(currentTime); // 생성 시간 설정
         notification.setUserId(userId);
-        notification.setPostId(postId);
-        notification.setContent("\uD83D\uDD14댓글알림\uD83D\uDD14<br>" + commentAuthor);
-        notification.setUrl("/post/" + postId);
+        notification.setContent("\uD83D\uDD14댓글 알림\uD83D\uDD14<br>" + commentAuthor);
+        notification.setUrl("http://localhost:8080/api/posts/" + postId);
+        notification.setRead(false);
+
+        notificationRepository.save(notification);
+        sendNotificationToUser(userId, notification);
+    }
+
+    // 프로젝트에 유저 참여시 알림 생성 및 전송
+    public void addUserAndSendNotification(Long userId, Long boardId, String addUserAuthor){
+        Notification notification = new Notification();
+        LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
+        notification.setCreatedAt(currentTime); // 생성 시간 설정
+        notification.setUserId(userId);
+        notification.setContent("\uD83D\uDD14프로젝트 알림\uD83D\uDD14<br>" + addUserAuthor);
+        notification.setUrl("http://localhost:8080/api/boards/" + boardId);
+        notification.setRead(false);
+
+        notificationRepository.save(notification);
+        sendNotificationToUser(userId, notification);
+    }
+
+    // 초대시 알림 생성 및 전송
+    public void inviteAndSendNotification(Long userId, String inviteAuthor){
+        Notification notification = new Notification();
+        LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
+        notification.setCreatedAt(currentTime); // 생성 시간 설정
+        notification.setUserId(userId);
+        notification.setContent("\uD83D\uDD14프로젝트 알림\uD83D\uDD14<br>" + inviteAuthor);
+        notification.setUrl("http://localhost:8080/api/boards");
         notification.setRead(false);
 
         notificationRepository.save(notification);

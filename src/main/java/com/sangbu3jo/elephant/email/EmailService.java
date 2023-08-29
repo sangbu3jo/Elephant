@@ -4,6 +4,7 @@ import com.sangbu3jo.elephant.board.entity.Board;
 import com.sangbu3jo.elephant.board.repository.BoardRepository;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
+import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class EmailService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final BoardUserRepository boardUserRepository;
+    private final NotificationService notificationService;
 
     public ResponseEntity<String> confirming(Long boardId, EmailUserDto emailUserDto, User user) {
         // user는 초대하는 사람 (user)
@@ -49,10 +51,15 @@ public class EmailService {
             for (User user1: users) {
                 try {
                     sendEmail(board, user1.getUsername(), user);
+                    // 초대받은 사용자에게 알람 보내기
+                    String notificationContent = user.getNickname() + "님이 회원님을 \"" + board.getTitle() + "\" 프로젝트에 초대하셨습니다. 가입하신 이메일을 확인해주세요.";
+                    notificationService.inviteAndSendNotification(user1.getId(), notificationContent);
+
                 } catch (Exception e) {
 //                    return ResponseEntity.badRequest().body("사용자 초대 실패");
                 }
             }
+
             return ResponseEntity.ok().body("사용자 초대 완료!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("가입되어 있지 않은 사용자는 초대할 수 없습니다.");
@@ -65,7 +72,7 @@ public class EmailService {
         EmailDto emailDto = EmailDto.builder()
                 .sendTo(invitedUser)
                 .sendFrom(invitingUser.getNickname())
-                .subject("[코끼리] " + invitingUser.getNickname() + "님이 " + board.getTitle() + "프로젝트에 초대하셨습니다.")
+                .subject("[코끼리] " + invitingUser.getNickname() + "님이 " + board.getTitle() + " 프로젝트에 초대하셨습니다.")
                 .build();
 
         // 이메일 내용 설정
@@ -86,13 +93,16 @@ public class EmailService {
 
     public String setMailMessage(String sendTo, String sendFrom, Board board) throws UnsupportedEncodingException {
         String msg = "";
-        msg += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">코끼리</h1>";
-        msg += "<p style=\"font-size: 16px; padding-right: 30px; padding-left: 30px;\">";
-        msg += "안녕하세요 " + sendTo + "님. 코끼리입니다 !" + "<br>";
-        msg += sendFrom + "님 으로부터 " + board.getTitle() + "프로젝트에 초대되셨습니다! </p>";
-        msg += "<div style=\"padding-right: 30px; padding-left: 30px; margin: 32px 0 40px;\"><table style=\"border-collapse: collapse; border: 0; background-color: #F4F4F4; height: 70px; table-layout: fixed; word-wrap: break-word; border-radius: 6px;\"><tbody><tr><td style=\"text-align: center; vertical-align: middle; font-size: 30px;\">";
-        msg += "<a href=\"http://localhost:8080/api/boards/" + board.getId() + "/member?member=" + URLEncoder.encode(sendTo, "UTF-8") + "\">" + "프로젝트에 참여하기" + "</a>";
-        msg += "</td></tr></tbody></table></div>";
+        msg += "<html><body style='font-family: Arial, sans-serif; background-color: #ffffff; margin: 0; padding: 0; text-align: center;'>";
+        msg += "<table width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td>";
+        msg += "<table class='container' width='1000' cellpadding='0' cellspacing='0' border='0' align='center'>";
+        msg += "<tr><td style='background-color: #f5f5f5; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);'>";
+        msg += "<h1 style='color: #007bff; font-size: 30px;'>코끼리</h1>";
+        msg += "<p style='font-size: 16px; margin-top: 20px;'>안녕하세요, " + sendTo + "님. 코끼리에서 초대장이 도착했습니다!</p>";
+        msg += "<p style='font-size: 16px; margin-top: 20px;'>" + sendFrom + "님으로부터 " + board.getTitle() + " 프로젝트에 초대되셨습니다.</p>";
+        msg += "<p style='margin-top: 20px;'><a href='http://localhost:8080/api/boards/" + board.getId() + "/member?member=" + URLEncoder.encode(sendTo, "UTF-8") + "' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>프로젝트에 참여하기</a></p>";
+        msg += "</td></tr></table></td></tr></table></body></html>";
+
         return msg;
     }
 

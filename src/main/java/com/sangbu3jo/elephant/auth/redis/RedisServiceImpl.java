@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "Redis Service")
 @Service
@@ -25,13 +24,6 @@ public class RedisServiceImpl implements RedisService {
     // 클라이언트 쿠키에서 refresh token 추출
     String InputRefreshToken = jwtUtil.getRefreshTokenFromRequest(request);
     String InputRefreshTokenValue = jwtUtil.substringToken(InputRefreshToken);
-
-    // refresh token 없을 경우 예외 처리
-    if (!StringUtils.hasText(InputRefreshToken)) {
-      log.error("RefreshToken is null. please login");
-      return false;
-      //throw new IllegalArgumentException("RefreshToken is null. please login");
-    }
 
     // refresh token 유효성 검사 불일치
     if (!jwtUtil.validateToken(InputRefreshTokenValue)) {

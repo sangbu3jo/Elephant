@@ -5,6 +5,7 @@ import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.users.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -15,4 +16,6 @@ public interface BoardUserRepository extends JpaRepository<BoardUser, Long> {
     Optional<BoardUser> findByBoardAndUser(Board board, User user);
 
     List<BoardUser> findAllByBoard(Board board);
+
+    List<BoardUser> findAllByBoardId(Long boardId);
 }
