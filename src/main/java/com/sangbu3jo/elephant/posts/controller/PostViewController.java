@@ -2,11 +2,14 @@ package com.sangbu3jo.elephant.posts.controller;
 
 import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
 import com.sangbu3jo.elephant.posts.entity.Category;
+import com.sangbu3jo.elephant.posts.entity.Post;
+import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.patterns.ExactTypePattern;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,7 +50,6 @@ public class PostViewController {
 
 
   //게시글 카테고리 검색 조회
-  //슬라이스 구현
   @GetMapping("/posts/categories/{category}/titles")
   public String getSearchTitle(@PathVariable Integer category,
       @RequestParam("title") String title,
@@ -97,23 +99,6 @@ public class PostViewController {
     return "mainPage";
   }
 
-/*    //스터디
-    @GetMapping("/posts/study")
-    public String getStudy(Model model){
-
-        Slice<PostResponseDto> postResponseDtoList = postService.getStudy();
-        model.addAttribute("study", postResponseDtoList);
-        return "mainPage";
-    }
-
-    //문제은행
-    @GetMapping("/posts/exam")
-    public String getExam(Model model){
-
-        List<PostResponseDto> postResponseDtoList = postService.getExam();
-        model.addAttribute("exam", postResponseDtoList);
-        return "mainPage";
-    }*/
 
   //게시글 생성 페이지로 이동
   @GetMapping("/post-page")
@@ -143,5 +128,6 @@ public class PostViewController {
       model.addAttribute("admin", admin);
     }
   }
+   
 }
-
+  

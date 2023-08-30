@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 public class ChatMessageResponseDto {
 
     private String type; // 메시지 타입
-
     private Long chatRoomId;
     private String nickname; // 클라이언트에서 표시용
     private String username; // 서버와 통신용
@@ -23,8 +22,7 @@ public class ChatMessageResponseDto {
         this.nickname = chatMessage.getNickname();
         this.username = chatMessage.getUsername();
         this.message = chatMessage.getMessage();
-
-        this.sendTime = LocalDateTime.parse(chatMessage.getSendTime().substring(0, 19), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
+        this.sendTime = chatMessage.getSendTime();
 //        this.sendTime = LocalDateTime.parse(chatMessage.getSendTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
     }
 

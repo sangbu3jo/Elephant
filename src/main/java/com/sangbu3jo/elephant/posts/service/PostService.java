@@ -49,7 +49,6 @@ public class PostService {
             post.setCategory(project);
         } else if (postRequestDto.getCategory().equals(Category.DEVELOPMENT_STUDY)) {
             post.setCategory(study);
-
         } else if (postRequestDto.getCategory().equals(Category.PREVIOUS_EXAM)) {
             post.setCategory(previousExam);
         } else if (postRequestDto.getCategory().equals(Category.FORUM_BOARD)) {
@@ -77,12 +76,12 @@ public class PostService {
 
 
 
+
         //category 나누기
         if (postRequestDto.getCategory().equals(Category.COOPERATION_PROJECT)) {
             post.setCategory(project);
         } else if (postRequestDto.getCategory().equals(Category.DEVELOPMENT_STUDY)) {
             post.setCategory(study);
-
         } else if (postRequestDto.getCategory().equals(Category.PREVIOUS_EXAM)) {
             post.setCategory(previousExam);
         } else if (postRequestDto.getCategory().equals(Category.FORUM_BOARD)) {

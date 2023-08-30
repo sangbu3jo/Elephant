@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>코끼리</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
+  <script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+  <!-- 로고 -->
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+
+  <style>
+    @font-face {
+      font-family: 'TheJamsil5Bold';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    * {
+      font-family : 'TheJamsil5Bold', cursive;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      color: #101014;
+      background-color: #f5f5fa;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* 가로 가운데 정렬 추가 */
+      align-items: center; /* 세로 가운데 정렬 추가 */
+    }
+
+    /* 상단 메뉴 */
+    .top {
+      height: 15vh;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
+    }
+
+    .right {
+      height: 100%;
+      width: 35%;
+      padding-left: 30px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .middle {
+      height: 100%;
+      width: 30%;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .middle img {
+      margin-right: 5px;
+    }
+
+    .left {
+      height: 100%;
+      width: 35%;
+      padding-right: 30px;
+      display: flex;
+      flex-direction: row;
+      justify-content: end;
+      align-items: center;
+    }
+
+
+
+
+    /* 알림 */
+    .notification-icon {
+      font-size: 30px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .notification-icon div {
+      position: relative;
+    }
+
+    @keyframes shake {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-3px);
+      }
+      20%, 40%, 60%, 80% {
+        transform: translateX(3px);
+      }
+    }
+
+    .new-notification {
+      color: red;
+      animation: shake 1.5s infinite; /* 흔들기 애니메이션 적용 */
+    }
+
+    .nobadge {
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      padding: 4px 8px;
+      font-size: 12px;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .notification-list {
+      position: absolute;
+      top: 100px; /* Adjust the top position to your preference */
+      right: 70px;
+      width: 295px;
+      background-color: white;
+      border: 1px solid #ddd;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      max-height: 700px;
+      overflow-y: auto;
+      display: none;
+      z-index: 10;
+      margin-top: 45px; /* 헤더의 높이만큼 여백 추가 */
+    }
+    .notification-list-header {
+      background-color: #ccc;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      position: fixed;
+      top: 100px;
+      width: 13%; /* 가로 너비를 꽉 채우도록 설정 */
+      z-index: 9998; /* 헤더 위에 배치 */
+    }
+    .notification-list-item {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      background-color: white;
+    }
+    .notification-list-item.read {
+      background-color: #f0f0f0;
+    }
+
+    /* 하단 게시판 */
+    .bottom {
+      height: 85vh;
+      width: 100%;
+    }
+
+    .bottom-container {
+      height: 100%;
+      padding: 0 200px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bottom-top {
+      padding-top: 20px;
+      height: 10%;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: end;
+      align-items: end;
+    }
+
+    .bottom-top-button{
+      width: 30%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: end;
+    }
+
+    .chatuser-btn{
+      display: block;
+      width: 130px;
+      cursor: pointer;
+      padding: 10px 20px;
+      text-align: center;
+      transition: 0.5s;
+      background-size: 200% auto;
+      color: #101014;
+      /* text-shadow: 0px 0px 10px rgba(0,0,0,0.2);*/
+      box-shadow: 0 0 20px #eee;
+      border-radius: 10px;
+      background-image: linear-gradient(to right, #f6d365 0%, #fda085 51%, #f6d365 100%);
+    }
+
+    .chatuser-btn:hover {
+      background-position: right center;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    a:hover {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .category-title {
+      font-size: 18px;
+    }
+
+    .list-group-item {
+      background-color: transparent;
+      cursor: pointer;
+    }
+
+    .offcanvas{
+      background-color: #f5f5fa;
+    }
+
+    .mini-list{
+      font-size: 14px;
+      color: #a9a9a9;
+    }
+
+    #selectedResultsModal{
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 채팅 리스트 출력 */
+    .bottom-bottom {
+      padding-bottom: 20px;
+      height: 85%;
+      margin-top: 5%;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .chatlists{
+      height: 100%;
+      width: 100%;
+    }
+
+    ol {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    ol::-webkit-scrollbar {
+      margin-left: 5px;
+      width: 7px;
+    }
+
+    ol::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    ol::-webkit-scrollbar-thumb {
+      border-radius: 2px;
+      background-color: #919191;
+    }
+
+    ol::-webkit-scrollbar-button {
+      width: 0;
+      height: 0;
+    }
+
+    li {
+      width: 100%;
+    }
+
+    .list-number-image {
+      margin-right: 10px;
+      width: 40px;
+      height: 40px;
+    }
+
+    .ms-2{
+      margin-left: 0 !important;
+    }
+
+    .chatitems{
+      display: flex;
+      justify-content: center;
+    }
+
+
+  </style>
+
+</head>
+<body>
+<!-- 상단 메뉴 (+ 네비게이션 메뉴)-->
+<div class="top">
+  <div class="right">
+    <a id="login" onclick="redirectToLoginPage()">
+      <button>로그인</button>
+    </a>
+    <a id="logout" onclick="logout()">
+      <button>로그아웃</button>
+    </a>
+    <a id="keeplogin" onclick="refreshAccessToken()">
+      <button>로그인 연장</button>
+    </a>
+  </div>
+  <div class="middle">
+    <!-- 가운데 코끼리 글씨 및 로고  -->
+    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px;"> <!-- 로고 이미지 추가 -->
+    <div style="text-align: center;">
+      코끼리
+    </div>
+  </div>
+  <div class="left">
+    <!-- 알림, 우측 메뉴 슬라이드 -->
+    <div class="notification-icon">
+      <div style="position: relative;">
+        <i class="far fa-bell" style="color: #cfcfcf;"></i>
+        <span id="notificationBadge" class="nobadge" style="display:none;"></span>
+      </div>
+    </div>
+
+    <div style="text-align: center;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+      <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png" style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+    </div>
+
+    <div class="offcanvas offcanvas-start w-25" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+      <div class="offcanvas-header" style = "text-align: center; align-items:center;">
+        <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+          <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+          코끼리
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+
+      <div class="list-group list-group-flush">
+        <!-- 카테고리 버튼과 하위 메뉴 -->
+        <button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#categoryMenu">게시판 카테고리</button>
+        <div id="categoryMenu" class="collapse">
+          <a href="/api/posts/categories/1" class="list-group-item list-group-item-action mini-list">협업 인원 모집</a>
+          <a href="/api/posts/categories/2" class="list-group-item list-group-item-action mini-list">스티디원 모집</a>
+          <a href="/api/posts/categories/3" class="list-group-item list-group-item-action mini-list">문제은행</a>
+          <a href="/api/posts/categories/4" class="list-group-item list-group-item-action mini-list">자유게시판</a>
+        </div>
+
+        <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
+        <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+        <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a> <!--서버에서 admin 여부 true/false로 가져오기-->
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- 나머지 내용 -->
+<div class="notification-list" id="notificationList">
+  <div class="notification-list-header">
+    <!-- 전체읽음 버튼 추가 -->
+    <button id="markAllReadButton" class="mark-all-read-button">전체 읽음</button>
+    알림
+  </div>
+</div>
+
+<!-- 하단 게시판 -->
+<div class="bottom">
+  <div class="bottom-container">
+    <div class="bottom-top">
+      <div class="bottom-top-button">
+        <a class="chatuser-btn" data-bs-toggle="modal" data-bs-target="#inviteModal">사용자 검색</a>
+      </div>
+
+      <!-- 초대 모달 창 -->
+      <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModallabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">사용자 검색</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <!-- 검색어 입력 창 -->
+              <input type="text" id="searchInput" class="form-control" placeholder="아이디 혹은 닉네임 검색...">
+
+              <!-- 검색 결과 목록 -->
+              <ul id="searchResults" class="list-group mt-2">
+                <!-- 검색 결과는 여기에 동적으로 추가될 것입니다. -->
+              </ul>
+
+              <!-- 선택한 결과를 표시할 곳 -->
+              <div id="selectedResultsModal"></div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" id="inviteUsers">채팅</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-bottom">
+      <div class="chatlists">
+        <ol class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-start" th:each="room: ${chatrooms}">
+            <a class="chatitems" style="display:flex; flex-direction: row; width: 100%;" th:href="@{|/api/chatRooms/${room.title}|}">
+              <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" alt="Image" class="list-number-image">
+              <div class="ms-2 me-auto" style="font-size: 14px;">
+                <div class="fw-bold" style="font-size: 18px;">
+                  <span th:text="${room.showUser}"></span>
+                </div>
+                <div class="ms-2 me-auto" th:text="${room.message}" style="color: #565656">Content for list item</div>
+              </div>
+            </a>
+            <span class="badge bg-primary rounded-pill" style="background-color: #afafaf !important;" th:text="${room.date}">14</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+
+<script>
+  var selectedResult = null; // 단일 결과를 저장하는 변수
+
+  function addResultToSearchResults(user) {
+    var resultItem = $("<li>")
+            .addClass("list-group-item")
+            .html(user.username + " | " + user.nickname);
+
+    // 클릭 이벤트를 추가하여 선택/해제 토글
+    resultItem.on("click", function() {
+      if (selectedResult === user) {
+        // 이미 선택된 결과와 같은 결과를 클릭하면 선택 해제
+        selectedResult = null;
+        $("#selectedResultsModal").empty();
+      } else {
+        // 새로운 결과를 선택하면 선택한 결과를 업데이트
+        selectedResult = user;
+
+        // 선택한 결과를 버튼으로 만들어서 #selectedResultsModal에 추가
+        var selectedButton = $("<button>")
+                .addClass("btn btn-dark")
+                .html(user.username);
+
+        selectedButton.on("click", function() {
+          // 선택한 결과를 선택 해제
+          selectedResult = null;
+
+          // 버튼을 제거
+          selectedButton.remove();
+        });
+
+        // #selectedResultsModal에 버튼 추가 (기존 버튼을 대체)
+        $("#selectedResultsModal").empty().append(selectedButton);
+      }
+    });
+
+    // 검색 결과를 #searchResults에 추가
+    $("#searchResults").append(resultItem);
+  }
+
+  const inviteUserBtn = document.getElementById('inviteUsers');
+  inviteUserBtn.addEventListener('click', function () {
+    console.log(selectedResult.username);
+
+    $.ajax({
+      type: "POST",
+      url : "/api/chatRooms",
+      contentType: "application/json",
+      data: JSON.stringify({ username : selectedResult.username }),
+      success: function (data) {
+        console.log(data);
+        window.location.href = data;
+      }, error: function () {
+
+      }
+    })
+
+  });
+
+  $(document).ready(function() {
+    $("#searchInput").on("input", function() {
+      var searchText = $(this).val();
+
+      // 검색어가 일정 길이 이상일 때만 서버에 요청
+      if (searchText.length >= 3) {
+
+        // 서버에 검색어 전달
+        $.ajax({
+          type: "GET",
+          url: `/api/boards/search/`+searchText,
+          dataType: "json",
+          success: function(data) {
+            $("#searchResults").empty();
+            // console.log("성공");
+            // console.log("서버 응답 데이터:", data);
+            // console.log("서버 응답 필요한 데이터:", data.content);
+            var users = data.content;
+
+            for (var i = 0; i < users.length; i++) {
+              var user = users[i];
+              addResultToSearchResults(user);
+              // var resultItem = $("<li>")
+              //     .addClass("list-group-item")
+              //     .html(user.username + " | " + user.nickname);
+              //
+              // $("#searchResults").append(resultItem);
+            }
+          },
+          error: function(error) {
+            console.log("실패");
+            console.error("검색 오류:", error);
+          }
+        });
+      }
+    });
+  });
+
+
+  $(document).ready(function() {
+    pageSetting();
+
+    const notificationIcon = document.querySelector('.notification-icon');
+    const notificationBadge = document.getElementById('notificationBadge');
+    const notificationList = document.getElementById('notificationList');
+    let isNotificationListOpen = false;
+    let notificationsList = []; // 알림 데이터를 저장할 리스트
+    let userId = null; // 사용자 아이디 변수 추가
+
+    // 알림 데이터를 서버에서 불러와서 목록에 추가하는 함수
+    const fetchNotifications = async (userId) => {
+      try {
+        const response = await fetch(`/api/notifications/list/${userId}`);
+        if (response.ok) {
+          const notifications = await response.json();
+          notificationsList = notifications;
+          updateNotificationList();
+          updateNotificationIcon();
+        } else {
+          console.error('Error fetching notifications:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    // 사용자 정보를 불러오는 함수
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch('/api/get-user-info');
+        if (response.ok) {
+          const userData = await response.json();
+          if (userData && userData.id) {
+            userId = userData.id;
+            loadNotificationsFromServer(userId);
+          }
+        } else {
+          console.error('Error fetching user info:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching user info:', error);
+      }
+    };
+
+    // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
+    fetchUserInfo();
+
+    // 알림 목록 업데이트 함수
+    const updateNotificationList = () => {
+      notificationList.innerHTML = ''; // 목록 초기화
+      notificationsList.forEach(notification => {
+        addNotificationToList(notification);
+      });
+      const listHeader = document.createElement('div');
+      listHeader.className = 'notification-list-header';
+      listHeader.innerText = '알림';
+      notificationList.insertBefore(listHeader, notificationList.firstChild);
+    };
+
+    // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
+    const formatTimeAgo = (notificationTime) => {
+      const currentTime = new Date();
+      const timeDifference = currentTime - new Date(notificationTime);
+
+      if (timeDifference < 60000) { // 1분 미만
+        return "방금 전";
+      } else if (timeDifference < 3600000) { // 1시간 미만
+        const minutes = Math.floor(timeDifference / 60000);
+        return `${minutes}분 전`;
+      } else if (timeDifference < 86400000) { // 24시간 미만
+        const hours = Math.floor(timeDifference / 3600000);
+        return `${hours}시간 전`;
+      } else {
+        const days = Math.floor(timeDifference / 86400000);
+        return `${days}일 전`;
+      }
+    };
+
+    // 알림 아이템 추가 함수
+    const addNotificationToList = (notification) => {
+      const listItem = document.createElement('div');
+      listItem.className = notification.read ? 'notification-list-item read' : 'notification-list-item unread';
+      const timeAgo = formatTimeAgo(notification.createdAt);
+      listItem.innerHTML = `${notification.content}<br><span class="notification-time">${timeAgo}</span>`;
+      listItem.onclick = () => {
+        handleNotificationItemClick(notification, listItem);
+      };
+      notificationList.insertBefore(listItem, notificationList.firstChild);
+    };
+
+    // 알림 읽음 처리 함수
+    const markNotificationAsRead = (notification, listItem) => {
+      if (!notification.read) {
+        notification.read = true;
+        listItem.classList.remove('unread');
+        listItem.classList.add('read');
+        updateNotificationIcon();
+
+        // AJAX 요청으로 서버에 알림 읽음 처리 요청 보내기
+        $.post(`/api/mark-notification-as-read/${notification.id}`)
+      }
+    };
+
+    // 알림 아이템 클릭 처리 함수
+    const handleNotificationItemClick = (notification, listItem) => {
+      markNotificationAsRead(notification, listItem);
+      window.location.href = notification.url;
+    };
+
+    // 알림 아이콘 업데이트 함수
+    const updateNotificationIcon = () => {
+      const unreadCount = notificationsList.filter(notification => !notification.read).length;
+      if (unreadCount > 0) {
+        notificationIcon.classList.add('new-notification');
+        notificationBadge.style.display="inline";
+        notificationBadge.innerText = unreadCount.toString();
+      } else {
+        notificationIcon.classList.remove('new-notification');
+        notificationBadge.style.display="none";
+        // notificationBadge.innerText = '';
+      }
+    };
+
+    // 종모양 아이콘 클릭 시 알림 목록 표시/숨기기
+    notificationIcon.addEventListener('click', () => {
+      updateNotificationList();
+      if (!isNotificationListOpen) {
+        notificationList.style.display = 'block';
+        isNotificationListOpen = true;
+      } else {
+        notificationList.style.display = 'none';
+        isNotificationListOpen = false;
+      }
+    });
+
+    // 페이지 로드 시 알림 데이터를 가져와서 표시
+    const loadNotificationsFromServer = (userId) => {
+      fetchNotifications(userId);
+    };
+
+    fetchUserInfo().then(() => {
+      const sse = new EventSource(`/api/notifications/${userId}`);
+      sse.onmessage = (event) => {
+        const notification = JSON.parse(event.data);
+        notificationsList.push(notification);
+        addNotificationToList(notification);
+        updateNotificationIcon();
+      };
+    });
+
+
+  });
+
+  function removeToken() { // 토큰 삭제
+    Cookies.remove('Authorization', {path: '/'});
+  }
+
+  /* 서버 통신 메서드 */
+  function refreshAccessToken() { // 엑세스 토큰 갱신
+    $.ajax({
+      type: "GET",
+      url: `/api/auth/refresh/access-token`,
+      contentType: "application/json",
+      success: function (data) {
+        console.log(data);
+        alert("로그인 연장 성공");
+      },
+      error: function (data) {
+        console.log(data);
+        alert("로그인 연장 실패 \n 재로그인 부탁드립니다.");
+        redirectToLoginPage();
+      }
+    });
+  }
+
+
+  /* 페이지 첫 로드 메서드 */
+  function pageSetting() {  // main page 세팅
+    const token = Cookies.get('Authorization');
+    const rtoken = Cookies.get('RefreshToken');
+    console.log(token);
+    console.log(rtoken);
+
+    const loginBtn = document.getElementById('login');
+    const logoutBtn = document.getElementById('logout');
+    const keeploginBtn = document.getElementById('keeplogin');
+
+    if(!token) {
+      loginBtn.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+      keeploginBtn.style.display = "none";
+    } else {
+      loginBtn.style.display = "none";
+    }
+
+  }
+
+  function logout() { // 로그아웃
+    $.ajax({
+      type: "DELETE",
+      url: `/api/auth/logout`,
+      contentType: "application/json",
+      success: function (data) {
+        removeToken();
+        alert("로그아웃 성공");
+        window.location.href = "/main";
+      },
+      error: function () {
+        alert("로그아웃 실패");
+        window.location.reload();
+      }
+    });
+  }
+
+  function redirectToLoginPage() {
+    window.location.href = "/api/auth/login-page";
+  }
+
+
+</script>
+</html>

@@ -41,7 +41,7 @@ public class PostController {
     @PutMapping("/posts/{post_id}")
     public ResponseEntity<String> modifiedPost(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @RequestBody PostRequestDto postRequestDto,
-                                               @PathVariable Long post_id) {
+                                               @PathVariable Long post_id) throws Exception {
 
         Post post = postRepository.findById(post_id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));

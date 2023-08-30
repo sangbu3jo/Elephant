@@ -130,6 +130,7 @@
       background-color: #a482d1;
       box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
       color: #fff;
+      cursor: pointer;
     }
 
 
@@ -456,9 +457,7 @@
 
       <button class="goOut" id = "goOutBtn">뒤로가기</button>
     </div>
-    <!--    <div class="connecting">-->
-    <!--      Connecting...-->
-    <!--    </div>-->
+
     <ul id="messageArea">
 
     </ul>
@@ -479,199 +478,288 @@
 </body>
 
 <script>
-  // console.log = function() {};
-  // 이걸 쓰면 콘솔에서 아무런 내역이 출력되지 않는다고 한다.. 진짜인가;
+    // console.log = function() {};
+    // 이걸 쓰면 콘솔에서 아무런 내역이 출력되지 않는다고 한다.. 진짜인가;
 
-  // https://m.blog.naver.com/qjawnswkd/222283176175
-  'use strict';
+    // https://m.blog.naver.com/qjawnswkd/222283176175
+    'use strict';
 
-  var username = '[[${username}]]';
-  var nickname = '[[${nickname}]]';
+    var username = '[[${username}]]';
+    var nickname = '[[${nickname}]]';
 
-  let url = window.location.href;
-  let id = url.replace("http://localhost:8080/api/chat/", "");
-  var chatRoomId = id;
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/chat/", "");
+    var chatRoomId = id;
 
-  const goOutBtn = document.getElementById('goOutBtn');
-  goOutBtn.addEventListener('click', () => {
-    window.location.href = '/api/boards/' + id;
-  })
+    const goOutBtn = document.getElementById('goOutBtn');
+    goOutBtn.addEventListener('click', () => {
+      window.location.href = '/api/boards/' + id;
+    })
 
 
-  $(document).ready(function() {
-    connect();
-  });
+    $(document).ready(function() {
+        onMessages();
+        connect();
+    });
 
-  // var usernamePage = document.querySelector('#username-page');
-  // var usernameForm = document.querySelector('#usernameForm');
+    // 메시지를 입력하는 부분
+    var messageInput = document.querySelector('#message');
+    // 메시지를 로딩하는 부분
+    var messageArea = document.querySelector('#messageArea');
+    // 연결 확인하는 부분
+    var connectingElement = document.querySelector('.connecting');
 
-  // 전체 페이지
-  var chatPage = document.querySelector('#chat-page');
+    var stompClient = null;
 
-  // 메시지를 입력하는 부분
-  var messageInput = document.querySelector('#message');
-  // 메시지를 로딩하는 부분
-  var messageArea = document.querySelector('#messageArea');
-  // 연결 확인하는 부분
-  var connectingElement = document.querySelector('.connecting');
+    function connect() {
+        var socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
 
-  var stompClient = null;
-
-  function connect() {
-    var socket = new SockJS('/ws');
-    stompClient = Stomp.over(socket);
-
-    stompClient.connect({}, onConnected, onError);
-  }
-
-  // websocket이 연결된 경우 (확인 완료)
-  function onConnected() {
-    // Subscribe 해당 토픽을 구독함 (해당 boardid 에 대해서 구독)
-    stompClient.subscribe("/topic/" + chatRoomId, onMessageReceived);
-
-    console.log("구독");
-    // Tell your username to the server
-    stompClient.send("/app/chat/adduser",
-            {},
-            JSON.stringify({nickname:nickname, username:username, type: 'ENTER', chatRoomId: chatRoomId})
-    )
-    // 연결이 되면 대화창을 추가하는건가 ?
-    // connectingElement.classList.add('hidden');
-  }
-
-  // websocket이 연결에 실패한 경우 (확인 완료 - 오류가 나지 않음)
-  function onError(error) {
-    connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
-    connectingElement.style.color = 'red';
-  }
-
-  function onMessageReceived(payload) {
-    var chat = JSON.parse(payload.body);
-
-    console.log(chat.type); // 이 콘솔 찍히는거 확인함 (Enter의 경우)
-
-    var messageElement = document.createElement('li');
-
-    if(chat.type === 'ENTER') {
-      messageElement.classList.add('event-message');
-      // 이거 안해도 되는거 아닌가 ?
-      chat.content = chat.username + chat.message;
-    } else if (chat.type === 'LEAVE') {
-      messageElement.classList.add('event-message');
-      chat.content = chat.username + chat.message;
-    } else {
-
-      if (chat.username === username) {
-        messageElement.classList.add('chat-message2');
-
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(chat.nickname[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(chat.nickname[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-
-        messageElement.appendChild(avatarElement);
-
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(chat.nickname);
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
-      } else {
-        messageElement.classList.add('chat-message');
-
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(chat.nickname[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(chat.nickname[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-
-        messageElement.appendChild(avatarElement);
-
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(chat.nickname);
-        usernameElement.appendChild(usernameText);
-        messageElement.appendChild(usernameElement);
-      }
+        stompClient.connect({}, onConnected, onError);
     }
 
-    var textElement = document.createElement('p');
-    var messageText = document.createTextNode(chat.message);
-    textElement.appendChild(messageText);
+    // websocket이 연결된 경우 (확인 완료)
+    function onConnected() {
+        // Subscribe 해당 토픽을 구독함 (해당 boardid 에 대해서 구독)
+        // stompClient.subscribe("/user/topic/" + chatRoomId, onMessages);
+        stompClient.subscribe("/topic/" + chatRoomId, onMessageReceived);
 
-    messageElement.appendChild(textElement);
-
-    messageArea.appendChild(messageElement);
-    messageArea.scrollTop = messageArea.scrollHeight;
-  }
-
-  // usernameForm이 동작할 때 connect가 동작하도록 되어있으니
-  // usernameForm이 동작하지 않아도 connect가 동작하도록 변경하면 됨.
-  var messageForm = document.querySelector('#messageForm');
-  messageForm.addEventListener('submit', sendMessage, true)
-
-  // 메세지를 보낼 때마다 실행할 함수
-  function sendMessage(event) {
-    // 메세지 입력 필드에 입력된 값을 가져옴
-    var messageContent = messageInput.value.trim();
-
-    // 메세지가 존재하고 (공백이 아니고), 웹 소캣이 연결된 경우에만 메시지를 전송함
-    if(messageContent && stompClient) {
-      console.log(messageInput.value);
-
-      var chatMessage = {
-        chatRoomId: chatRoomId,
-        username: username,
-        nickname: nickname,
-        message: messageInput.value,
-        type: 'TALK'
-      };
-
-      // json으로 감싸서 서버로 전송
-      stompClient.send("/app/chat/sending", {}, JSON.stringify(chatMessage));
-
-      // messageInput 필드를 공백으로 처리
-      messageInput.value = '';
+        console.log("구독");
+        // Tell your username to the server
+        stompClient.send("/app/chat/adduser",
+                {},
+                JSON.stringify({nickname:nickname, username:username, type: 'ENTER', chatRoomId: chatRoomId})
+        )
     }
 
-    event.preventDefault();
-  }
-
-  // 사용자 프로필 설정 (Random Color)
-  function getAvatarColor(messageSender) {
-    var hash = 0;
-    for (var i = 0; i < messageSender.length; i++) {
-      hash = 31 * hash + messageSender.charCodeAt(i);
+    // websocket이 연결에 실패한 경우 (확인 완료 - 오류가 나지 않음)
+    function onError(error) {
+        connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+        connectingElement.style.color = 'red';
     }
 
-    var index = Math.abs(hash % colors.length);
-    return colors[index];
-  }
+    function onMessages() {
+        $.ajax({
+            type: "GET",
+            url : "/api/chat/messages/" + id,
+            contentType : 'application/json',
+            success: function (data) {
+                console.log(data);
+                var chatting = data;
 
-  // 아바타 프로필 컬러 랜덤 설정
-  var colors = [
-    '#2196F3', '#32c787', '#00BCD4', '#ff5652',
-    '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
-  ];
+                chatting.forEach(function (chatItem) {
+                    var messageElement = document.createElement('li');
+                    if(chatItem.type === 'ENTER') {
+                        messageElement.classList.add('event-message');
+                        chatItem.content = chatItem.username + chatItem.message;
+                    } else if (chatItem.type === 'LEAVE') {
+                        messageElement.classList.add('event-message');
+                        chatItem.content = chatItem.username + chatItem.message;
+                    } else {
+                        var avatarElement = document.createElement('i');
+                        var usernameElement = document.createElement('span');
+                        messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
+                        avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
+                        avatarElement.appendChild(document.createTextNode(chatItem.nickname[0]));
+                        usernameElement.appendChild(document.createTextNode(chatItem.nickname));
+                        messageElement.appendChild(avatarElement);
+                        messageElement.appendChild(usernameElement);
+                    }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("stars-container");
+                    var textElement = document.createElement('p');
+                    var messageText = document.createTextNode(chatItem.message);
+                    textElement.appendChild(messageText);
 
-    for (let i = 0; i < 100; i++) {
-      const star = document.createElement("div");
-      star.className = "star";
-      star.style.left = `${Math.random() * 100}vw`;
-      star.style.top = `${Math.random() * 100}vh`;
-      container.appendChild(star);
+                    messageElement.appendChild(textElement);
+
+                    messageArea.appendChild(messageElement);
+                });
+
+                messageArea.scrollTop = messageArea.scrollHeight;
+            }
+        })
     }
-  });
+
+    function onMessageReceived(payload) {
+        var chat = JSON.parse(payload.body);
+
+        console.log(chat.type); // 이 콘솔 찍히는거 확인함 (Enter의 경우)
+
+        if (Array.isArray(chat)) {
+            chat.forEach(function (chatItem) {
+                var messageElement = document.createElement('li');
+                if (chatItem.username === username) {
+                    console.log(chatItem.nickname);
+                    messageElement.classList.add('chat-message2');
+
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(chatItem.nickname[0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
+
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(chatItem.nickname[0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
+
+                    messageElement.appendChild(avatarElement);
+
+                    var usernameElement = document.createElement('span');
+                    var usernameText = document.createTextNode(chatItem.nickname);
+                    usernameElement.appendChild(usernameText);
+                    messageElement.appendChild(usernameElement);
+                } else {
+                    console.log(chatItem.nickname);
+                    messageElement.classList.add('chat-message');
+
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(chatItem.nickname[0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
+
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(chatItem.nickname[0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
+
+                    messageElement.appendChild(avatarElement);
+
+                    var usernameElement = document.createElement('span');
+                    var usernameText = document.createTextNode(chatItem.nickname);
+                    usernameElement.appendChild(usernameText);
+                    messageElement.appendChild(usernameElement);
+                }
+                var textElement = document.createElement('p');
+                var messageText = document.createTextNode(chatItem.message);
+                textElement.appendChild(messageText);
+
+                messageElement.appendChild(textElement);
+
+                messageArea.appendChild(messageElement);
+                messageArea.scrollTop = messageArea.scrollHeight;
+            });
+        } else {
+            var messageElement = document.createElement('li');
+            if(chat.type === 'ENTER') {
+                messageElement.classList.add('event-message');
+                chat.content = chat.username + chat.message;
+            } else if (chat.type === 'LEAVE') {
+                messageElement.classList.add('event-message');
+                chat.content = chat.username + chat.message;
+            } else {
+                if (chat.username === username) {
+                    messageElement.classList.add('chat-message2');
+
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(chat.nickname[0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
+
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(chat.nickname[0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
+
+                    messageElement.appendChild(avatarElement);
+
+                    var usernameElement = document.createElement('span');
+                    var usernameText = document.createTextNode(chat.nickname);
+                    usernameElement.appendChild(usernameText);
+                    messageElement.appendChild(usernameElement);
+                } else {
+                    messageElement.classList.add('chat-message');
+
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(chat.nickname[0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
+
+                    var avatarElement = document.createElement('i');
+                    var avatarText = document.createTextNode(chat.nickname[0]);
+                    avatarElement.appendChild(avatarText);
+                    avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
+
+                    messageElement.appendChild(avatarElement);
+
+                    var usernameElement = document.createElement('span');
+                    var usernameText = document.createTextNode(chat.nickname);
+                    usernameElement.appendChild(usernameText);
+                    messageElement.appendChild(usernameElement);
+                }
+            }
+
+            var textElement = document.createElement('p');
+            var messageText = document.createTextNode(chat.message);
+            textElement.appendChild(messageText);
+
+            messageElement.appendChild(textElement);
+
+            messageArea.appendChild(messageElement);
+            messageArea.scrollTop = messageArea.scrollHeight;
+        }
+
+    }
+
+    // usernameForm이 동작할 때 connect가 동작하도록 되어있으니
+    // usernameForm이 동작하지 않아도 connect가 동작하도록 변경하면 됨.
+    var messageForm = document.querySelector('#messageForm');
+    messageForm.addEventListener('submit', sendMessage, true)
+
+    // 메세지를 보낼 때마다 실행할 함수
+    function sendMessage(event) {
+        // 메세지 입력 필드에 입력된 값을 가져옴
+        var messageContent = messageInput.value.trim();
+
+        // 메세지가 존재하고 (공백이 아니고), 웹 소캣이 연결된 경우에만 메시지를 전송함
+        if(messageContent && stompClient) {
+            console.log(messageInput.value);
+
+            var chatMessage = {
+                chatRoomId: chatRoomId,
+                username: username,
+                nickname: nickname,
+                message: messageInput.value,
+                type: 'TALK'
+            };
+
+            // json으로 감싸서 서버로 전송
+            stompClient.send("/app/chat/sending", {}, JSON.stringify(chatMessage));
+
+            // messageInput 필드를 공백으로 처리
+            messageInput.value = '';
+        }
+
+        event.preventDefault();
+    }
+
+    // 사용자 프로필 설정 (Random Color)
+    function getAvatarColor(messageSender) {
+        var hash = 0;
+        for (var i = 0; i < messageSender.length; i++) {
+            hash = 31 * hash + messageSender.charCodeAt(i);
+        }
+
+        var index = Math.abs(hash % colors.length);
+        return colors[index];
+    }
+
+    // 아바타 프로필 컬러 랜덤 설정
+    var colors = [
+        '#2196F3', '#32c787', '#00BCD4', '#ff5652',
+        '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.getElementById("stars-container");
+
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            container.appendChild(star);
+        }
+    });
 
 </script>
 </html>

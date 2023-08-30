@@ -24,6 +24,7 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<PostCommentResponseDto> postCommentList;
+    private Long userId;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -43,6 +44,7 @@ public class PostResponseDto {
                 .map(PostCommentResponseDto::new)
                 .sorted(Comparator.comparing(PostCommentResponseDto::getCreatedAt))
                 .toList();
+        this.userId = post.getUser().getId();
 
 
     }

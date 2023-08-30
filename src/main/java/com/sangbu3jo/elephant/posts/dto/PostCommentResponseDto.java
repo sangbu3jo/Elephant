@@ -17,6 +17,7 @@ public class PostCommentResponseDto {
     private String postTitle;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private Long userId;
 
     public PostCommentResponseDto(PostComment postComment) {
         this.username = postComment.getUser().getUsername();
