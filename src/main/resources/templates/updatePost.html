@@ -369,8 +369,16 @@
             </div>
 
             <div class="form-group">
-                <label for="files">첨부 파일</label>
-                <input type="file" id="files" name="files" class="input-field" th:value="${updatePost.files}">
+                <label for="files">새 이미지</label>
+                <input type="file" id="files" name="files" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="currentImageUrl">현재 이미지</label>
+                <input type="hidden" id="currentImageUrl" name="currentImageUrl" th:value="${updatePost.files}" readonly>
+                <div style="position: relative;" th:if="${updatePost.files != null}">
+                    <img id="currentImage" th:src="${updatePost.files}" width="300" height="100">
+                    <button style="position: absolute; top: 10px; right: 10px; background-color: red; color: white; border: none; cursor: pointer;" onclick="deleteImage()">X</button>
+                </div>
             </div>
             <div class="form-group" id = "form-recruitment">
                 <input type="hidden" id="postId2" name="postId2" value="${updatePost.id}">
@@ -397,6 +405,8 @@
 </div>
 
 <script>
+
+
     document.addEventListener("DOMContentLoaded", function() {
         // 카테고리 선택 상자
         var categorySelect = document.getElementById("category");
@@ -422,6 +432,38 @@
             }
         }
     });
+
+    function deleteImage() {
+
+        const postFileDelId = window.location.href.split('/').pop();
+
+        var image = document.getElementById('currentImage');
+        var button = document.querySelector('button[onclick="deleteImage()"]');
+        image.style.display = 'none'; // 이미지를 화면에서 숨깁니다.
+        button.style.display = 'none'; // 버튼을 화면에서 숨깁니다.
+
+        var fileUrl = $("#currentImageUrl").val();
+        // 게시물 파일 삭제
+        //게시믈 null로 변경?
+        //게시물만 삭제 가능?
+        $.ajax({
+            url: `/api/posts/${postFileDelId}/file?fileUrl=${fileUrl}`,
+            type: "DELETE",
+            success: function (data) {
+                console.log(data);
+                // 삭제에 성공한 경우
+                // 화면에서 해당 댓글을 제거하거나 업데이트
+                image.remove(); // 이미지를 DOM에서 제거
+                button.remove(); // 버튼을 DOM에서 제거
+
+                window.location.reload();
+            },
+            error: function (error) {
+                console.error("댓글 삭제 실패");
+            }
+        });
+
+    }
 
     $(document).ready(function () {
 
@@ -455,7 +497,7 @@
                     success: function (response) {
                         $("#result").text(response); // 성공 메시지를 표시합니다.
 
-                        window.location.href = "/"
+                        window.location.href = "/api/posts/" + postUpdateId
                     },
                     error: function (error) {
                         $("#result").text("에러 발생: " + error.responseText); // 에러 메시지를 표시합니다.

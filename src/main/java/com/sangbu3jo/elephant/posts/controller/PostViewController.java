@@ -2,10 +2,12 @@ package com.sangbu3jo.elephant.posts.controller;
 
 import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
 import com.sangbu3jo.elephant.posts.entity.Post;
+import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.patterns.ExactTypePattern;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +24,7 @@ public class PostViewController {
 
     //RequestParam 방식 이용 프론트에서 값을 받아올 때
     private final PostService postService;
+    private final PostRepository postRepository;
 
 //    //메인페이지에서 섹션을 나눠서 각 카테고리마다 5개 정도 가져오기
 //    @GetMapping("/posts/categories")
@@ -72,21 +75,26 @@ public class PostViewController {
 
         return "searchedPage";
     }
+
     //게시글 상세(단건 조회) 페이지
     @GetMapping("/posts/{post_id}")
     public String getPost(@PathVariable Long post_id,
                           @AuthenticationPrincipal UserDetailsImpl userDetails,
                           Model model) {
+
+
         PostResponseDto postResponseDto = postService.getPost(post_id, userDetails.getUser());
         model.addAttribute("post", postResponseDto);
+        model.addAttribute("loginUser", userDetails.getUser().getId());
         return "post";
-    }
 
+
+    }
 
 
     //프로젝트
     @GetMapping("/posts/project")
-    public String getProject(Model model){
+    public String getProject(Model model) {
 
         List<PostResponseDto> projResponseDtoList = postService.getProject();
         List<PostResponseDto> stuResponseDtoList = postService.getStudy();
@@ -125,15 +133,29 @@ public class PostViewController {
         return "createPost";
     }
 
+
     //게시글 수정 페이지로 이동
     @GetMapping("/posts/update/{post_id}")
     public String updatePost(@PathVariable Long post_id,
                              @AuthenticationPrincipal UserDetailsImpl userDetails,
-                             Model model) {
+                             Model model) throws Exception {
+
+        Post post = findByID(post_id);
+
 
         PostResponseDto postResponseDto = postService.getPost(post_id, userDetails.getUser());
         model.addAttribute("updatePost", postResponseDto);
         return "updatePost";
+
+
+    }
+
+    private Post findByID(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 id는 존재하지 않습니다."));
+
+        return post;
     }
 }
+
 

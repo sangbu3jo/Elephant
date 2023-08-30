@@ -1,11 +1,13 @@
 package com.sangbu3jo.elephant.posts.controller;
 
+import com.amazonaws.AmazonServiceException;
 import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
 import com.sangbu3jo.elephant.posts.entity.Category;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.posts.service.S3Service;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import groovy.transform.AutoExternalize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequiredArgsConstructor
@@ -73,14 +76,38 @@ public class S3Controller {
                                              @AuthenticationPrincipal UserDetailsImpl userDetails,
                                              @PathVariable Long post_id) throws IOException {
 
-        Post post = postRepository.findById(post_id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+        Post post = findByID(post_id);
+
         if (userDetails.getUser().getId().equals(post.getUser().getId())) {
             s3Service.modifiedPost(image, category, postRequestDto, post);
             return ResponseEntity.status(200).body("수정 성공");
 
         } else return ResponseEntity.status(400).body("수정 실패");
 
+    }
+
+    @DeleteMapping("/api/posts/{post_id}/file")
+    public ResponseEntity<String> deleteFile(@RequestParam("fileUrl") String fileUrl,
+                                             @PathVariable Long post_id,
+                                             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
+        Post post = findByID(post_id);
+
+
+        if (userDetails.getUser().getId().equals(post.getUser().getId())) {
+            s3Service.deleteFile(fileUrl, post);
+            return ResponseEntity.status(200).body("이미지가 삭제 되었습니다.");
+        } else {
+            return ResponseEntity.status(400).body("이미지를 삭제할 수 없습니다.");
+        }
+
+
+    }
+
+    private Post findByID(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 id는 존재하지 않습니다."));
+
+        return post;
     }
 
 

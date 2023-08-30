@@ -6,12 +6,14 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -27,6 +29,7 @@ import java.util.UUID;
 public class S3UploaderService {
 
     private final AmazonS3 amazonS3;
+    private final PostRepository postRepository;
 
     //업로드 구현
 
@@ -80,9 +83,10 @@ public class S3UploaderService {
     }
 
     //file 삭제
-    public void fileDelete(String fileName) {
+    @Transactional
+    public void fileDelete(String s3Key) {
         try {
-            amazonS3.deleteObject(this.bucket, (fileName).replace(File.separatorChar, '/'));
+            amazonS3.deleteObject(this.bucket, s3Key);
         } catch (AmazonServiceException e) {
             System.out.println(e.getErrorMessage());
         }
