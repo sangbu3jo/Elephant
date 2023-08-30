@@ -29,9 +29,10 @@
         <div class="form-group">
             <label for="category">카테고리</label>
             <select id="category" name="category" class="input-field">
-                <option value="1">협업 프로젝트</option>
-                <option value="2">스터디 모집</option>
-                <option value="3">문제은행</option>
+                <option value="COOPERATION_PROJECT">협업 프로젝트</option>
+                <option value="DEVELOPMENT_STUDY">개발 스터디</option>
+                <option value="PREVIOUS_EXAM">문제 은행</option>
+                <option value="FORUM_BOARD">자유게시판</option>
             </select>
         </div>
         <div class="form-group">
@@ -41,7 +42,7 @@
 
         <div class="form-group">
             <label for="files">첨부 파일</label>
-            <input type="file" id="files" name="files" class="input-field">
+            <input type="file" id="files" name="image" class="input-field">
         </div>
 
         <div class="form-group">
@@ -61,19 +62,32 @@
             var selectedCategory = $("#category").val();
             var title = $("#title").val();
             var content = $("#content").val();
+            var files = $("#files")[0].files[0];
 
             // Create an object with the data to send to the server
-            var postData = {
-                category: selectedCategory,
-                title: title,
-                content: content
-            };
+            // var postData = {
+            //     category: selectedCategory,
+            //     title: title,
+            //     content: content
+            // };
+
+            // FormData 객체를 생성하여 데이터를 담습니다.
+            var formData = new FormData();
+            formData.append("category", selectedCategory);
+            formData.append("title", title);
+            formData.append("content", content);
+            formData.append("image", files);
+
 
             $.ajax({
                 type: "POST",
-                url: "/api/posts", // 게시글 생성 엔드포인트 URL을 설정합니다.
-                data: JSON.stringify(postData),
-                contentType: "application/json",
+                url: "/api/posts/newFile", // 게시글 생성 엔드포인트 URL을 설정합니다.
+                // data: JSON.stringify(postData),
+                data: formData,
+                processData: false,
+                contentType: false,
+                // contentType: false,
+                // contentType: "multipart/form-data",
                 success: function (response) {
                     $("#result").text(response); // 성공 메시지를 표시합니다.
 

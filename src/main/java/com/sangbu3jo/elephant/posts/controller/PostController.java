@@ -46,14 +46,11 @@ public class PostController {
         Post post = postRepository.findById(post_id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
 
-        try {
-            postService.modifiedPost(postRequestDto, post_id, userDetails.getUser());
-            return ResponseEntity.status(200).body("게시글이 변경되었습니다.");
-        } catch (RejectedExecutionException e) {
-            return ResponseEntity.status(400).body("게시글을 변경에 실패했습니다.");
-        } catch (NullPointerException nullPointerException) {
-            return ResponseEntity.status(400).body("값을 입력해주세요");
-        }
+
+        if (userDetails.getUser().getId().equals(post.getUser().getId())) {
+            postService.modifiedPost(post, postRequestDto);
+            return ResponseEntity.status(200).body("Success");
+        } else return ResponseEntity.status(400).body("수정 권한이 없습니다.");
     }
 
 
