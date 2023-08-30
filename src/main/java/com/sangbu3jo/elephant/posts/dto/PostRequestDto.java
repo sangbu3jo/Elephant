@@ -10,9 +10,10 @@ public class PostRequestDto {
 
     private String title;
     private String content;
+
     private Category category;
+
     private Boolean completed = false;
     private Integer selectNum;
-
 
 }
