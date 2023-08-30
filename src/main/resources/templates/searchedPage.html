@@ -531,9 +531,8 @@
   </div>
   <div class="middle">
     <!-- 가운데 코끼리 글씨 및 로고  -->
-    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
-         style="width: 35px; height: 35px;"> <!-- 로고 이미지 추가 -->
-    <div style="text-align: center;">
+    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
+    <div style="text-align: center; cursor:pointer;" onclick="gotoMain()">
       코끼리
     </div>
   </div>
@@ -743,6 +742,11 @@
 </div>-->
 
 <script>
+
+  function gotoMain() {
+    window.location.href = "/main";
+  }
+
   // 게시글 생성 버튼 클릭 이벤트 핸들러
   $("#create-post-button").click(function () {
     // 게시글 생성 페이지로 이동
