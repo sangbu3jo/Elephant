@@ -382,7 +382,7 @@
             </div>
             <div class="form-group" id = "form-recruitment">
                 <input type="hidden" id="postId2" name="postId2" value="${updatePost.id}">
-                <div class="form-group" th:if="${updatePost.category != updatePost.category.PREVIOUS_EXAM}">
+                <div class="form-group" th:unless="${updatePost.category == '문제 은행' || updatePost.category == '자유 게시판'}">
                     <label for="completed">모집 현황</label>
                     <select id="completed" name="completed" class="input-field">
                         <option value="true">모집 완료</option>

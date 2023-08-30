@@ -27,7 +27,7 @@ public enum Category {
                 categoryName = Category.COOPERATION_PROJECT.getCategoryName();
                 break;
             case 2:
-                categoryName = Category.COOPERATION_PROJECT.getCategoryName();
+                categoryName = Category.DEVELOPMENT_STUDY.getCategoryName();
                 break;
             case 3:
                 categoryName = Category.PREVIOUS_EXAM.getCategoryName();
