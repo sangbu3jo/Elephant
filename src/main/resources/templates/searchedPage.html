@@ -736,6 +736,12 @@
 </div>-->
 
 <script>
+  // 게시글 생성 버튼 클릭 이벤트 핸들러
+  $("#create-post-button").click(function () {
+    // 게시글 생성 페이지로 이동
+    window.location.replace("/api/post-page");
+  });
+
   // header js 코드 추가
   $(document).ready(function () {
     pageSetting();
