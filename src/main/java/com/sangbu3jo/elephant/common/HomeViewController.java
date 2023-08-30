@@ -27,9 +27,11 @@ public class HomeViewController {
             List<PostResponseDto> projResponseDtoList = postService.getProject();
             List<PostResponseDto> stuResponseDtoList = postService.getStudy();
             List<PostResponseDto> exaResponseDtoList = postService.getExam();
+            List<PostResponseDto> foruResponseDtoList = postService.getForum();
             model.addAttribute("projects", projResponseDtoList);
             model.addAttribute("studies", stuResponseDtoList);
             model.addAttribute("exams", exaResponseDtoList);
+            model.addAttribute("forums", foruResponseDtoList);
 
             return "mainPage";
         }
@@ -46,9 +48,11 @@ public class HomeViewController {
         List<PostResponseDto> projResponseDtoList = postService.getProject();
         List<PostResponseDto> stuResponseDtoList = postService.getStudy();
         List<PostResponseDto> exaResponseDtoList = postService.getExam();
+        List<PostResponseDto> foruResponseDtoList = postService.getForum();
         model.addAttribute("projects", projResponseDtoList);
         model.addAttribute("studies", stuResponseDtoList);
         model.addAttribute("exams", exaResponseDtoList);
+        model.addAttribute("forums", foruResponseDtoList);
 
         return "mainPage";
     }
