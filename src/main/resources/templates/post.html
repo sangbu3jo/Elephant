@@ -518,7 +518,6 @@
                 <h5 th:text="${post.category}">Category</h5>
             </div>
             <div class="post-top-bottom">
-<!--                th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">11/11 11:11:11</p>-->
                 <h6 th:text="'작성날짜 ' + ${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">생성 날짜</h6>
                 <h6 th:text="'조회수 ' + ${post.view_cnt}">조회수: 00회</h6>
                 <h6 th:unless="${post.category == '문제 은행' || post.category == '자유 게시판'}">
@@ -528,8 +527,8 @@
             </div>
 
         </div>
-        <div class="post-content-bottom">
-            <p th:text="${post.content}">Contents</p>
+        <div class="post-content-bottom" style="margin-top: 40px;">
+            <p th:utext="${post.content}">Contents</p>
             <div th:if="${post.files != null}">
                 <img th:src="${post.files}" width="700" height="400" alt="이미지 대체 텍스트">
             </div>
@@ -561,15 +560,17 @@
                                 <h5 th:text="${comment.content}">content</h5>
 
                                 <!-- 댓글 작성 날짜 -->
-                                <p th:text="'작성날짜 ' + ${#temporals.format(comment.createdAt,'MM/dd HH:mm:ss')}">댓글 작성 날짜</p>
+                                <p th:text="'작성날짜 ' + ${#temporals.format(comment.createdAt,'MM/dd HH:mm:ss')}">댓글 작성
+                                    날짜</p>
                             </div>
 
                             <div class="comment-button">
                                 <div th:if="${comment.userId == loginUser}">
-                                <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정</button>
-                                <button class="delete-comment" th:attr="onclick='deleteComment(' + ${comment.id} + ')'">
-                                    댓글삭제
-                                </button>
+                                    <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정</button>
+                                    <button class="delete-comment"
+                                            th:attr="onclick='deleteComment(' + ${comment.id} + ')'">
+                                        댓글삭제
+                                    </button>
                                 </div>
                             </div>
 
@@ -578,7 +579,8 @@
                                     <!-- 모달 내용 -->
                                     <span class="close">&times;</span>
                                     <h2>댓글 수정</h2>
-                                    <textarea id="commentTextarea"></textarea>
+                                    <input type="hidden" id="commentId" name="commentId" th:value="${comment.id}">
+                                    <textarea id="commentTextarea" th:text="${comment.content}"></textarea>
                                     <button id="saveComment">저장</button>
                                 </div>
                             </div>
@@ -689,62 +691,58 @@
     document.querySelectorAll('.update-comment').forEach(button => {
         button.addEventListener('click', function () {
 
-            const commentId = this.getAttribute('data-comment-id'); // 수정 버튼의 data-comment-id 속성을 가져옴
-            console.log(commentId);
 
             const modal = document.querySelector('.modal');
             modal.style.display = 'block';
 
-            // 여기서 commentId를 사용하여 원하는 작업 수행
-            // commentId를 이용하여 댓글 내용을 가져오거나 다른 로직을 수행할 수 있음
         });
     });
+
+
+    // 모달 저장 버튼 클릭 시
+    document.getElementById('saveComment').addEventListener('click', function () {
+
+        var commentContent = $("#commentTextarea").val();
+        var commentId = $("#commentId").val();
+
+
+        var postData = {
+            content: commentContent // 수정된 내용
+        };
+
+        console.log(commentId);
+        console.log(commentContent)
+
+        if (confirm("댓글을 수정하시겠습니까?")) {
+            $.ajax({
+                type: "PUT",
+                url: "/api/posts/comments/" + commentId, // 수정할 댓글의 URL
+                data: JSON.stringify(postData),
+                contentType: "application/json",
+                success: function (response) {
+                    // 성공 시 서버의 응답을 처리합니다.
+                    $("#result").text(response); // 성공 메시지를 표시합니다.
+
+                    // 수정이 성공하면 모달을 닫을 수 있습니다.
+                    // const modal = document.getElementById('commentModal');
+                    // modal.style.display = 'none';
+                    window.location.reload();
+
+                },
+                error: function (error) {
+                    // 에러 시 에러 메시지를 처리합니다.
+                    $("#result").text("에러 발생: " + error.responseText);
+                }
+            });
+        }
+    });
+
 
     // 모달 닫기 버튼 클릭 시
     const closeBtn = document.querySelector('.close');
     closeBtn.addEventListener('click', function () {
         const modal = document.querySelector('.modal');
         modal.style.display = 'none';
-    });
-
-    var commentSaveId = comment.id;
-    // 모달 저장 버튼 클릭 시
-    document.getElementById('saveComment').addEventListener('click', function (event) {
-
-
-        const commentTextarea = document.getElementById('commentTextarea').value;
-        const commentUpId = this.getAttribute('data-comment-id');
-        console.log(commentTextarea);
-        // console.log(commentUpdateId);
-
-        // const commentSaveId = document.getElementById('saveComment').getAttribute('data-comment-id');
-        // var commentSaveId = commentSave.attr("#data-comment-id").val();
-        // const commentSaveId = event.button.valueOf()
-        console.log(event.toString());
-        console.log(commentSaveId);
-
-        const postData = {
-            content: commentTextarea // 수정된 내용
-        };
-
-        $.ajax({
-            type: "PUT",
-            url: `/api/posts/comments/${commentUpId}`, // 수정할 댓글의 URL
-            data: JSON.stringify(postData),
-            contentType: "application/json",
-            success: function (response) {
-                // 성공 시 서버의 응답을 처리합니다.
-                $("#result").text(response); // 성공 메시지를 표시합니다.
-
-                // 수정이 성공하면 모달을 닫을 수 있습니다.
-                const modal = document.getElementById('commentModal');
-                modal.style.display = 'none';
-            },
-            error: function (error) {
-                // 에러 시 에러 메시지를 처리합니다.
-                $("#result").text("에러 발생: " + error.responseText);
-            }
-        });
     });
 
 </script>

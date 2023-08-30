@@ -32,7 +32,7 @@ public class PostResponseDto {
         this.username = post.getUser().getUsername();
         this.nickname = post.getUser().getNickname();
         log.info(nickname);
-        this.content = post.getContent();
+        this.content = post.getContent().replaceAll("\n", "<br>");
         this.category = post.getCategory().getCategoryName();
         this.completed = post.getCompleted();
         this.files = post.getFiles();
