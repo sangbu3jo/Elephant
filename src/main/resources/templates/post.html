@@ -484,7 +484,6 @@
             </div>
 
         </div>
-
     </div>
 
     <!-- 나머지 내용 -->
@@ -512,7 +511,7 @@
             <div class="post-top-bottom">
                 <h6 th:text="'작성날짜 ' + ${post.createdAt}">생성 날짜</h6>
                 <h6 th:text="'조회수 ' + ${post.view_cnt}">조회수: 00회</h6>
-                <h6 th:if="${post.category != post.category.PREVIOUS_EXAM}">
+                <h6 th:unless="${post.category == '문제 은행' || post.category == '자유 게시판'}">
                     <span th:if="${post.completed == false}">모집중</span>
                     <span th:if="${post.completed == true}">모집완료</span>
                 </h6>

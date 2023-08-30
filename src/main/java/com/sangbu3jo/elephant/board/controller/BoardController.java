@@ -9,6 +9,7 @@ import com.sangbu3jo.elephant.boarduser.dto.BoardUserResponseDto;
 import com.sangbu3jo.elephant.columns.dto.ColumnsResponseDto;
 import com.sangbu3jo.elephant.columns.service.ColumnsService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -54,6 +55,7 @@ public class BoardController {
         model.addAttribute("columns", columns);
         List<BoardUserResponseDto> boardUsers = boardService.findBoardUsers(board_id);
         model.addAttribute("boardUsers", boardUsers);
+        checkAdmin(model,userDetails);
         return "board";
 
     }
@@ -78,6 +80,7 @@ public class BoardController {
         log.info(pageNo.toString());
         Page<BoardResponseDto> boardList = boardService.getBoards(userDetails.getUser(), pageable, pageNo);
         model.addAttribute("boards", boardList);
+        checkAdmin(model,userDetails);
         return "boards";
     }
     /*@GetMapping("/boards")
@@ -153,6 +156,14 @@ public class BoardController {
         BoardResponseDto boardResponseDto = new BoardResponseDto(board);
         model.addAttribute("board", boardResponseDto);
         return "cardCalendar";
+    }
+
+    private void checkAdmin(Model model, UserDetailsImpl userDetails) {
+        Boolean admin = false;
+        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            admin = true;
+        }
+        model.addAttribute("admin", admin);
     }
 
 }

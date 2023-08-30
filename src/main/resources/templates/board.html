@@ -1145,5 +1145,12 @@
         });
     });
 
+    const gotoGameButton = document.getElementById('gotoMiniGame');
+    gotoGameButton.addEventListener('click', () => {
+        let url = window.location.href;
+        let id = url.replace("http://localhost:8080/api/boards/", "");
+        window.location.href = `http://localhost:8080/api/minigame/${id}`
+    })
+
 </script>
 </html>

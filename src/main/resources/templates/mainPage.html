@@ -97,6 +97,8 @@
             font-size: 30px;
             cursor: pointer;
             margin-right: 10px;
+            display: flex;
+            flex-direction: row;
         }
 
         .notification-icon div {
@@ -280,6 +282,7 @@
             font-size: 12px;
             z-index: 9999; /* 다른 요소보다 앞에 표시되도록 설정 */
         }
+
     </style>
 
 </head>
@@ -358,22 +361,17 @@
         </div>
 
     </div>
+</div>
 
-
-    <div id="category-list" style="float: right;">
-        <ul>
-            <li><a href="/api/posts/categories/1">협업 프로젝트</a></li>
-            <li><a href="/api/posts/categories/2">스터디 모집</a></li>
-            <li><a href="/api/posts/categories/3">문제은행</a></li>
-            <li><a href="/api/posts/categories/4">자유게시판</a></li>
-        </ul>
-
+<!-- 나머지 내용 -->
+<div class="notification-list" id="notificationList">
+    <div class="notification-list-header">
+        <!-- 전체읽음 버튼 추가 -->
+        <button id="markAllReadButton" class="mark-all-read-button">전체 읽음</button>
+        알림
     </div>
+</div>
 
-    <!-- 나머지 내용 -->
-    <div class="notification-list" id="notificationList">
-        <div class="notification-list-header">알림</div>
-    </div>
 
 
     <!-- 하단 게시판 -->
@@ -431,61 +429,12 @@
                         <span class="badge bg-primary rounded-pill"  th:text="|조회수: ${forum.view_cnt}|">조회수: 1</span>
                     </li>
                 </ul>
-
             </div>
         </div>
     </div>
 
 </div>
-
-
-<!--<div id="forum-list">-->
-<!--    <ul>-->
-<!--        <li th:each="forum : ${forums}">-->
-<!--            &lt;!&ndash;                <a>&ndash;&gt;-->
-<!--            <h2 th:text="${forum.title}"></h2>-->
-<!--            <h3 th:text="${forum.category}"></h3>-->
-<!--            <a th:href="@{'/api/posts/' + ${forum.id}}">-->
-<!--                자세히 보기-->
-<!--            </a>-->
-
-<!--        </li>-->
-<!--    </ul>-->
-<!--</div>-->
-
-<!--    <div id="study-list">-->
-<!--        <form method="get" action="/api/posts/study">-->
-<!--            <ul>-->
-<!--                <li th:each="study, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
-<!--                    &lt;!&ndash;                <a>&ndash;&gt;-->
-<!--                    <h2 th:text="${study.title}"></h2>-->
-<!--                    <h3 th:text="${study.category}"></h3>-->
-<!--                    <a th:href="@{'/api/posts/' + ${study.id}}">-->
-<!--                        자세히 보기-->
-
-<!--                    </a>-->
-<!--                </li>-->
-<!--            </ul>-->
-<!--        </form>-->
-<!--    </div>-->
-<!--</div>-->
-<!--<div id="exam-list">-->
-<!--    <form method="get" action="/api/posts/exam">-->
-<!--        <ul>-->
-<!--            <li th:each="exam, iterStat : ${mainPage}" th:if="${iterStat.index < 5}">-->
-
-<!--                <h2 th:text="${exam.title}"></h2>-->
-<!--                <h3 th:text="${exam.category}"></h3>-->
-<!--                <a th:href="@{'/api/posts/' + ${exam.id}}">자세히 보기-->
-
-<!--                </a>-->
-<!--            </li>-->
-<!--        </ul>-->
-<!--    </form>-->
-<!--</div>-->
-
 </body>
-
 
 <script>
     function gotoPost(postid) {
@@ -544,7 +493,7 @@
             fetchUserInfo();
         }
 
-        // 알림 목록 업데이트 함수
+// 알림 목록 업데이트 함수
         const updateNotificationList = () => {
             notificationList.innerHTML = ''; // 목록 초기화
             notificationsList.forEach(notification => {
@@ -685,9 +634,9 @@
                     alert(response); // 오류 메시지 출력
                 });
         }
-
-
     });
+
+
 
     function removeToken() { // 토큰 삭제
         Cookies.remove('Authorization', {path: '/'});
@@ -715,9 +664,7 @@
     /* 페이지 첫 로드 메서드 */
     function pageSetting() {  // main page 세팅
         const token = Cookies.get('Authorization');
-        const rtoken = Cookies.get('RefreshToken');
         console.log(token);
-        console.log(rtoken);
 
         const loginBtn = document.getElementById('login');
         const logoutBtn = document.getElementById('logout');

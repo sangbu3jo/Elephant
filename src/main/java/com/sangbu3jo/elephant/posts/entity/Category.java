@@ -19,5 +19,26 @@ public enum Category {
     public String getCategoryName() {
         return categoryName;
     }
+
+    public static String getCategory(int index){
+        String categoryName = "";
+        switch (index) {
+            case 1:
+                categoryName = Category.COOPERATION_PROJECT.getCategoryName();
+                break;
+            case 2:
+                categoryName = Category.COOPERATION_PROJECT.getCategoryName();
+                break;
+            case 3:
+                categoryName = Category.PREVIOUS_EXAM.getCategoryName();
+                break;
+            case 4:
+                categoryName = Category.FORUM_BOARD.getCategoryName();
+                break;
+            default:
+                throw new IllegalArgumentException("해당 카테고리가 존재하지 않습니다.");
+        }
+        return categoryName;
+    }
 }
 

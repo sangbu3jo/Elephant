@@ -23,11 +23,7 @@ public class HomeViewController {
     @GetMapping("/")
     public String getMain(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
         if (userDetails != null) {
-            Boolean admin = false;
-            if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
-                admin = true;
-            }
-            model.addAttribute("admin", admin);
+            checkAdmin(model,userDetails);
             List<PostResponseDto> projResponseDtoList = postService.getProject();
             List<PostResponseDto> stuResponseDtoList = postService.getStudy();
             List<PostResponseDto> exaResponseDtoList = postService.getExam();
@@ -44,11 +40,9 @@ public class HomeViewController {
     //프로젝트
     @GetMapping("/main")
     public String getProject(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Boolean admin = false;
-        if (userDetails != null){
-            admin = userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN);
+        if (userDetails != null) {
+            checkAdmin(model, userDetails);
         }
-        model.addAttribute("admin", admin);
         List<PostResponseDto> projResponseDtoList = postService.getProject();
         List<PostResponseDto> stuResponseDtoList = postService.getStudy();
         List<PostResponseDto> exaResponseDtoList = postService.getExam();
@@ -57,6 +51,14 @@ public class HomeViewController {
         model.addAttribute("exams", exaResponseDtoList);
 
         return "mainPage";
+    }
+
+    private void checkAdmin(Model model, UserDetailsImpl userDetails) {
+        Boolean admin = false;
+        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            admin = true;
+        }
+        model.addAttribute("admin", admin);
     }
 
 }

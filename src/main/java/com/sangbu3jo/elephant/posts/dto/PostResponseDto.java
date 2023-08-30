@@ -1,19 +1,21 @@
 package com.sangbu3jo.elephant.posts.dto;
 
-import com.sangbu3jo.elephant.posts.entity.Category;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 public class PostResponseDto {
     private Long id;
+    private Long userId;
     private String title;
     private String content;
-    private Category category;
+    private String category;
     private String username;
     private String nickname;
     private String files;
@@ -26,11 +28,13 @@ public class PostResponseDto {
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
+        this.userId = post.getUser().getId();
         this.title = post.getTitle();
         this.username = post.getUser().getUsername();
         this.nickname = post.getUser().getNickname();
+        log.info(nickname);
         this.content = post.getContent();
-        this.category = post.getCategory();
+        this.category = post.getCategory().getCategoryName();
         this.completed = post.getCompleted();
         this.files = post.getFiles();
         this.view_cnt = post.getViewCnt()==null ? 0 : post.getViewCnt();

@@ -8,13 +8,15 @@ import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -131,18 +133,15 @@ public class PostService {
 
 
     //게시글 카테고리 별 전체 조회
-    public Page<PostResponseDto> getCategoryPost(Integer category, int page, int size, String sortBy, boolean isAsc) {
+    public Page<PostResponseDto> getCategoryPost(Integer category, Pageable pageable, Integer pageNo) {
 
-        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Sort sort = Sort.by(direction, sortBy);
-
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        // 작성일자 순으로 내림차순 정렬 객체 생성
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        // 정렬 객체를 통해 pageNo와 한 페이지당 갯수 설정하여 pageable 객체에 입력. 
+        pageable = PageRequest.of(pageNo, 5, sort);
+        
+        // 각 카테고리별 데이터 가져와서 객체에 입력.
         Page<Post> projectList;
-
-        // 페이징 구현
-        Pageable pageable = PageRequest.of(page - 1, size, sort); //페이지 번호는 0부터 시작함, 한 페이지에 게시물 갯수
-
-
         switch (category) {
             case 1:
                 projectList = postRepository.findAllByCategoryOrderByCreatedAtDesc(Category.COOPERATION_PROJECT, pageable);
@@ -160,45 +159,44 @@ public class PostService {
                 throw new IllegalArgumentException("해당 카테고리가 존재하지 않습니다.");
         }
 
-
-        for (Post post : projectList) {
-            postResponseDtoList.add(new PostResponseDto(post));
-        }
-
-        return new PageImpl<>(postResponseDtoList, pageable, projectList.getTotalElements());
+        // dto 타입으로 반환
+        return projectList.map(PostResponseDto::new);
     }
 
     //게시글 카테고리 검색 조회
     //슬라이스 구현
-    public List<PostResponseDto> getSearchTitle(Integer category, String title) {
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+    public Page<PostResponseDto> getSearchTitle(Integer category, Pageable pageable, Integer pageNo,
+        String title) {
+        // 작성일자 순으로 내림차순 정렬 객체 생성
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        // 정렬 객체를 통해 pageNo와 한 페이지당 갯수 설정하여 pageable 객체에 입력.
+        pageable = PageRequest.of(pageNo, 5, sort);
 
-
-        //슬라이스 구현
-        Pageable pageable = PageRequest.of(0, 10); //페이지 번호는 0부터 시작함, 한 페이지에 게시물 갯수
-
-        Slice<Post> searchList;
+        // 각 카테고리별 데이터 가져와서 객체에 입력.
+        Page<Post> searchList;
 
         switch (category) {
             case 1:
-                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(project, title, pageable);
+                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(
+                    Category.COOPERATION_PROJECT, title, pageable);
                 break;
             case 2:
-                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(study, title, pageable);
+                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(
+                    Category.DEVELOPMENT_STUDY, title, pageable);
                 break;
             case 3:
-                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(previousExam, title, pageable);
+                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(
+                    Category.PREVIOUS_EXAM, title, pageable);
                 break;
             case 4:
-                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(forumBoard, title, pageable);
+                searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(
+                    Category.FORUM_BOARD, title, pageable);
                 break;
             default:
                 throw new IllegalArgumentException("해당 카테고리가 존재하지 않습니다.");
         }
 
-        return searchList.stream()
-                .map(PostResponseDto::new)
-                .collect(Collectors.toList());
+        return searchList.map(PostResponseDto::new);
     }
 
     //게시물 단건 조회(댓글 포함)

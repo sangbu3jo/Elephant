@@ -1,3 +1,15 @@
+@font-face {
+    font-family: 'TheJamsil5Bold';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+}
+
+* {
+    font-family: 'TheJamsil5Bold', cursive;
+    color: #DEE2E6;
+}
+
 body {
     background-size: cover;
     background-image: url("https://images.klipfolio.com/website/public/79b53931-b472-4cd5-85bc-f19df936cb9b/Best_Team_Collaboration_Tools.png");
@@ -5,12 +17,14 @@ body {
 
 h1 {
     font-size: xxx-large;
+    color: #fff;
 }
 
 h2 {
     font-weight: unset;
-    margin-top: 1px;
-    margin-bottom: 2px;
+    font-size: large;
+    /*margin-top: 1px;*/
+    margin-bottom: -10px;
 }
 
 div {
@@ -28,6 +42,7 @@ li {
 a {
     color: #DEE2E6;
     text-decoration: none;
+    font-size: x-large;
 }
 a:hover{
     color: #000;
@@ -56,6 +71,6 @@ header{
 }
 
 .content {
-    margin-left: 5%;
+    margin-left: 4%;
     margin-top: 10%;
 }
