@@ -383,7 +383,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center"
                             th:each="project : ${projects}" th:onclick="'gotoPost(\'' + ${project.id} + '\')'">
-                            <span th:text="${project.title}">제목</span>
+                            <span th:text="|${project.title.length() > 30 ? #strings.substring(project.title, 0, 30) + '...' : project.title}|">제목</span>
                             <span th:text="${project.nickname}">작성자</span>
                             <span class="badge bg-primary rounded-pill"
                                   th:text="|조회수: ${project.view_cnt}|">조회수: 1</span>
@@ -396,7 +396,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center"
                             th:each="study : ${studies}" th:onclick="'gotoPost(\'' + ${study.id} + '\')'">
-                            <span th:text="${study.title}">제목</span>
+                            <span th:text="|${study.title.length() > 20 ? #strings.substring(study.title, 0, 20) + '...' : study.title}|">제목</span>
                             <span th:text="${study.nickname}">작성자</span>
                             <span class="badge bg-primary rounded-pill" th:text="|조회수: ${study.view_cnt}|">조회수: 1</span>
                         </li>
@@ -412,7 +412,7 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center"
                         th:each="exam : ${exams}"  th:onclick="'gotoPost(\'' + ${exam.id} + '\')'">
-                        <span th:text="${exam.title}">제목</span>
+                        <span th:text="|${exam.title.length() > 20 ? #strings.substring(exam.title, 0, 20) + '...' : exam.title}|">제목</span>
                         <span th:text="${exam.nickname}">작성자</span>
                         <span class="badge bg-primary rounded-pill" th:text="|조회수: ${exam.view_cnt}|">조회수: 1</span>
                     </li>
@@ -424,7 +424,7 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center"
                         th:each="forum : ${forums}"  th:onclick="'gotoPost(\'' + ${forum.id} + '\')'">
-                        <span th:text="${forum.title}">제목</span>
+                        <span th:text="|${forum.title.length() > 20 ? #strings.substring(forum.title, 0, 20) + '...' : forum.title}|">제목</span>
                         <span th:text="${forum.nickname}">작성자</span>
                         <span class="badge bg-primary rounded-pill"  th:text="|조회수: ${forum.view_cnt}|">조회수: 1</span>
                     </li>
