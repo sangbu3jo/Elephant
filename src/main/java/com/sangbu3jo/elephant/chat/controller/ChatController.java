@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -104,8 +105,10 @@ public class ChatController {
 
     // 개인 채팅방 생성 혹은 연결
     @PostMapping("/api/chatRooms")
+    @ResponseBody
     public String createPrivateChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                          @RequestBody ChatUserRequestDto chatUserRequestDto) {
+//        return new RedirectView(chatRoomService.findPrivateChatRoom(userDetails.getUser().getUsername(), chatUserRequestDto.getUsername()));
         return chatRoomService.findPrivateChatRoom(userDetails.getUser().getUsername(), chatUserRequestDto.getUsername());
     }
 
