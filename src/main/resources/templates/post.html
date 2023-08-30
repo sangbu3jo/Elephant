@@ -144,6 +144,15 @@
             }
         }
 
+        .mark-all-read-button {
+            position: absolute;
+            top: 10px; /* 버튼 위치 조정 */
+            right: 10px; /* 버튼 위치 조정 */
+            padding: 1px 4px;
+            font-size: 12px;
+            z-index: 9999; /* 다른 요소보다 앞에 표시되도록 설정 */
+        }
+
         .new-notification {
             color: red;
             animation: shake 1.5s infinite; /* 흔들기 애니메이션 적용 */
@@ -509,7 +518,8 @@
                 <h5 th:text="${post.category}">Category</h5>
             </div>
             <div class="post-top-bottom">
-                <h6 th:text="'작성날짜 ' + ${post.createdAt}">생성 날짜</h6>
+<!--                th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">11/11 11:11:11</p>-->
+                <h6 th:text="'작성날짜 ' + ${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">생성 날짜</h6>
                 <h6 th:text="'조회수 ' + ${post.view_cnt}">조회수: 00회</h6>
                 <h6 th:unless="${post.category == '문제 은행' || post.category == '자유 게시판'}">
                     <span th:if="${post.completed == false}">모집중</span>
@@ -551,7 +561,7 @@
                                 <h5 th:text="${comment.content}">content</h5>
 
                                 <!-- 댓글 작성 날짜 -->
-                                <p th:text="'작성날짜 ' + ${comment.createdAt}">댓글 작성 날짜</p>
+                                <p th:text="'작성날짜 ' + ${#temporals.format(comment.createdAt,'MM/dd HH:mm:ss')}">댓글 작성 날짜</p>
                             </div>
 
                             <div class="comment-button">
@@ -652,24 +662,26 @@
 
     function deleteComment(commentId) {
         // Ajax로 DELETE 요청 보내기
-        $.ajax({
-            url: `/api/posts/comments/${commentId}`,
-            type: "DELETE",
-            success: function (data) {
-                console.log(data);
-                // 삭제에 성공한 경우
-                // 화면에서 해당 댓글을 제거하거나 업데이트
-                const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
-                if (commentElement) {
-                    commentElement.remove(); // 해당 댓글을 화면에서 제거
-                }
+        if (confirm("댓글을 삭제하시겠습니까?")) {
+            $.ajax({
+                url: `/api/posts/comments/${commentId}`,
+                type: "DELETE",
+                success: function (data) {
+                    console.log(data);
+                    // 삭제에 성공한 경우
+                    // 화면에서 해당 댓글을 제거하거나 업데이트
+                    const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
+                    if (commentElement) {
+                        commentElement.remove(); // 해당 댓글을 화면에서 제거
+                    }
 
-                window.location.reload();
-            },
-            error: function (error) {
-                console.error("댓글 삭제 실패");
-            }
-        });
+                    window.location.reload();
+                },
+                error: function (error) {
+                    console.error("댓글 삭제 실패");
+                }
+            });
+        }
     }
 
 
