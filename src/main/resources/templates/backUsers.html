@@ -364,9 +364,8 @@
     </div>
     <div class="middle">
         <!-- 가운데 코끼리 글씨 및 로고  -->
-        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
-             style="width: 35px; height: 35px;"> <!-- 로고 이미지 추가 -->
-        <div style="text-align: center; color:#000">
+        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
+        <div style="text-align: center; cursor:pointer;" onclick="gotoMain()">
             코끼리
         </div>
     </div>
@@ -472,6 +471,9 @@
 <!-- 나머지 내용은 유지하고, 필요한 부분만 수정합니다. -->
 
 <script>
+    function gotoMain() {
+        window.location.href = "/main";
+    }
     // header js 코드 추가
     $(document).ready(function () {
         pageSetting();
