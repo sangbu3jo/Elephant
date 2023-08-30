@@ -556,10 +556,12 @@
                             </div>
 
                             <div class="comment-button">
+                                <div th:if="${comment.userId == loginUser}">
                                 <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정</button>
                                 <button class="delete-comment" th:attr="onclick='deleteComment(' + ${comment.id} + ')'">
                                     댓글삭제
                                 </button>
+                                </div>
                             </div>
 
                             <div class="modal">
@@ -697,13 +699,12 @@
     var commentSaveId = comment.id;
     // 모달 저장 버튼 클릭 시
     document.getElementById('saveComment').addEventListener('click', function (event) {
-        //function id 값 받아오고
 
-        // 모달 내용을 저장하는 로직을 추가하세요.
-        // 예를 들어, 수정된 댓글 내용을 서버로 전송할 수 있습니다.
 
         const commentTextarea = document.getElementById('commentTextarea').value;
+        const commentUpId = this.getAttribute('data-comment-id');
         console.log(commentTextarea);
+        // console.log(commentUpdateId);
 
         // const commentSaveId = document.getElementById('saveComment').getAttribute('data-comment-id');
         // var commentSaveId = commentSave.attr("#data-comment-id").val();
@@ -717,7 +718,7 @@
 
         $.ajax({
             type: "PUT",
-            url: `/api/posts/comments/${commentSaveId}`, // 수정할 댓글의 URL
+            url: `/api/posts/comments/${commentUpId}`, // 수정할 댓글의 URL
             data: JSON.stringify(postData),
             contentType: "application/json",
             success: function (response) {
