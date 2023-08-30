@@ -16,24 +16,15 @@ public class AdminViewController {
     @GetMapping("/admins")
     public String backAdminsPage(Model model,
         @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Boolean admin = false;
-        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
-            admin = true;
-        }
-        model.addAttribute("admin", admin);
+        checkAdmin(model, userDetails);
         return "backAdmins";
     }
-
 
     // 사용자 정보관리 페이지
     @GetMapping("/users")
     public String backUsersPage(Model model,
         @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Boolean admin = false;
-        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
-            admin = true;
-        }
-        model.addAttribute("admin", admin);
+        checkAdmin(model, userDetails);
         return "backUsers";
     }
 
@@ -42,5 +33,14 @@ public class AdminViewController {
     public String notification() {
         return "notification";
     }
+
+    private void checkAdmin(Model model, UserDetailsImpl userDetails) {
+        Boolean admin = false;
+        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            admin = true;
+        }
+        model.addAttribute("admin", admin);
+    }
+
 
 }

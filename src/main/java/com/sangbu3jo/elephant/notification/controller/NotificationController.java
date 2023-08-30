@@ -63,9 +63,12 @@ public class NotificationController {
     }
 
     @GetMapping("/get-user-info")
-    public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        User user = notificationService.getUserInfo(userDetails.getUser());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<Object> getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        if(userDetails!=null) {
+            User user = notificationService.getUserInfo(userDetails.getUser());
+            return ResponseEntity.ok(user);
+        }
+        return ResponseEntity.badRequest().body("유저 정보가 없습니다.");
     }
 
 }

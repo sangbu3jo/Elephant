@@ -139,7 +139,7 @@ public class PostService {
         // 작성일자 순으로 내림차순 정렬 객체 생성
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         // 정렬 객체를 통해 pageNo와 한 페이지당 갯수 설정하여 pageable 객체에 입력. 
-        pageable = PageRequest.of(pageNo, 10, sort);
+        pageable = PageRequest.of(pageNo, 5, sort);
         
         // 각 카테고리별 데이터 가져와서 객체에 입력.
         Page<Post> projectList;
@@ -171,7 +171,7 @@ public class PostService {
         // 작성일자 순으로 내림차순 정렬 객체 생성
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         // 정렬 객체를 통해 pageNo와 한 페이지당 갯수 설정하여 pageable 객체에 입력.
-        pageable = PageRequest.of(pageNo, 10, sort);
+        pageable = PageRequest.of(pageNo, 5, sort);
 
         // 각 카테고리별 데이터 가져와서 객체에 입력.
         Page<Post> searchList;

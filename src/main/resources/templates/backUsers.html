@@ -280,12 +280,13 @@
             justify-content: flex-start;
             align-items: center; /* 가로 정렬을 중앙에서 시작하도록 변경 */
             width: 50%;
-            height: auto;
+            height: auto; /* 건욱님 코드는 80vh*/
             background-color: white;
             border: 1px solid #ddd;
             margin-left: 10%;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
             /*      position: fixed;
                   top: 55%; !* 55%에서 50%로 변경 *!
                   left: 50%;
@@ -328,9 +329,9 @@
             display: flex;
             flex-direction: column; /* 항목을 수직으로 쌓습니다 */
             max-height: 90vh; /* 컨텐츠의 최대 높이 설정 */
-            overflow-y: auto; /* 컨텐츠가 넘칠 때 수직 스크롤바를 추가합니다 */
+            overflow-y: hidden; /* 컨텐츠가 넘칠 때 수직 스크롤바를 추가합니다 */
             gap: 10px;
-            width: 90%;
+            width: 90%; /* 건욱님 코드는 80%*/
             justify-content: flex-start; /* 요소들을 왼쪽 정렬로 유지 */
             align-items: flex-start; /* 요소들을 위쪽 정렬로 유지 */
         }
@@ -713,7 +714,7 @@
             success: function (data) {
                 removeToken();
                 alert("로그아웃 성공");
-                window.location.href='/';
+                window.location.href='/main';
             },
             error: function () {
                 alert("로그아웃 실패");
@@ -726,7 +727,7 @@
         window.location.href = "/api/auth/login-page";
     }
 
-    const userPerPage = 7;
+    const userPerPage = 5;
     const profileButton = document.getElementById('profile');
     const myPostsButton = document.getElementById('myPosts');
     const myCommentsButton = document.getElementById('myComments');
@@ -1272,7 +1273,7 @@
                 <tr>
                     <td></td>
                     <td>게시글 내용 : </td>
-                    <td>${post.content.substring(0, 50)}...</td>
+                    <td>${post.content.substring(0, 20)}...</td>
                 </tr>
             </table>
         `;
@@ -1301,7 +1302,7 @@
                 <tr>
                     <td></td>
                     <td>댓글 내용 : </td>
-                    <td>${comment.content}</td>
+                    <td>${comment.content.substring(0, 20)}...</td>
                 </tr>
                 <tr>
                     <td></td>
