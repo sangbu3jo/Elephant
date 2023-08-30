@@ -71,6 +71,10 @@ public class PostService {
     //게시물 수정
     @Transactional
     public void modifiedPost(Post post, PostRequestDto postRequestDto) {
+
+
+
+
         //category 나누기
         if (postRequestDto.getCategory().equals(Category.COOPERATION_PROJECT)) {
             post.setCategory(project);

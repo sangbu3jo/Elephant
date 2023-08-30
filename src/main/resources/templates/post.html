@@ -5,44 +5,248 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/5856/5856675.png"/>
+    <title>코끼리</title>
 
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
+    <script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+    <!-- 로고 -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"/>
+
     <style>
 
         /* 수정된 스타일 */
-        .delete-button {
-            position: fixed; /* 고정 위치 */
-            top: 10px; /* 위에서 10px 떨어진 위치 */
-            right: 10px; /* 오른쪽에서 10px 떨어진 위치 */
-            background-color: red; /* 빨간색 배경색 */
-            color: white; /* 흰색 텍스트 색상 */
-            padding: 5px 10px; /* 버튼 내부 여백 조정 */
-            border: none; /* 테두리 제거 */
-            cursor: pointer; /* 마우스 커서 모양 변경 (손가락 모양) */
-            border-radius: 5px; /* 둥근 모서리 */
-            font-size: 12px; /* 텍스트 크기 작게 설정 */
+        @font-face {
+            font-family: 'TheJamsil5Bold';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
         }
 
-        .delete-button:hover {
-            background-color: darkred; /* 마우스 오버 시 배경색 변경 */
+        * {
+            font-family: 'TheJamsil5Bold', cursive;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            color: #101014;
+            background-color: #f5f5fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 가로 가운데 정렬 추가 */
+            align-items: center; /* 세로 가운데 정렬 추가 */
+        }
+
+        body::-webkit-scrollbar {
+            margin-left: 5px;
+            width: 10px;
+        }
+
+        body::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        body::-webkit-scrollbar-thumb {
+            border-radius: 2px;
+            background-color: #dddddd;
+        }
+
+        body::-webkit-scrollbar-button {
+            width: 0;
+            height: 0;
+        }
+
+        /* 상단 메뉴 */
+        .top {
+            height: 15vh;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            background-color: transparent;
+            border: none;
+        }
+
+        .right {
+            height: 100%;
+            width: 35%;
+            padding-left: 30px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .middle {
+            height: 100%;
+            width: 30%;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .middle img {
+            margin-right: 5px;
+        }
+
+        .left {
+            height: 100%;
+            width: 35%;
+            padding-right: 30px;
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+            align-items: center;
+        }
+
+        /* 알림 */
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 30px;
+            cursor: pointer;
+            margin-right: 10px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .notification-icon div {
+            width: 40px;
+            height: 40px;
+            position: relative;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            10%, 30%, 50%, 70%, 90% {
+                transform: translateX(-3px);
+            }
+            20%, 40%, 60%, 80% {
+                transform: translateX(3px);
+            }
+        }
+
+        .new-notification {
+            color: red;
+            animation: shake 1.5s infinite; /* 흔들기 애니메이션 적용 */
+        }
+
+        .nobadge {
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 12px;
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .notification-list {
+            position: absolute;
+            top: 100px; /* Adjust the top position to your preference */
+            right: 70px;
+            width: 295px;
+            background-color: white;
+            border: 1px solid #ddd;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            max-height: 700px;
+            overflow-y: auto;
+            display: none;
+            z-index: 10;
+            margin-top: 45px; /* 헤더의 높이만큼 여백 추가 */
+        }
+
+        .notification-list-header {
+            background-color: #ccc;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            position: fixed;
+            top: 100px;
+            width: 13%; /* 가로 너비를 꽉 채우도록 설정 */
+            z-index: 9998; /* 헤더 위에 배치 */
+        }
+
+        .notification-list-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            background-color: white;
+        }
+
+        .notification-list-item.read {
+            background-color: #f0f0f0;
+        }
+
+        .list-group-item {
+            background-color: transparent;
+            cursor: pointer;
+        }
+
+        .offcanvas {
+            background-color: #f5f5fa;
+        }
+
+
+        /* 하단 게시판 */
+
+        .bottom {
+            height: 85vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .buttons {
+            width: 80%;
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+        }
+
+        .delete-button,
         #update-post-button {
-            position: fixed; /* 고정 위치 */
-            top: 10px; /* 위에서 10px 떨어진 위치 */
-            right: 100px; /* 오른쪽에서 10px 떨어진 위치 */
-            background-color: blue; /* 빨간색 배경색 */
-            color: white; /* 흰색 텍스트 색상 */
+            background-color: #e9e9e9; /* 빨간색 배경색 */
+            color: #1a1515; /* 흰색 텍스트 색상 */
             padding: 5px 10px; /* 버튼 내부 여백 조정 */
             border: none; /* 테두리 제거 */
             cursor: pointer; /* 마우스 커서 모양 변경 (손가락 모양) */
             border-radius: 5px; /* 둥근 모서리 */
             font-size: 12px; /* 텍스트 크기 작게 설정 */
+        }
+
+        .delete-button:hover,
+        #update-post-button:hover {
+            background-color: #d6d6d6; /* 마우스 오버 시 배경색 변경 */
+        }
+
+
+        #post-content {
+            width: 100%;
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* 모달 레이어 스타일 */
@@ -81,6 +285,129 @@
         }
 
 
+        /* 게시글 부분 수정 */
+        .post-content-top {
+            width: 80%;
+            height: 30%;
+        }
+
+        .post-content-bottom {
+            width: 80%;
+            height: 70%;
+            overflow-y: auto;
+        }
+
+        .post-content-bottom::-webkit-scrollbar {
+            margin-left: 5px;
+            width: 7px;
+        }
+
+        .post-content-bottom::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        .post-content-bottom::-webkit-scrollbar-thumb {
+            border-radius: 2px;
+            background-color: #dddddd;
+        }
+
+        .post-content-bottom::-webkit-scrollbar-button {
+            width: 0;
+            height: 0;
+        }
+
+        .post-top-top {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .post-top-bottom {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+
+        /* 댓글 부분 수정 */
+        .comment-content {
+            margin-top: 1%;
+            width: 100%;
+            height: 49%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .comment {
+            width: 80%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #comment-form {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        ul {
+            padding: 0;
+            width: 100%;
+            margin: 0;
+        }
+
+        #comment-content {
+            width: 60vw;
+        }
+
+        .comment-container {
+            width: 100%;
+            margin-top: 1vh;
+        }
+
+        .comment h5 {
+            margin: 0;
+        }
+
+        .line {
+            margin-top: 1vh;
+            margin-bottom: 1vh;
+            width: 100%;
+            height: 0.1vh;
+            background-color: #101014;
+        }
+
+        .comment-one {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 10px;
+            background-color: transparent;
+        }
+
+        .comment-content-user {
+            width: 80%;
+        }
+
+        .comment-button {
+            width: 20%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: end;
+        }
+
     </style>
 
 
@@ -88,71 +415,170 @@
 
 
 <body>
-
-
-<button id="update-post-button">게시글 수정</button>
-
-<!-- 게시물 삭제 버튼 -->
-
-<button type="button" id="delete-button" class="delete-button" onclick="deletePost()">게시물 삭제</button>
-
-
-<div id="post-content">
-    <h1 th:text="${post.title}"></h1>
-    <h5 th:text="${#strings.substring(post.username, 0, 5) + '*****'}"></h5>
-    <h3 th:text="${post.category}"></h3>
-    <p th:text="${post.content}"></p>
-    <!-- 조회수 앞에 "조회수" 추가하여 출력 -->
-    <h5 th:text="'조회수 ' + ${post.view_cnt}"></h5>
-
-    <h5 th:if="${post.category != post.category.PREVIOUS_EXAM}">
-        <span th:if="${post.completed == false}">모집중</span>
-        <span th:if="${post.completed == true}">모집완료</span>
-    </h5>
-    <h5 th:text="'작성날짜 ' + ${post.createdAt}">생성 날짜</h5>
-
-
-    <h2>댓글 작성</h2>
-    <form id="comment-form">
-        <div class="form-group">
-            <label for="comment-content">댓글 내용</label>
-            <input type="text" id="comment-content" name="comment-content" class="input-field" placeholder="댓글을 입력하세요">
+<div class="top">
+    <div class="right">
+        <a id="login" onclick="redirectToLoginPage()">
+            <button>로그인</button>
+        </a>
+        <a id="logout" onclick="logout()">
+            <button>로그아웃</button>
+        </a>
+        <a id="keeplogin" onclick="refreshAccessToken()">
+            <button>로그인 연장</button>
+        </a>
+    </div>
+    <div class="middle">
+        <!-- 가운데 코끼리 글씨 및 로고  -->
+        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px;">
+        <!-- 로고 이미지 추가 -->
+        <div style="text-align: center;">
+            코끼리
         </div>
-        <button type="submit" class="submit-button">댓글 작성</button>
-    </form>
+    </div>
+    <div class="left">
+        <!-- 알림, 우측 메뉴 슬라이드 -->
+        <div class="notification-icon">
+            <div style="position: relative;">
+                <i class="far fa-bell" style="color: #cfcfcf;"></i>
+                <span id="notificationBadge" class="nobadge" style="display:none;"></span>
+            </div>
+        </div>
 
-    <!-- 댓글 목록 출력 -->
-    <h2>댓글</h2>
-    <div class="comment-container">
-        <ul>
-            <li th:each="comment : ${post.postCommentList}">
-                <div class="comment">
-                    <!-- 댓글 내용 -->
-                    <p th:text="${comment.content}"></p>
-                    <!-- 댓글 작성자 (앞 5글자만 표시) -->
-                    <h5 th:text="${#strings.substring(comment.username, 0, 5) + '*****'}"></h5>
-                    <!-- 댓글 작성 날짜 -->
-                    <h5 th:text="'작성날짜 ' + ${comment.createdAt}">댓글 작성 날짜</h5>
-                    <!-- 댓글 수정 날짜 -->
-                    <h5 th:text="'수정날짜 ' + ${comment.modifiedAt}">댓글 수정 날짜</h5>
+        <div style="text-align: center;" type="button" data-bs-toggle="offcanvas"
+             data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+            <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png" style="width: 40px; height: 40px;">
+            <!-- 로고 이미지 추가 -->
+        </div>
 
-                    <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정</button>
+        <div class="offcanvas offcanvas-start w-25" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
+             aria-labelledby="offcanvasWithBothOptionsLabel">
+            <div class="offcanvas-header" style="text-align: center; align-items:center;">
+                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+                    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
+                         style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+                    코끼리
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
 
-                    <button class="delete-comment" th:attr="onclick='deleteComment(' + ${comment.id} + ')'">댓글삭제
-                    </button>
-
-                    <div class="modal">
-                        <div class="modal-content">
-                            <!-- 모달 내용 -->
-                            <span class="close">&times;</span>
-                            <h2>댓글 수정</h2>
-                            <textarea id="commentTextarea"></textarea>
-                            <button id="saveComment">저장</button>
-                        </div>
-                    </div>
+            <div class="list-group list-group-flush">
+                <!-- 카테고리 버튼과 하위 메뉴 -->
+                <button class="list-group-item list-group-item-action" data-bs-toggle="collapse"
+                        data-bs-target="#categoryMenu">게시판 카테고리
+                </button>
+                <div id="categoryMenu" class="collapse">
+                    <a href="/api/posts/categories/1" class="list-group-item list-group-item-action mini-list">협업 인원
+                        모집</a>
+                    <a href="/api/posts/categories/2" class="list-group-item list-group-item-action mini-list">스티디원
+                        모집</a>
+                    <a href="/api/posts/categories/3" class="list-group-item list-group-item-action mini-list">문제은행</a>
+                    <a href="/api/posts/categories/4" class="list-group-item list-group-item-action mini-list">자유게시판</a>
                 </div>
-            </li>
-        </ul>
+
+                <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
+                <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a>
+                <!--서버에서 admin 여부 true/false로 가져오기-->
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 나머지 내용 -->
+    <div class="notification-list" id="notificationList">
+        <div class="notification-list-header">알림</div>
+    </div>
+
+</div>
+
+<div class="bottom">
+    <div class="buttons">
+        <div th:if="${post.userId == loginUser}">
+            <button id="update-post-button" style="margin-right: 10px;">게시글 수정</button>
+            <button type="button" id="delete-button" class="delete-button" onclick="deletePost()">게시물 삭제</button>
+        </div>
+    </div>
+
+    <div id="post-content">
+        <div class="post-content-top">
+            <h4 th:text="${post.title}">Title</h4>
+            <div class="post-top-top">
+                <h5 th:text="${#strings.substring(post.username, 0, 5) + '*****'}">Nickname</h5>
+                <h5 th:text="${post.category}">Category</h5>
+            </div>
+            <div class="post-top-bottom">
+                <h6 th:text="'작성날짜 ' + ${post.createdAt}">생성 날짜</h6>
+                <h6 th:text="'조회수 ' + ${post.view_cnt}">조회수: 00회</h6>
+                <h6 th:if="${post.category != post.category.PREVIOUS_EXAM}">
+                    <span th:if="${post.completed == false}">모집중</span>
+                    <span th:if="${post.completed == true}">모집완료</span>
+                </h6>
+            </div>
+
+        </div>
+        <div class="post-content-bottom">
+            <p th:text="${post.content}">Contents</p>
+            <div th:if="${post.files != null}">
+                <img th:src="${post.files}" width="700" height="400" alt="이미지 대체 텍스트">
+            </div>
+        </div>
+    </div>
+
+    <div class="comment-content">
+        <div class="comment">
+            <h4>댓글</h4>
+            <form id="comment-form">
+                <div class="form-group">
+                    <label for="comment-content">댓글 내용</label>
+                    <input type="text" id="comment-content" name="comment-content" class="input-field"
+                           placeholder="댓글을 입력하세요">
+                </div>
+                <button type="submit" class="submit-button">댓글 작성</button>
+            </form>
+            <div class="line"></div>
+            <!-- 댓글 목록 출력 -->
+            <div class="comment-container">
+                <ul>
+                    <li th:each="comment : ${post.postCommentList}">
+                        <div class="comment-one">
+                            <div class="comment-content-user">
+                                <!-- 댓글 작성자 (앞 5글자만 표시) -->
+                                <p th:text="${#strings.substring(comment.username, 0, 5) + '*****'}">username</p>
+
+                                <!-- 댓글 내용 -->
+                                <h5 th:text="${comment.content}">content</h5>
+
+                                <!-- 댓글 작성 날짜 -->
+                                <p th:text="'작성날짜 ' + ${comment.createdAt}">댓글 작성 날짜</p>
+                            </div>
+
+                            <div class="comment-button">
+                                <div th:if="${comment.userId == loginUser}">
+                                <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정</button>
+                                <button class="delete-comment" th:attr="onclick='deleteComment(' + ${comment.id} + ')'">
+                                    댓글삭제
+                                </button>
+                                </div>
+                            </div>
+
+                            <div class="modal">
+                                <div class="modal-content">
+                                    <!-- 모달 내용 -->
+                                    <span class="close">&times;</span>
+                                    <h2>댓글 수정</h2>
+                                    <textarea id="commentTextarea"></textarea>
+                                    <button id="saveComment">저장</button>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -168,7 +594,7 @@
                 success: function (response) {
                     console.log(response);
                     // 삭제 성공 시 페이지 리로드 또는 다른 동작 수행
-                    window.location.href = "/api/posts/categories";
+                    window.location.href = "/";
                 },
                 error: function (error) {
                     console.error("게시물 삭제 실패:", error);
@@ -273,13 +699,12 @@
     var commentSaveId = comment.id;
     // 모달 저장 버튼 클릭 시
     document.getElementById('saveComment').addEventListener('click', function (event) {
-        //function id 값 받아오고
 
-        // 모달 내용을 저장하는 로직을 추가하세요.
-        // 예를 들어, 수정된 댓글 내용을 서버로 전송할 수 있습니다.
 
         const commentTextarea = document.getElementById('commentTextarea').value;
+        const commentUpId = this.getAttribute('data-comment-id');
         console.log(commentTextarea);
+        // console.log(commentUpdateId);
 
         // const commentSaveId = document.getElementById('saveComment').getAttribute('data-comment-id');
         // var commentSaveId = commentSave.attr("#data-comment-id").val();
@@ -293,7 +718,7 @@
 
         $.ajax({
             type: "PUT",
-            url: `/api/posts/comments/${commentSaveId}`, // 수정할 댓글의 URL
+            url: `/api/posts/comments/${commentUpId}`, // 수정할 댓글의 URL
             data: JSON.stringify(postData),
             contentType: "application/json",
             success: function (response) {
@@ -311,9 +736,279 @@
         });
     });
 
-
 </script>
 
 
 </body>
+
+<script>
+    $(document).ready(function () {
+        pageSetting();
+
+        const notificationIcon = document.querySelector('.notification-icon');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const notificationList = document.getElementById('notificationList');
+        let isNotificationListOpen = false;
+        let notificationsList = []; // 알림 데이터를 저장할 리스트
+        let userId = null; // 사용자 아이디 변수 추가
+
+        // 알림 데이터를 서버에서 불러와서 목록에 추가하는 함수
+        const fetchNotifications = async (userId) => {
+            try {
+                const response = await fetch(`/api/notifications/list/${userId}`);
+                if (response.ok) {
+                    const notifications = await response.json();
+                    notificationsList = notifications;
+                    updateNotificationList();
+                    updateNotificationIcon();
+                } else {
+                    console.error('Error fetching notifications:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+
+        // 사용자 정보를 불러오는 함수
+        const fetchUserInfo = async () => {
+            try {
+                const response = await fetch('/api/get-user-info');
+                if (response.ok) {
+                    const userData = await response.json();
+                    if (userData && userData.id) {
+                        userId = userData.id;
+                        loadNotificationsFromServer(userId);
+                    }
+                } else {
+                    console.error('Error fetching user info:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+            }
+        };
+
+        // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
+        fetchUserInfo();
+
+        // 알림 목록 업데이트 함수
+        const updateNotificationList = () => {
+            notificationList.innerHTML = ''; // 목록 초기화
+            notificationsList.forEach(notification => {
+                addNotificationToList(notification);
+            });
+            const listHeader = document.createElement('div');
+            listHeader.className = 'notification-list-header';
+
+            // Create the "전체 읽음" button
+            const markAllReadButton = `<button id="markAllReadButton" class="mark-all-read-button">전체 읽음</button>`;
+            listHeader.innerHTML = markAllReadButton; // innerHTML로 버튼 추가
+            listHeader.innerHTML += '알림';
+
+            notificationList.insertBefore(listHeader, notificationList.firstChild);
+
+            // "전체 읽음" 버튼에 이벤트 리스너 연결
+            const button = document.getElementById('markAllReadButton');
+            button.addEventListener('click', function () {
+                const confirmResult = confirm('알림 전체 읽음처리 하시겠습니까?');
+                if (confirmResult) {
+                    // 확인을 선택한 경우 서버에 요청 보내기
+                    markAllNotificationsAsRead();
+                    // alert('알림이 전체 읽음 처리되었습니다.');
+                    window.location.href = window.location.href;
+                } else {
+                    // 취소를 선택한 경우
+                    // 아무 작업도 하지 않음
+                }
+
+            });
+
+
+        };
+
+        // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
+        const formatTimeAgo = (notificationTime) => {
+            const currentTime = new Date();
+            const timeDifference = currentTime - new Date(notificationTime);
+
+            if (timeDifference < 60000) { // 1분 미만
+                return "방금 전";
+            } else if (timeDifference < 3600000) { // 1시간 미만
+                const minutes = Math.floor(timeDifference / 60000);
+                return `${minutes}분 전`;
+            } else if (timeDifference < 86400000) { // 24시간 미만
+                const hours = Math.floor(timeDifference / 3600000);
+                return `${hours}시간 전`;
+            } else {
+                const days = Math.floor(timeDifference / 86400000);
+                return `${days}일 전`;
+            }
+        };
+
+        // 알림 아이템 추가 함수
+        const addNotificationToList = (notification) => {
+            const listItem = document.createElement('div');
+            listItem.className = notification.read ? 'notification-list-item read' : 'notification-list-item unread';
+            const timeAgo = formatTimeAgo(notification.createdAt);
+            listItem.innerHTML = `${notification.content}<br><span class="notification-time">${timeAgo}</span>`;
+            listItem.onclick = () => {
+                handleNotificationItemClick(notification, listItem);
+            };
+            notificationList.insertBefore(listItem, notificationList.firstChild);
+        };
+
+        // 알림 읽음 처리 함수
+        const markNotificationAsRead = (notification, listItem) => {
+            if (!notification.read) {
+                notification.read = true;
+                listItem.classList.remove('unread');
+                listItem.classList.add('read');
+                updateNotificationIcon();
+
+                // AJAX 요청으로 서버에 알림 읽음 처리 요청 보내기
+                $.post(`/api/mark-notification-as-read/${notification.id}`)
+            }
+        };
+
+        // 알림 아이템 클릭 처리 함수
+        const handleNotificationItemClick = (notification, listItem) => {
+            markNotificationAsRead(notification, listItem);
+            window.location.href = notification.url;
+        };
+
+        // 알림 아이콘 업데이트 함수
+        const updateNotificationIcon = () => {
+            const unreadCount = notificationsList.filter(notification => !notification.read).length;
+            if (unreadCount > 0) {
+                notificationIcon.classList.add('new-notification');
+                notificationBadge.style.display = "inline";
+                notificationBadge.innerText = unreadCount.toString();
+            } else {
+                notificationIcon.classList.remove('new-notification');
+                notificationBadge.style.display = "none";
+                // notificationBadge.innerText = '';
+            }
+        };
+
+        // 종모양 아이콘 클릭 시 알림 목록 표시/숨기기
+        notificationIcon.addEventListener('click', () => {
+            updateNotificationList();
+            if (!isNotificationListOpen) {
+                notificationList.style.display = 'block';
+                isNotificationListOpen = true;
+            } else {
+                notificationList.style.display = 'none';
+                isNotificationListOpen = false;
+            }
+        });
+
+        // 페이지 로드 시 알림 데이터를 가져와서 표시
+        const loadNotificationsFromServer = (userId) => {
+            fetchNotifications(userId);
+        };
+
+        fetchUserInfo().then(() => {
+            const sse = new EventSource(`/api/notifications/${userId}`);
+            sse.onmessage = (event) => {
+                const notification = JSON.parse(event.data);
+                notificationsList.push(notification);
+                addNotificationToList(notification);
+                updateNotificationIcon();
+            };
+        });
+
+        // // 전체읽음 버튼 클릭 시 실행되는 함수
+        // document.getElementById('markAllReadButton').addEventListener('click', function() {
+        //     const confirmResult = confirm('알림 전체 읽음처리 하시겠습니까?');
+        //     if (confirmResult) {
+        //         // 확인을 선택한 경우 서버에 요청 보내기
+        //         markAllNotificationsAsRead();
+        //         window.location.href = window.location.href;
+        //     } else {
+        //         // 취소를 선택한 경우
+        //         // 아무 작업도 하지 않음
+        //     }
+        // });
+
+        // 알림 전체 읽음 처리 함수
+        function markAllNotificationsAsRead() {
+            $.post(`/api/mark-all-notifications-as-read/${userId}`)
+                .done(function (response) {
+                    alert(response); // 성공 메시지 출력
+                    // 서버 응답에 따라 적절한 처리를 수행할 수 있습니다.
+                    // 예를 들어 알림 목록을 다시 가져와서 업데이트하는 등의 작업을 수행할 수 있습니다.
+                })
+                .fail(function (response) {
+                    alert(response); // 오류 메시지 출력
+                });
+        }
+
+    });
+
+
+    function removeToken() { // 토큰 삭제
+        Cookies.remove('Authorization', {path: '/'});
+    }
+
+    /* 서버 통신 메서드 */
+    function refreshAccessToken() { // 엑세스 토큰 갱신
+        $.ajax({
+            type: "GET",
+            url: `/api/auth/refresh/access-token`,
+            contentType: "application/json",
+            success: function (data) {
+                console.log(data);
+                alert("로그인 연장 성공");
+            },
+            error: function (data) {
+                console.log(data);
+                alert("로그인 연장 실패 \n 재로그인 부탁드립니다.");
+                redirectToLoginPage();
+            }
+        });
+    }
+
+
+    /* 페이지 첫 로드 메서드 */
+    function pageSetting() {  // main page 세팅
+        const token = Cookies.get('Authorization');
+        const rtoken = Cookies.get('RefreshToken');
+        console.log(token);
+        console.log(rtoken);
+
+        const loginBtn = document.getElementById('login');
+        const logoutBtn = document.getElementById('logout');
+        const keeploginBtn = document.getElementById('keeplogin');
+
+        if (!token) {
+            loginBtn.style.display = "inline-block";
+            logoutBtn.style.display = "none";
+            keeploginBtn.style.display = "none";
+        } else {
+            loginBtn.style.display = "none";
+        }
+
+    }
+
+    function logout() { // 로그아웃
+        $.ajax({
+            type: "DELETE",
+            url: `/api/auth/logout`,
+            contentType: "application/json",
+            success: function (data) {
+                removeToken();
+                alert("로그아웃 성공");
+                window.location.reload();
+            },
+            error: function () {
+                alert("로그아웃 실패");
+                window.location.reload();
+            }
+        });
+    }
+
+    function redirectToLoginPage() {
+        window.location.href = "/api/auth/login-page";
+    }
+
+</script>
 </html>
