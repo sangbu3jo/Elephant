@@ -634,7 +634,9 @@
     <div class="card" id="cardArea" th:each="post, postIndex : ${posts}">
       <div class="card-body" style="text-align: left;">
         <a th:href="@{/api/posts/{postId}(postId=${post.id})}">
-          <h5 class="card-title" th:text="${post.title}"> 스터디원 구함 </h5>
+          <h5 class="card-title"
+              th:text="|${post.title.length() > 15 ? #strings.substring(post.title, 0, 15) + '...' : post.title}|">
+          스터디원 구함 </h5>
           <h6 class="card-subtitle mb-3 text-body-secondary"
               th:text="|View : ${post.view_cnt}|">
             View: 15</h6>
@@ -643,8 +645,13 @@
           >Some quick example text to build on the card title ...</p>
         </a>
         <p class="card-link" style="
-                margin: revert; text-align: right; margin-top: 95%;"
-           th:text="|${post.nickname}|"></p>
+                margin: revert;
+                /* text-align: right; */
+                /* margin-top: 90%; */
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;"
+           th:text="|${post.nickname}|">sally</p>
         <p class="card-link" style="
     font-size: small;
     text-align: right;
