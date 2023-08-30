@@ -37,20 +37,23 @@ public class PrivateChatRoomResponseDto {
         }
 
         LocalDateTime now = LocalDateTime.now();
-        Duration duration = Duration.between(privateChatMessage.getSendTime(), now);
-        long seconds = duration.getSeconds();
-        if (seconds >= 24 * 3600) {
-            long days = seconds / (24 * 3600);
-            this.date =  days + "일 전";
-        } else if (seconds >= 3600) {
-            long hours = seconds / 3600;
-            this.date = hours + "시간 전";
-        } else if (seconds >= 60) {
-            long minutes = seconds / 60;
-            this.date = minutes + "분 전";
-        } else {
-            this.date = seconds + "초 전";
+        if (privateChatMessage != null) {
+            Duration duration = Duration.between(privateChatMessage.getSendTime(), now);
+            long seconds = duration.getSeconds();
+            if (seconds >= 24 * 3600) {
+                long days = seconds / (24 * 3600);
+                this.date =  days + "일 전";
+            } else if (seconds >= 3600) {
+                long hours = seconds / 3600;
+                this.date = hours + "시간 전";
+            } else if (seconds >= 60) {
+                long minutes = seconds / 60;
+                this.date = minutes + "분 전";
+            } else {
+                this.date = seconds + "초 전";
+            }
         }
+
     }
 
 

@@ -112,10 +112,10 @@ public class ChatRoomService {
         if (chatRoom == null) {
             PrivateChatRoom newChatRoom =  new PrivateChatRoom(firstUser, secondUser);
             PrivateChatRoom saveChatRoom = mongoTemplate.save(newChatRoom);
-            return "/api/chatRooms/" + saveChatRoom.getTitle();
+            return "redirect:/api/chatRooms/" + saveChatRoom.getTitle();
         }
 
-        return "/api/chatRooms/" + chatRoom.getTitle();
+        return "redirect:/api/chatRooms/" + chatRoom.getTitle();
     }
 
     public List<PrivateChatRoomResponseDto> findAllPrivateChatRooms(String username) {
