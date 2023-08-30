@@ -188,6 +188,9 @@
 <script>
   const goOutBtn = document.getElementById('goOutButton');
   goOutBtn.addEventListener('click', () => {
+    let url = window.location.href;
+    let id = url.replace("http://localhost:8080/api/minigame/", "");
+    window.location.href = `http://localhost:8080/api/boards/${id}`
     window.location.href="";
   })
 

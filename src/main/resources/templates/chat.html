@@ -549,18 +549,27 @@
 
                 chatting.forEach(function (chatItem) {
                     var messageElement = document.createElement('li');
-                    var avatarElement = document.createElement('i');
-                    var usernameElement = document.createElement('span');
+                    if(chatItem.type === 'ENTER') {
+                        messageElement.classList.add('event-message');
+                        chatItem.content = chatItem.username + chatItem.message;
+                    } else if (chatItem.type === 'LEAVE') {
+                        messageElement.classList.add('event-message');
+                        chatItem.content = chatItem.username + chatItem.message;
+                    } else {
+                        var avatarElement = document.createElement('i');
+                        var usernameElement = document.createElement('span');
+                        messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
+                        avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
+                        avatarElement.appendChild(document.createTextNode(chatItem.nickname[0]));
+                        usernameElement.appendChild(document.createTextNode(chatItem.nickname));
+                        messageElement.appendChild(avatarElement);
+                        messageElement.appendChild(usernameElement);
+                    }
+
                     var textElement = document.createElement('p');
+                    var messageText = document.createTextNode(chatItem.message);
+                    textElement.appendChild(messageText);
 
-                    messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
-                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
-                    avatarElement.appendChild(document.createTextNode(chatItem.nickname[0]));
-                    usernameElement.appendChild(document.createTextNode(chatItem.nickname));
-                    textElement.appendChild(document.createTextNode(chatItem.message));
-
-                    messageElement.appendChild(avatarElement);
-                    messageElement.appendChild(usernameElement);
                     messageElement.appendChild(textElement);
 
                     messageArea.appendChild(messageElement);
