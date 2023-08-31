@@ -162,10 +162,6 @@ public class CardService {
                 log.info("바꿀 순서와 리스트 사이즈가 동일한 경우");
                 card.updateCardOrder(newOrder);
                 cardRepository.save(card);
-            } else if (newOrder == 0) {
-                log.info("바꿀 순서는 0번째 입니다");
-                card.updateCardOrder(newOrder);
-                cardRepository.save(card);
             } else {
                 for (Card c: newCardList) {
                     if (c.getCardOrder() >= newOrder) {
