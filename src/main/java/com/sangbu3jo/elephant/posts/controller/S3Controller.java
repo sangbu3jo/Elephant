@@ -3,7 +3,6 @@ package com.sangbu3jo.elephant.posts.controller;
 import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
 import com.sangbu3jo.elephant.posts.entity.Category;
 import com.sangbu3jo.elephant.posts.entity.Post;
-import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.posts.service.S3Service;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +57,6 @@ public class S3Controller {
             @ModelAttribute PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
-//        PostRequestDto postRequestDto = new ObjectMapper().readValue(request.getInputStream(),PostRequestDto.class);
 
         // 파일 업로드를 통해 게시물을 저장하고 게시물 ID를 반환
         Long postId = s3Service.keepPost(image, postRequestDto, category, userDetails.getUser());

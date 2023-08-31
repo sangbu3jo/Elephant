@@ -417,6 +417,17 @@
             align-items: end;
         }
 
+        #wrap {
+            width: 100%;
+            height: 100vh;
+            overflow: auto;
+            scroll-snap-type: block;
+        }
+        body{
+            width: 100%;
+            height: 100%;
+        }
+
     </style>
 
 
@@ -424,6 +435,7 @@
 
 
 <body>
+<div id="wrap">
 <div class="top">
     <div class="right">
         <a id="login" onclick="redirectToLoginPage()">
@@ -438,7 +450,8 @@
     </div>
     <div class="middle">
         <!-- 가운데 코끼리 글씨 및 로고  -->
-        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
+        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
+             style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
         <div style="text-align: center; cursor:pointer;" onclick="gotoMain()">
             코끼리
         </div>
@@ -485,6 +498,7 @@
 
                 <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
                 <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+                <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a>
                 <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a>
                 <!--서버에서 admin 여부 true/false로 가져오기-->
 
@@ -501,96 +515,100 @@
 
 </div>
 
-<div class="bottom">
-    <div class="buttons">
-        <div th:if="${post.userId == loginUser}">
-            <button id="update-post-button" style="margin-right: 10px;">게시글 수정</button>
-            <button type="button" id="delete-button" class="delete-button" onclick="deletePost()">게시물 삭제</button>
-        </div>
-    </div>
-
-    <div id="post-content">
-        <div class="post-content-top">
-            <h4 th:text="${post.title}">Title</h4>
-            <div class="post-top-top">
-                <h5 th:text="${#strings.substring(post.username, 0, 5) + '*****'}">Nickname</h5>
-                <h5 th:text="${post.category}">Category</h5>
-            </div>
-            <div class="post-top-bottom">
-                <h6 th:text="'작성날짜 ' + ${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">생성 날짜</h6>
-                <h6 th:text="'조회수 ' + ${post.view_cnt}">조회수: 00회</h6>
-                <h6 th:unless="${post.category == '문제 은행' || post.category == '자유 게시판'}">
-                    <span th:if="${post.completed == false}">모집중</span>
-                    <span th:if="${post.completed == true}">모집완료</span>
-                </h6>
-            </div>
-
-        </div>
-        <div class="post-content-bottom" style="margin-top: 40px;">
-            <p th:utext="${post.content}">Contents</p>
-            <div th:if="${post.files != null}">
-                <img th:src="${post.files}" width="700" height="400" alt="이미지 대체 텍스트">
+    <div class="bottom">
+        <div class="buttons">
+            <div th:if="${post.userId == loginUser}">
+                <button id="update-post-button" style="margin-right: 10px;">게시글 수정</button>
+                <button type="button" id="delete-button" class="delete-button" onclick="deletePost()">게시물 삭제</button>
             </div>
         </div>
-    </div>
 
-    <div class="comment-content">
-        <div class="comment">
-            <h4>댓글</h4>
-            <form id="comment-form">
-                <div class="form-group">
-                    <label for="comment-content">댓글 내용</label>
-                    <input type="text" id="comment-content" name="comment-content" class="input-field"
-                           placeholder="댓글을 입력하세요">
+        <div id="post-content">
+            <div class="post-content-top">
+                <h4 th:text="${post.title}">Title</h4>
+                <div class="post-top-top">
+                    <h5 th:text="${#strings.substring(post.username, 0, 5) + '*****'}">Nickname</h5>
+                    <h5 th:text="${post.category}">Category</h5>
                 </div>
-                <button type="submit" class="submit-button">댓글 작성</button>
-            </form>
-            <div class="line"></div>
-            <!-- 댓글 목록 출력 -->
-            <div class="comment-container">
-                <ul>
-                    <li th:each="comment : ${post.postCommentList}">
-                        <div class="comment-one">
-                            <div class="comment-content-user">
-                                <!-- 댓글 작성자 (앞 5글자만 표시) -->
-                                <p th:text="${#strings.substring(comment.username, 0, 5) + '*****'}">username</p>
+                <div class="post-top-bottom">
+                    <h6 th:text="'작성날짜 ' + ${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">생성 날짜</h6>
+                    <h6 th:text="'조회수 ' + ${post.view_cnt}">조회수: 00회</h6>
+                    <h6 th:unless="${post.category == '문제 은행' || post.category == '자유 게시판'}">
+                        <span th:if="${post.completed == false}">모집중</span>
+                        <span th:if="${post.completed == true}">모집완료</span>
+                    </h6>
+                </div>
 
-                                <!-- 댓글 내용 -->
-                                <h5 th:text="${comment.content}">content</h5>
-
-                                <!-- 댓글 작성 날짜 -->
-                                <p th:text="'작성날짜 ' + ${#temporals.format(comment.createdAt,'MM/dd HH:mm:ss')}">댓글 작성
-                                    날짜</p>
-                            </div>
-
-                            <div class="comment-button">
-                                <div th:if="${comment.userId == loginUser}">
-                                    <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정</button>
-                                    <button class="delete-comment"
-                                            th:attr="onclick='deleteComment(' + ${comment.id} + ')'">
-                                        댓글삭제
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="modal">
-                                <div class="modal-content">
-                                    <!-- 모달 내용 -->
-                                    <span class="close">&times;</span>
-                                    <h2>댓글 수정</h2>
-                                    <input type="hidden" id="commentId" name="commentId" th:value="${comment.id}">
-                                    <textarea id="commentTextarea" th:text="${comment.content}"></textarea>
-                                    <button id="saveComment">저장</button>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
+            </div>
+            <div class="post-content-bottom">
+                <p th:utext="${post.content}">Contents</p>
+                <div th:if="${post.files != null}">
+                    <img th:src="${post.files}" alt="이미지 대체 텍스트"  style="max-width: 100%; height: auto;">
+                </div>
             </div>
         </div>
 
+        <div class="comment-content">
+            <div class="comment">
+                <h4>댓글</h4>
+                <form id="comment-form">
+                    <div class="form-group">
+                        <label for="comment-content">댓글 내용</label>
+                        <input type="text" id="comment-content" name="comment-content" class="input-field"
+                               placeholder="댓글을 입력하세요">
+                    </div>
+                    <button type="submit" class="submit-button">댓글 작성</button>
+                </form>
+                <div class="line"></div>
+                <!-- 댓글 목록 출력 -->
+                <div class="comment-container">
+                    <ul>
+                        <li th:each="comment : ${post.postCommentList}">
+                            <div class="comment-one">
+                                <div class="comment-content-user">
+                                    <!-- 댓글 작성자 (앞 5글자만 표시) -->
+                                    <p th:text="${#strings.substring(comment.username, 0, 5) + '*****'}">username</p>
+
+                                    <!-- 댓글 내용 -->
+                                    <h5 th:text="${comment.content}">content</h5>
+
+                                    <!-- 댓글 작성 날짜 -->
+                                    <p th:text="'작성날짜 ' + ${#temporals.format(comment.createdAt,'MM/dd HH:mm:ss')}">댓글
+                                        작성
+                                        날짜</p>
+                                </div>
+
+                                <div class="comment-button">
+                                    <div th:if="${comment.userId == loginUser}">
+                                        <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정
+                                        </button>
+                                        <button class="delete-comment"
+                                                th:attr="onclick='deleteComment(' + ${comment.id} + ')'">
+                                            댓글삭제
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="modal">
+                                    <div class="modal-content">
+                                        <!-- 모달 내용 -->
+                                        <span class="close">&times;</span>
+                                        <h2>댓글 수정</h2>
+                                        <input type="hidden" id="commentId" name="commentId" th:value="${comment.id}">
+                                        <textarea id="commentTextarea" th:text="${comment.content}"></textarea>
+                                        <button id="saveComment">저장</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
+
 
 
 <script>
@@ -598,6 +616,7 @@
     function gotoMain() {
         window.location.href = "/main";
     }
+
     // 게시물 삭제 함수
     function deletePost() {
         const postId = window.location.href.split('/').pop(); // 현재 주소에서 postId 추출
