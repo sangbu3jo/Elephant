@@ -32,7 +32,7 @@ public class PostResponseDto {
         this.username = post.getUser().getUsername();
         this.nickname = post.getUser().getNickname();
         log.info(nickname);
-        this.content = post.getContent().replaceAll("\n", "<br>");
+        this.content = post.getContent();
         this.category = post.getCategory().getCategoryName();
         this.completed = post.getCompleted();
         this.files = post.getFiles();
@@ -44,9 +44,14 @@ public class PostResponseDto {
                 .sorted(Comparator.comparing(PostCommentResponseDto::getCreatedAt))
                 .toList();
         this.userId = post.getUser().getId();
-
-
     }
+
+
+    // 단건 조회시 내용 Unescape 를 위한 줄바꿈 처리
+    public void convertContent(){
+        this.content = content.replaceAll("\n", "<br>");
+    }
+
 
 
 }
