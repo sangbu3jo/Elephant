@@ -7,6 +7,7 @@ import com.sangbu3jo.elephant.chat.dto.*;
 import com.sangbu3jo.elephant.chat.service.ChatRoomService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -92,6 +93,7 @@ public class ChatController {
         // model에 List혹은 Slice 형태로 담아서 보내기 (프론트에서 list 받아서 출력해주기)
         List<PrivateChatRoomResponseDto> chatRoomResponseDtos = chatRoomService.findAllPrivateChatRooms(userDetails.getUser().getUsername()); // username으로 찾기
         model.addAttribute("chatrooms", chatRoomResponseDtos);
+        checkAdmin(model, userDetails);
         return "chatRooms";
     }
 
@@ -142,6 +144,14 @@ public class ChatController {
         chatMessageRequestDto.setSendTime(LocalDateTime.now());
         chatRoomService.savePrivateChatMessage(chatMessageRequestDto);
         messagingTemplate.convertAndSend("/queue/" + chatMessageRequestDto.getTitle(), chatMessageRequestDto);
+    }
+
+    private void checkAdmin(Model model, UserDetailsImpl userDetails) {
+        Boolean admin = false;
+        if (userDetails.getUser().getRole().equals(UserRoleEnum.ADMIN)) {
+            admin = true;
+        }
+        model.addAttribute("admin", admin);
     }
 
 //    @EventListener

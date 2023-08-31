@@ -1,6 +1,7 @@
 package com.sangbu3jo.elephant.chat.service;
 
 import com.sangbu3jo.elephant.board.entity.Board;
+import com.sangbu3jo.elephant.board.repository.BoardRepository;
 import com.sangbu3jo.elephant.chat.dto.*;
 import com.sangbu3jo.elephant.chat.entity.*;
 import com.sangbu3jo.elephant.chat.repository.ChatRoomRepository;
@@ -27,6 +28,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatUserRepository chatUserRepository;
+    private final BoardRepository boardRepository;
 
     @Autowired
     private final MongoTemplate mongoTemplate;
@@ -37,6 +39,8 @@ public class ChatRoomService {
         if(!chatRoom.isPresent()) {
             ChatRoom newChatRoom =  new ChatRoom(board.getId(), board);
             chatRoomRepository.save(newChatRoom);
+            board.updateChatRoom(newChatRoom);
+            boardRepository.save(board);
         }
 
     } // findChatRoom

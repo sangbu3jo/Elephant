@@ -23,7 +23,7 @@ public class ChatRoom {
     @OneToOne
     private Board board;
 
-    @OneToMany(mappedBy = "chatroom")
+    @OneToMany(mappedBy = "chatroom", orphanRemoval = true)
     private List<ChatUser> users = new ArrayList<>();
 
     public ChatRoom(Long id, Board board){

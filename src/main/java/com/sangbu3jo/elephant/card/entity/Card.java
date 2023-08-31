@@ -100,8 +100,8 @@ public class Card {
         this.cardComments.remove(comment);
     }
 
-    public void updateCardOrder(Integer order) {
-        this.cardOrder = Long.valueOf(order);
+    public void updateCardOrder(Long order) {
+        this.cardOrder = order;
     }
 
     public void setColumn(Columns newcolumn) {
