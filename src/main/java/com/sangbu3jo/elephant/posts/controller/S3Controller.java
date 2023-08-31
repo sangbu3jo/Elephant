@@ -58,7 +58,6 @@ public class S3Controller {
             @ModelAttribute PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
-//        PostRequestDto postRequestDto = new ObjectMapper().readValue(request.getInputStream(),PostRequestDto.class);
 
         // 파일 업로드를 통해 게시물을 저장하고 게시물 ID를 반환
         Long postId = s3Service.keepPost(image, postRequestDto, category, userDetails.getUser());
