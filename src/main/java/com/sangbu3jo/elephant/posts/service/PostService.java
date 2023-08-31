@@ -8,9 +8,11 @@ import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,7 @@ public class PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final S3UploaderService s3UploaderService;
 
     //카테고리
     private final Category project = Category.COOPERATION_PROJECT;
@@ -75,8 +78,6 @@ public class PostService {
     public void modifiedPost(Post post, PostRequestDto postRequestDto) {
 
 
-
-
         //category 나누기
         if (postRequestDto.getCategory().equals(Category.COOPERATION_PROJECT)) {
             post.setCategory(project);
@@ -99,11 +100,8 @@ public class PostService {
     @Transactional
     public void deletePost(Post post) {
 
-
         //삭제
         postRepository.delete(post);
-
-
     }
 
 
@@ -139,7 +137,7 @@ public class PostService {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         // 정렬 객체를 통해 pageNo와 한 페이지당 갯수 설정하여 pageable 객체에 입력. 
         pageable = PageRequest.of(pageNo, 5, sort);
-        
+
         // 각 카테고리별 데이터 가져와서 객체에 입력.
         Page<Post> projectList;
         switch (category) {
@@ -166,7 +164,7 @@ public class PostService {
     //게시글 카테고리 검색 조회
     //슬라이스 구현
     public Page<PostResponseDto> getSearchTitle(Integer category, Pageable pageable, Integer pageNo,
-        String title) {
+                                                String title) {
         // 작성일자 순으로 내림차순 정렬 객체 생성
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         // 정렬 객체를 통해 pageNo와 한 페이지당 갯수 설정하여 pageable 객체에 입력.
@@ -178,19 +176,19 @@ public class PostService {
         switch (category) {
             case 1:
                 searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(
-                    Category.COOPERATION_PROJECT, title, pageable);
+                        Category.COOPERATION_PROJECT, title, pageable);
                 break;
             case 2:
                 searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(
-                    Category.DEVELOPMENT_STUDY, title, pageable);
+                        Category.DEVELOPMENT_STUDY, title, pageable);
                 break;
             case 3:
                 searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(
-                    Category.PREVIOUS_EXAM, title, pageable);
+                        Category.PREVIOUS_EXAM, title, pageable);
                 break;
             case 4:
                 searchList = postRepository.findAllByCategoryAndTitleContainingOrderByCreatedAtDesc(
-                    Category.FORUM_BOARD, title, pageable);
+                        Category.FORUM_BOARD, title, pageable);
                 break;
             default:
                 throw new IllegalArgumentException("해당 카테고리가 존재하지 않습니다.");
@@ -299,6 +297,7 @@ public class PostService {
 
         return post;
     }
+
 }
 
 
