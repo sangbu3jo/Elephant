@@ -25,10 +25,10 @@
 </head>
 
 <body>
-<div>
-    <a href="/">
+<div class="head-icon">
+    <a href="/" style="display: block; text-decoration: none; text-align: center;">
         <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" alt="Button Icon" style="
-    width: 70px; cursor: pointer;">
+            width: 50px; cursor: pointer;">
     </a>
 </div>
 
@@ -36,10 +36,10 @@
     <!-- Sign Up -->
     <div class="container__form container--signup">
         <div class="form" id="form1">
-            <h2 class="form__title">Sign Up</h2>
+            <h2 class="form__title">회원가입</h2>
             <input type="text" placeholder="아이디" name="username" id="username" class="input"/>
             <input type="password" placeholder="비밀번호" name="password" id="password" class="input"/>
-            <a href="" id="showSignupPwBtn" style="margin-left: -70%; font-size:14px;">Show Password</a>
+            <a href="" id="showSignupPwBtn" style="margin-left: -70%; font-size:14px;">비밀번호 보기</a>
             <input type="text" placeholder="닉네임" name="nickname" id="nickname" class="input"/>
             <input type="text" placeholder="자기소개" name="introduce" id="introduce" class="input"/>
             <input id="admin-check" type="checkbox" name="admin" onclick="onclickAdmin()" style="margin-top: 10px;">관리자
@@ -52,11 +52,11 @@
     <!-- Log In -->
     <div class="container__form container--login">
         <div class="form" id="form2">
-            <h2 class="form__title">Login</h2>
+            <h2 class="form__title">로그인</h2>
             <input type="text" placeholder="아이디" name="loginUsername" id="loginUsername" class="input"/>
             <input type="password" placeholder="비밀번호" name="loginPassword" id="loginPassword"
                    class="input"/>
-            <a href="" id="showLoginPwBtn" style="margin-left: -70%; font-size:14px;">Show Password</a>
+            <a href="" id="showLoginPwBtn" style="margin-left: -70%; font-size:14px;">비밀번호 보기</a>
             <button class="btn" onclick="onLogin()">로그인하기</button>
             <button id="login-kakao-btn"
                     onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=d7da621a3b256dc1ef5cc2ee72d98307&redirect_uri=http://localhost:8080/api/auth/kakao/callback&response_type=code'">
@@ -77,10 +77,10 @@
     <div class="container__overlay">
         <div class="overlay">
             <div class="overlay__panel overlay--left">
-                <button class="btn" id="logIn" style="WIDTH: 67%;">LogIn</button>
+                <button class="btn" id="logIn" style="WIDTH: 67%;">로그인</button>
             </div>
             <div class="overlay__panel overlay--right">
-                <button class="btn" id="signUp" style="WIDTH: 67%;">Sign Up</button>
+                <button class="btn" id="signUp" style="WIDTH: 67%;">회원가입</button>
             </div>
         </div>
     </div>

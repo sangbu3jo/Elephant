@@ -21,432 +21,11 @@
 
     <!--상단 아이콘-->
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+
+    <link rel="stylesheet" type="text/css"  href="/css/boards.css">
+
     <style>
-        @font-face {
-            font-family: 'TheJamsil5Bold';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302_01@1.0/TheJamsil5Bold.woff2') format('woff2');
-            font-weight: 500;
-            font-style: normal;
-        }
 
-        * {
-            font-family : 'TheJamsil5Bold', cursive;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            z-index: -1;
-            background-color: #f5f5fa;
-            /* background: radial-gradient(
-                    circle farthest-corner at center top,
-                    #071021,
-                    #19324a
-            ); */
-        }
-
-        /* 배경 서식 */
-        #stars-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #f6f6f6;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: twinkle 2s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% {
-                opacity: 0.5;
-            }
-            50% {
-                opacity: 0.7;
-            }
-        }
-
-        /* header 부분 - only 제목 (코끼리) */
-        .header {
-            color: #1a1515;
-            height: 15%;
-            width: 100%;
-            background-color: transparent;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        button {
-            background-color: transparent;
-            border: none;
-        }
-
-        .right {
-            height: 100%;
-            width: 35%;
-            padding-left: 30px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-
-        .middle {
-            height: 100%;
-            width: 30%;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .middle img {
-            margin-right: 5px;
-        }
-
-        .left {
-            height: 100%;
-            width: 35%;
-            padding-right: 30px;
-            display: flex;
-            flex-direction: row;
-            justify-content: end;
-            align-items: center;
-        }
-
-        .title{
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        /* 알림 */
-        .notification-icon {
-            width: 40px;
-            height: 40px;
-            font-size: 30px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-
-        .notification-icon div {
-            width: 40px;
-            height: 40px;
-            position: relative;
-        }
-
-        @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            10%, 30%, 50%, 70%, 90% {
-                transform: translateX(-3px);
-            }
-            20%, 40%, 60%, 80% {
-                transform: translateX(3px);
-            }
-        }
-
-        .list-group-item {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-
-        .list-group-item span:nth-child(1) {
-            width: 50%;
-        }
-        .list-group-item span:nth-child(2) {
-            width: 35%;
-        }
-
-        .badge-bg-primary-rounded-pill {
-            width: 15%;
-        }
-
-        .bg-primary {
-            background-color: #ccc !important;
-        }
-
-        .new-notification {
-            color: red;
-            animation: shake 1.5s infinite; /* 흔들기 애니메이션 적용 */
-        }
-
-        .nobadge {
-            background-color: red;
-            color: white;
-            border-radius: 50%;
-            padding: 4px 8px;
-            font-size: 12px;
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-
-        .notification-list {
-            position: absolute;
-            top: 100px; /* Adjust the top position to your preference */
-            right: 70px;
-            width: 295px;
-            background-color: white;
-            border: 1px solid #ddd;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            max-height: 700px;
-            overflow-y: auto;
-            display: none;
-            z-index: 10;
-            margin-top: 45px; /* 헤더의 높이만큼 여백 추가 */
-        }
-        .notification-list-header {
-            background-color: #ccc;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            position: fixed;
-            top: 100px;
-            width: 13%; /* 가로 너비를 꽉 채우도록 설정 */
-            z-index: 9998; /* 헤더 위에 배치 */
-        }
-        .notification-list-item {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            cursor: pointer;
-            background-color: white;
-        }
-        .notification-list-item.read {
-            background-color: #f0f0f0;
-        }
-
-        .list-group-item {
-            background-color: transparent;
-            cursor: pointer;
-        }
-
-        .offcanvas{
-            background-color: #f5f5fa;
-        }
-
-        /* bottom 부분 */
-        .bottom {
-            height: 85%;
-            padding: 20px;
-            background-color: transparent;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        /* bottom one 부분 - 내 프로젝트 text & add project 버튼*/
-        .bottomone {
-            height: 5%;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bottomonewrapper{
-            width: 80%;
-            height: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .text-center {
-            font-size: 20px;
-            padding-left: 20px;
-            height: 100%;
-            width: 80%;
-            display: flex;
-            justify-content: start;
-            align-items: center;
-        }
-
-        .button-center {
-            padding-right: 20px;
-            width: 20%;
-            height: 100%;
-            display: flex;
-            justify-content: end;
-            align-items: center;
-        }
-
-        .btn-primary {
-            background-color: #e6e6e6;
-        }
-
-        /*bottom two*/
-        .bottomtwo {
-            height: 100%;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bottomwindows {
-            width: 80%;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start;
-            align-content: flex-start;
-        }
-
-        .bottomthree {
-            height: 10%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* bottomtwo - 카드들 나오는 부분 */
-        .floating-window {
-            height: 200px;
-            width: calc(25% - 20px);
-            margin: 10px;
-            background-color: #f6f6f6;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .window-header {
-            height: 20%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background-color: #e6e6e6;
-            border-bottom: 1px solid #d6d6d6;
-        }
-
-        .window-title {
-            margin: 0;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .window-bottom {
-            height: 30%;
-            width: 100%; /* 부모 요소의 너비를 100%로 설정하여 가로 폭을 채움 */
-            padding: 10px; /* 필요한 패딩값 설정 */
-            background-color: transparent;
-        }
-
-        .window-bottom > button {
-            border-radius: 5px;
-            background-color: transparent;
-            border: 1px solid #d6d6d6;
-            transition: 0.5s;
-        }
-
-        .window-bottom > button:hover {
-            background-color: #e6e6e6;
-            transition: 0.5s;
-        }
-
-        .window-controls {
-            display: flex;
-        }
-
-        .window-minimize,
-        .window-maximize,
-        .window-close {
-            width: 14px;
-            height: 14px;
-            margin-left: 8px;
-            border-radius: 50%;
-        }
-
-        .window-minimize {
-            background-color: #f7d54a;
-        }
-
-        .window-maximize {
-            background-color: #62c462;
-        }
-
-        .window-close {
-            background-color: #ee5f5b;
-        }
-
-        .window-maximize:hover {
-            cursor: pointer;
-            background-color: #52a352;
-        }
-        .window-close:hover{
-            cursor: pointer;
-            background-color: #d35350;
-        }
-
-        .window-content {
-            height: 50%;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .window-content > p {
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        /*bottom3*/
-        nav {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .pagination {
-            display: flex;
-            flex-wrap: wrap;
-            list-style: none;
-            padding: 0;
-        }
-
-        .custom-pagination .page-item .page-link {
-            cursor: pointer;
-            background-color: #f6f6f6;
-            color: #000;
-            border-color: #d6d6d6;
-        }
-
-        .custom-pagination .page-item .page-link:hover {
-            background-color: #e6e6e6;
-            border-color: #e6e6e6;
-        }
-
-        .mark-all-read-button {
-            position: absolute;
-            top: 10px; /* 버튼 위치 조정 */
-            right: 10px; /* 버튼 위치 조정 */
-            padding: 1px 4px;
-            font-size: 12px;
-            z-index: 9999; /* 다른 요소보다 앞에 표시되도록 설정 */
-        }
 
     </style>
 </head>
@@ -495,6 +74,21 @@
             </div>
 
             <div class="list-group list-group-flush">
+                <button class="list-group-item list-group-item-action" data-bs-toggle="collapse"
+                        data-bs-target="#categoryMenu">게시판 카테고리
+                </button>
+                <div id="categoryMenu" class="collapse">
+                    <a href="/api/posts/categories/1"
+                       class="list-group-item list-group-item-action mini-list">협업 인원 모집</a>
+                    <a href="/api/posts/categories/2"
+                       class="list-group-item list-group-item-action mini-list">스티디원 모집</a>
+                    <a href="/api/posts/categories/3"
+                       class="list-group-item list-group-item-action mini-list">문제은행</a>
+                    <a href="/api/posts/categories/4"
+                       class="list-group-item list-group-item-action mini-list">자유게시판</a>
+                </div>
+
+
                 <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
                 <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
                 <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a> <!--채팅 페이지 테스트 중-->
@@ -837,6 +431,18 @@
         })
     }); // document 종료
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-center',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
     $(document).ready(function() {
         pageSetting();
 
@@ -883,7 +489,10 @@
         };
 
         // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
-        fetchUserInfo();
+        const token = Cookies.get('Authorization');
+        if (token) { // 토큰 있을 경우
+            fetchUserInfo();
+        }
 
         // 알림 목록 업데이트 함수
         const updateNotificationList = () => {
@@ -906,17 +515,15 @@
             // "전체 읽음" 버튼에 이벤트 리스너 연결
             const button = document.getElementById('markAllReadButton');
             button.addEventListener('click', function() {
-                const confirmResult = confirm('알림 전체 읽음처리 하시겠습니까?');
-                if (confirmResult) {
-                    // 확인을 선택한 경우 서버에 요청 보내기
-                    markAllNotificationsAsRead();
-                    // alert('알림이 전체 읽음 처리되었습니다.');
-                    window.location.href = window.location.href;
-                } else {
-                    // 취소를 선택한 경우
-                    // 아무 작업도 하지 않음
-                }
-
+                Swal.fire({
+                    icon: "waning",
+                    title: "알림 전체 읽음처리 하시겠습니까?"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        markAllNotificationsAsRead();
+                        window.location.reload();
+                    }
+                })
             });
 
 
@@ -1017,16 +624,22 @@
         function markAllNotificationsAsRead() {
             $.post(`/api/mark-all-notifications-as-read/${userId}`)
                 .done(function(response) {
-                    alert(response); // 성공 메시지 출력
-                    // 서버 응답에 따라 적절한 처리를 수행할 수 있습니다.
-                    // 예를 들어 알림 목록을 다시 가져와서 업데이트하는 등의 작업을 수행할 수 있습니다.
+                    Toast.fire({
+                        icon: 'success',
+                        title: "전체 읽음 처리 되었습니다!",
+                    })
                 })
                 .fail(function(response) {
-                    alert(response); // 오류 메시지 출력
+                    Toast.fire({
+                        icon: 'error',
+                        title: "전체 읽음 처리 실패!",
+                    })
                 });
         }
 
     });
+
+
 
     function removeToken() { // 토큰 삭제
         Cookies.remove('Authorization', {path: '/'});
@@ -1040,11 +653,17 @@
             contentType: "application/json",
             success: function (data) {
                 console.log(data);
-                alert("로그인 연장 성공");
+                Toast.fire({
+                    icon: 'success',
+                    title: "로그인 연장 성공",
+                })
             },
             error: function (data) {
                 console.log(data);
-                alert("로그인 연장 실패 \n 재로그인 부탁드립니다.");
+                Toast.fire({
+                    icon: 'error',
+                    title: "로그인 연장 실패. 재로그인 부탁드립니다.",
+                })
                 redirectToLoginPage();
             }
         });
@@ -1079,16 +698,21 @@
             contentType: "application/json",
             success: function (data) {
                 removeToken();
-                alert("로그아웃 성공");
-
-             
-
-                window.location.href = "/main";
+                Toast.fire({
+                    icon: 'success',
+                    title: "로그아웃 성공",
+                }).then(function () {
+                    window.location.href = "/main";
+                })
 
             },
             error: function () {
-                alert("로그아웃 실패");
-                window.location.reload();
+                Toast.fire({
+                    icon: 'error',
+                    title: "로그아웃 실패",
+                }).then(function () {
+                    window.location.reload();
+                })
             }
         });
     }

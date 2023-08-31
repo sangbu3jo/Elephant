@@ -17,21 +17,40 @@
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+@font-face {
+    font-family: 'GangwonState';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/GangwonState.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
-    font-family: 'Jua', sans-serif;
+    font-family: 'GangwonState', sans-serif;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     align-items: center;
-    background-color: var(--white);
-    /*background: url("");*/
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
     background-size: cover;
+    background-image: url("https://images.klipfolio.com/website/public/79b53931-b472-4cd5-85bc-f19df936cb9b/Best_Team_Collaboration_Tools.png");
+    /*background: url("");*/
+    /*background-attachment: fixed;*/
+    /*background-position: center;*/
+    /*background-repeat: no-repeat;*/
     display: grid;
-    height: 100vh;
+    height: 100%;
     place-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 .form__title {
@@ -47,17 +66,25 @@ body {
     text-decoration: none;
 }
 
+.head-icon{
+    width: 100%;
+    height: 10%;
+    display: flex;
+    text-align: center;
+    align-items: end;
+    justify-content: center;
+}
+
 .container {
     background-color: var(--white);
     border-radius: var(--button-radius);
     box-shadow: 0 0.9rem 1.7rem rgba(0, 0, 0, 0.25),
     0 0.7rem 0.7rem rgba(0, 0, 0, 0.22);
-    height: var(--max-height);
+    height: 85%;
     max-width: var(--max-width);
     overflow: hidden;
     position: relative;
     width: 100%;
-    margin: 0px 0px 5rem;
 }
 
 .container__form {
@@ -108,7 +135,7 @@ body {
 
 .overlay {
     background-color: var(--lightblue);
-    background-color: rgba(173, 216, 230, 0.5);
+    background-color: #CAEDFF;
     /*background: url("");*/
     background-attachment: fixed;
     background-position: center;
