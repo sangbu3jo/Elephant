@@ -5,6 +5,7 @@ import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +24,7 @@ public class PostController {
     //게시글 생성
     @PostMapping("/posts")
     public ResponseEntity<String> createPost(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                             @RequestBody PostRequestDto postRequestDto) {
+                                             @Valid @RequestBody PostRequestDto postRequestDto) {
 
 
         try {
@@ -40,7 +41,7 @@ public class PostController {
     //게시글 수정
     @PutMapping("/posts/{post_id}")
     public ResponseEntity<String> modifiedPost(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                               @RequestBody PostRequestDto postRequestDto,
+                                               @Valid @RequestBody PostRequestDto postRequestDto,
                                                @PathVariable Long post_id) throws Exception {
 
         Post post = postService.findById(post_id);

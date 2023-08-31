@@ -5,6 +5,7 @@ import com.sangbu3jo.elephant.posts.entity.Category;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.service.S3Service;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ public class S3Controller {
     public Long saveFile(
             @RequestParam(value = "image") MultipartFile image,
             @RequestParam(value = "category") Category category,
-            @ModelAttribute PostRequestDto postRequestDto,
+            @Valid @ModelAttribute PostRequestDto postRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
 
@@ -67,7 +68,7 @@ public class S3Controller {
     @PutMapping(value = "/api/posts/new_file/{post_id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateFile(@RequestParam(value = "image") MultipartFile image,
                                              @RequestParam(value = "category") Category category,
-                                             @ModelAttribute PostRequestDto postRequestDto,
+                                             @Valid @ModelAttribute PostRequestDto postRequestDto,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails,
                                              @PathVariable Long post_id) throws IOException {
 
