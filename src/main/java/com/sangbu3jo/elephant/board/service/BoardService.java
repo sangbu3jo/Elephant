@@ -21,7 +21,9 @@ import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -44,6 +46,8 @@ public class BoardService {
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory;
     private final NotificationService notificationService;
+    @Autowired
+    private final MongoTemplate mongoTemplate;
 
     // 보드 생성
     @Transactional
@@ -99,8 +103,11 @@ public class BoardService {
             throw new IllegalArgumentException();
         }
 
+        mongoTemplate.getCollection(board.getId().toString()).drop();
+
         /* Board 엔티티 안에 boarduser set 을 orphanremoval = true 속성을 주었기 때문에,
-         *  해당 레포지토리에서 따로 찾아서 삭제해줄 필요 없음 */
+         *  해당 레포지토리에서 따로 찾아서 삭제해줄 필요 없음
+         *  채팅방 또한 1:1 매핑으로 cascade=CascadeType.REMOVAL 을 주었음 */
         boardRepository.delete(board);
     }
 

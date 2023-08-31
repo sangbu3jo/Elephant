@@ -2,6 +2,7 @@ package com.sangbu3jo.elephant.board.entity;
 
 import com.sangbu3jo.elephant.board.dto.BoardRequestDto;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
+import com.sangbu3jo.elephant.chat.entity.ChatRoom;
 import com.sangbu3jo.elephant.columns.entity.Columns;
 import jakarta.persistence.*;
 import lombok.*;
@@ -52,6 +53,9 @@ public class Board {
     @OneToMany(mappedBy = "board", orphanRemoval = true)
     List<Columns> columnsList = new LinkedList<>();
 
+    @OneToOne(cascade = CascadeType.REMOVE)
+    private ChatRoom chatRoom;
+
     /**
      * 연관관계 편의 메소드 - 반대쪽에는 연관관계 편의 메소드가 없도록 주의합니다.
      */
@@ -85,6 +89,10 @@ public class Board {
     public void changeColumns(Columns columns, Integer order) {
         this.columnsList.remove(columns);
         this.columnsList.add(order, columns);
+    }
+
+    public void updateChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
     }
 
 

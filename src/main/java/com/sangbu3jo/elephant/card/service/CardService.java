@@ -91,45 +91,58 @@ public class CardService {
         Card card = findCard(cardId);
 
         // 이동 전, 이동 후의 컬럼 찾기
-        Columns oldcolumn = card.getColumns();
+        Columns oldcolumn = findColumns(card.getColumns().getId());
         Columns newcolumn = findColumns(cardOrderRequestDto.getColumnId());
-
-        List<Card> oldCardList = oldcolumn.getCards();
 
         // ID 값이 일치하는 경우라면 (컬럼이 일치한다면)
         if (oldcolumn.getId().equals(newcolumn.getId())) {
             log.info("컬럼 변경 X");
+            List<Card> oldCardList = cardRepository.findAllByColumnsOrderByCardOrder(oldcolumn);
 
-            for (int i = 0; i < oldcolumn.getCards().size(); i++) {
-                log.info(oldcolumn.getCards().get(i).getTitle() + ", 순서: " + i);
-            }
+            Long oldOrder = card.getCardOrder();
+            Long newOrder = Long.valueOf(cardOrderRequestDto.getCardOrder());
 
             // 1. 카드가 해당 컬럼 안에서 순서만 바뀌는 경우
             // => 원래 카드에 저장된 column의 id와 cardOrderRequestDto 에서 가져온 column의 id 값이 일치
-            oldcolumn.changeCardOrder(card, cardOrderRequestDto.getCardOrder());
-
-            log.info("이후 순서: " + oldcolumn.getCards().indexOf(card));
-
-            for (int i = 0; i < oldCardList.size(); i++) {
-                oldCardList.get(i).updateCardOrder(i);
-                cardRepository.save(oldCardList.get(i));
-                log.info(oldCardList.get(i).getTitle() + ", 순서: " + i);
+            if (newOrder < oldOrder) {
+                for (Card c : oldCardList) {
+                    if (c.getCardOrder() >= newOrder && c.getCardOrder() < oldOrder) {
+                        log.info("새 순서로 변경");
+                        c.updateCardOrder(c.getCardOrder() + 1);
+                    }
+                    if (c.getId().equals(card.getId())) {
+                        log.info("newOrder로 정함");
+                        c.updateCardOrder(newOrder);
+                    }
+                    cardRepository.save(c);
+                }
+                cardRepository.saveAll(oldCardList);
+            } else if (newOrder > oldOrder){
+                for (Card c : oldCardList) {
+                    if (c.getCardOrder() <= newOrder && c.getCardOrder() > oldOrder) {
+                        c.updateCardOrder(c.getCardOrder() - 1);
+                    }
+                    if (c.getId() == card.getId()) {
+                        c.updateCardOrder(newOrder);
+                    }
+                    cardRepository.save(c);
+                }
+                cardRepository.saveAll(oldCardList);
             }
-
             // 예전 컬럼의 내용들 저장
-            cardRepository.saveAll(oldCardList);
             columnsRepository.save(oldcolumn);
-
         } else {
             log.info("컬럼 변경 O");
             // 2. 카드가 다른 컬럼으로 이동하는 경우
             // => 원래 카드에 저장된 column의 id를 받아온 cardOrderRequestDto에서 가져온 column의 id값으로 새로운 column을 찾아서 set 해줌
             card.setColumn(newcolumn);
+            log.info(card.getColumns().getTitle());
             oldcolumn.removeCard(card);
+            // 이전 컬럼 리스트는, 중간에 하나가 빠져도 그 순서대로 다시 0부터 시작해서 재정렬 하면 됨
+            List<Card> oldCardList = cardRepository.findAllByColumnsOrderByCardOrder(oldcolumn);
 
             for (int i = 0; i < oldCardList.size(); i++) {
-                log.info(oldCardList.get(i).getTitle() + ", index: " + i);
-                oldCardList.get(i).updateCardOrder(i);
+                oldCardList.get(i).updateCardOrder(Long.valueOf(i));
                 cardRepository.save(oldCardList.get(i));
             }
 
@@ -141,12 +154,25 @@ public class CardService {
             newcolumn.addNewCard(card, cardOrderRequestDto.getCardOrder());
             List<Card> newCardList = cardRepository.findAllByColumnsOrderByCardOrder(newcolumn);
 
-            for (int i = 0; i < newCardList.size(); i++) {
-                log.info(newCardList.get(i).getTitle() + ", index: " + i);
-                newCardList.get(i).updateCardOrder(i);
-                cardRepository.save(newCardList.get(i));
-            }
+            Long newOrder = Long.valueOf(cardOrderRequestDto.getCardOrder());
 
+            log.info("바꿀 순서: " + newOrder + ", 리스트 사이즈: " + (newCardList.size()-1));
+
+            if ( newOrder == (newCardList.size()-1) ) { // 바꾸기 이전 리스트를 생각해서 그냥 뒀는데 바꾸고 나서 가져오므로 -1 해주어야 함
+                log.info("바꿀 순서와 리스트 사이즈가 동일한 경우");
+                card.updateCardOrder(newOrder);
+                cardRepository.save(card);
+            } else {
+                for (Card c: newCardList) {
+                    if (c.getCardOrder() >= newOrder) {
+                        c.updateCardOrder(c.getCardOrder() + 1);
+                    }
+                    if (c.getId() == card.getId()) {
+                        card.updateCardOrder(newOrder);
+                    }
+                    cardRepository.save(card);
+                }
+            }
             columnsRepository.save(newcolumn);
             cardRepository.saveAll(newCardList);
         }
