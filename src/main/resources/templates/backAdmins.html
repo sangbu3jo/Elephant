@@ -233,7 +233,10 @@
         };
 
         // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
-        fetchUserInfo();
+        const token = Cookies.get('Authorization');
+        if (token) { // 토큰 있을 경우
+            fetchUserInfo();
+        };
 
         // 알림 목록 업데이트 함수
         const updateNotificationList = () => {
@@ -547,41 +550,59 @@
 
         if (userManagementButton.classList.contains('active')) {
             if (checkedCheckboxes.length === 1) {
-                if (confirm('회원의 권한을 변경시키겠습니까?')) {
-                    const userId = checkedCheckboxes[0].getAttribute('data-userid');
-                    const userRole = checkedCheckboxes[0].getAttribute('data-userrole');
 
-                    let newRole = '';
+                Swal.fire({
+                    title: '유저 권한을 수정하시겠습니까?',
+                    text: '권한 수정을 진행합니다.',
+                    icon: 'warning',
 
-                    if (userRole === 'USER') {
-                        newRole = 'ADMIN';
-                    } else if (userRole === 'ADMIN') {
-                        newRole = 'USER';
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        const userId = checkedCheckboxes[0].getAttribute('data-userid');
+                        const userRole = checkedCheckboxes[0].getAttribute('data-userrole');
+
+                        let newRole = '';
+
+                        if (userRole === 'USER') {
+                            newRole = 'ADMIN';
+                        } else if (userRole === 'ADMIN') {
+                            newRole = 'USER';
+                        }
+
+                        // 권한 수정 API 호출
+                        fetch(`/api/${userId}/auth`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                newRole: newRole // 새로운 권한 정보를 전달
+                            })
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to update user authorization');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
+                                fetchAndRenderUsers();
+                            })
+                            .catch(error => console.error('Error updating user authorization:', error));
                     }
-
-                    // 권한 수정 API 호출
-                    fetch(`/api/${userId}/auth`, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            newRole: newRole // 새로운 권한 정보를 전달
-                        })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to update user authorization');
-                            }
-                            return response.text();
-                        })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderUsers();
-                        })
-                        .catch(error => console.error('Error updating user authorization:', error));
-                }
+                });
             } else {
                 Swal.fire({
                     icon: 'warning',
@@ -609,39 +630,58 @@
                         return response.json();
                     })
                     .then(post => {
-                        const shouldHide = confirm('게시글을 숨김 처리하시겠습니까?');
+                        Swal.fire({
+                            title: '게시글을 숨김 처리하시겠습니까?',
+                            text: '되돌릴 수 없습니다.',
+                            icon: 'warning',
 
-                        if (shouldHide) {
-                            // 게시글 수정 API 호출
-                            fetch(`/api/posts/${postId}/admin`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    title: "숨김 처리된 게시글입니다.",
-                                    content: "숨김 처리된 게시글입니다.",
-                                    category: "",
-                                    completed: false
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: '삭제',
+                            cancelButtonText: '취소',
+
+                            reverseButtons: false, // 버튼 순서 거꾸로
+                        }).then(result => {
+                            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                                // 게시글 수정 API 호출
+                                fetch(`/api/posts/${postId}/admin`, {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        title: "숨김 처리된 게시글입니다.",
+                                        content: "숨김 처리된 게시글입니다.",
+                                        category: "",
+                                        completed: false
+                                    })
                                 })
-                            })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error('Failed to update post');
-                                    }
-                                    return response.text();
-                                })
-                                .then(responseText => {
-                                    alert(responseText);
-                                    fetchAndRenderPosts();
-                                })
-                                .catch(error => console.error('Error updating post:', error));
-                        }
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Failed to update post');
+                                        }
+                                        return response.text();
+                                    })
+                                    .then(responseText => {
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: responseText,
+                                        })
+                                        fetchAndRenderPosts();
+                                    })
+                                    .catch(error => console.error('Error updating post:', error));
+                            }
+                        });
                     })
                     .catch(error => console.error('Error fetching post:', error));
             } else {
-                alert('수정할 게시글을 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '숨길 게시글을 선택해주세요.',
+                });
             }
         } else if (commentManagementButton.classList.contains('active')) {
             const checkedCommentCheckbox = document.querySelector('.user-checkbox:checked'); // 수정: user-checkbox -> comment-checkbox
@@ -649,34 +689,54 @@
             if (checkedCommentCheckbox) {
                 const commentId = checkedCommentCheckbox.getAttribute('data-commentid');
 
-                const shouldHide = confirm('댓글을 숨김 처리하시겠습니까?');
+                Swal.fire({
+                    title: '댓글을 숨김 처리하시겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
 
-                if (shouldHide) {
-                    // 댓글 숨김 처리 API 호출
-                    fetch(`/api/posts/comments/${commentId}/admin`, { // 수정: '/api/posts/comments/' -> API 엔드포인트에 맞게 변경
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            content: "숨김 처리된 댓글입니다."
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        // 댓글 숨김 처리 API 호출
+                        fetch(`/api/posts/comments/${commentId}/admin`, { // 수정: '/api/posts/comments/' -> API 엔드포인트에 맞게 변경
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                content: "숨김 처리된 댓글입니다."
+                            })
                         })
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to hide comment');
-                            }
-                            return response.text();
-                        })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderComments();
-                        })
-                        .catch(error => console.error('Error hiding comment:', error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to hide comment');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
+                                fetchAndRenderComments();
+                            })
+                            .catch(error => console.error('Error hiding comment:', error));
+                    }
+                });
+
             } else {
-                alert('숨김 처리할 댓글을 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '숨길 댓글을 선택해주세요.',
+                });
             }
         }
     });
@@ -689,58 +749,108 @@
             if (checkedCheckboxes.length === 1) {
                 const userId = checkedCheckboxes[0].getAttribute('data-userid');
 
-                if (confirm('회원을 탈퇴시키겠습니까?')) {
-                    fetch(`/api/${userId}/auth`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to delete user');
+                Swal.fire({
+                    title: '회원을 탈퇴시키겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        fetch(`/api/${userId}/auth`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                             }
-                            return response.text();
                         })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderUsers();
-                        })
-                        .catch(error => console.error('Error deleting user:', error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to delete user');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
+                                fetchAndRenderUsers();
+                            })
+                            .catch(error => console.error('Error deleting user:', error));
+                    }
+                });
             } else if (checkedCheckboxes.length === 0) {
-                alert('삭제할 유저를 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '삭제할 유저를 선택해주세요.',
+                });
             } else {
-                alert('하나의 유저만 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '하나의 유저만 선택해주세요.',
+                });
             }
         } else if (postManagementButton.classList.contains('active')) {
             // 게시글 삭제 기능 추가
             if (checkedCheckboxes.length === 1) {
                 const postId = checkedCheckboxes[0].getAttribute('data-postid');
 
-                if (confirm('게시글을 삭제하시겠습니까?')) {
-                    fetch(`/api/posts/${postId}/admin`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to delete post');
+                Swal.fire({
+                    title: '게시글을 삭제하시겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        fetch(`/api/posts/${postId}/admin`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                             }
-                            return response.text();
                         })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderPosts();
-                        })
-                        .catch(error => console.error('Error deleting post:', error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to delete post');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
+                                fetchAndRenderPosts();
+                            })
+                            .catch(error => console.error('Error deleting post:', error));
+                    }
+                });
             } else if (checkedCheckboxes.length === 0) {
-                alert('삭제할 게시글을 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '삭제할 게시글을 선택해주세요.',
+                });
             } else {
-                alert('하나의 게시글만 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '하나의 게시글만 선택해주세요.',
+                });
             }
         } else if (commentManagementButton.classList.contains('active')) {
             const checkedCommentCheckbox = document.querySelector('.user-checkbox:checked');
@@ -748,27 +858,48 @@
             if (checkedCommentCheckbox) {
                 const commentId = checkedCommentCheckbox.getAttribute('data-commentid');
 
-                if (confirm('댓글을 삭제하시겠습니까?')) {
-                    fetch(`/api/posts/comments/${commentId}/admin`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                        }
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to delete comment');
+                Swal.fire({
+                    title: '댓글을 삭제하시겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        fetch(`/api/posts/comments/${commentId}/admin`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
                             }
-                            return response.text();
                         })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderComments(); // 삭제 후 댓글 목록을 다시 불러와서 렌더링
-                        })
-                        .catch(error => console.error('Error deleting comment:', error));
-                }
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to delete comment');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
+                                fetchAndRenderComments(); // 삭제 후 댓글 목록을 다시 불러와서 렌더링
+                            })
+                            .catch(error => console.error('Error deleting comment:', error));
+                    }
+                });
             } else {
-                alert('삭제할 댓글을 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '삭제할 댓글을 선택해주세요.',
+                });
             }
         }
 
