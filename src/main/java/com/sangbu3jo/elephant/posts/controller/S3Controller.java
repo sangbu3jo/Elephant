@@ -3,7 +3,6 @@ package com.sangbu3jo.elephant.posts.controller;
 import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
 import com.sangbu3jo.elephant.posts.entity.Category;
 import com.sangbu3jo.elephant.posts.entity.Post;
-import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.posts.service.S3Service;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
