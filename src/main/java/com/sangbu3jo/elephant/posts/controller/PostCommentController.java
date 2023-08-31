@@ -1,6 +1,7 @@
 package com.sangbu3jo.elephant.posts.controller;
 
 import com.sangbu3jo.elephant.posts.dto.PostCommentRequestDto;
+import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.entity.PostComment;
 import com.sangbu3jo.elephant.posts.repository.PostCommentRepository;
 import com.sangbu3jo.elephant.posts.service.PostCommentService;
@@ -18,7 +19,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class PostCommentController {
 
     private final PostCommentService postCommentService;
-    private final PostCommentRepository postCommentRepository;
+
 
     //댓글 생성
 
@@ -43,8 +44,7 @@ public class PostCommentController {
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
                                                   @RequestBody PostCommentRequestDto postCommentRequestDto) {
 
-        PostComment postComment = postCommentRepository.findById(comment_id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 댓글은 존재하지 않습니다."));
+        PostComment postComment = postCommentService.findById(comment_id);
 
         if (userDetails.getUser().getId().equals(postComment.getUser().getId())) {
             postCommentService.modifiedComment(postCommentRequestDto, postComment);
@@ -56,8 +56,8 @@ public class PostCommentController {
     @DeleteMapping("/posts/comments/{comment_id}")
     public ResponseEntity<String> deleteComment(@PathVariable Long comment_id,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        PostComment postComment = postCommentRepository.findById(comment_id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 댓글은 존재하지 않습니다."));
+
+        PostComment postComment = postCommentService.findById(comment_id);
 
         if (userDetails.getUser().getId().equals(postComment.getUser().getId())) {
             postCommentService.deleteComment(postComment);

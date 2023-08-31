@@ -18,7 +18,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class PostController {
 
     private final PostService postService;
-    private final PostRepository postRepository;
+
 
     //게시글 생성
     @PostMapping("/posts")
@@ -43,8 +43,7 @@ public class PostController {
                                                @RequestBody PostRequestDto postRequestDto,
                                                @PathVariable Long post_id) throws Exception {
 
-        Post post = postRepository.findById(post_id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+        Post post = postService.findById(post_id);
 
 
         if (userDetails.getUser().getId().equals(post.getUser().getId())) {
@@ -59,8 +58,7 @@ public class PostController {
     public ResponseEntity<String> deletePost(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                              @PathVariable Long post_id) {
 
-        Post post = postRepository.findById(post_id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+        Post post = postService.findById(post_id);
 
         //post fk user_id 값과 로그인한 user id값 비교
         if (userDetails.getUser().getId().equals(post.getUser().getId())) {

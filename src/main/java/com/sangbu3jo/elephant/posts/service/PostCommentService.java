@@ -52,6 +52,8 @@ public class PostCommentService {
     @Transactional
     public void modifiedComment(PostCommentRequestDto postCommentRequestDto, PostComment postComment) {
 
+
+
        //댓글 수정
         postComment.update(postCommentRequestDto);
 
@@ -65,21 +67,13 @@ public class PostCommentService {
         postCommentRepository.delete(postComment);
     }
 
-    //댓글 단건 조회
-//    public PostCommentResponseDto getComment(Long id, User user) {
-//
-//        User commentUser = userRepository.findById(user.getId())
-//                .orElseThrow(()-> new IllegalArgumentException("해당 유저는 존재하지 않습니다."));
-//
-//        PostComment postComment = postCommentRepository.findById(id)
-//                .orElseThrow(()-> new IllegalArgumentException("해당 댓글을 찾아올 수 없습니다."));
-//
-//        PostCommentResponseDto postCommentResponseDto = new PostCommentResponseDto(postComment);
-//
-//        return postCommentResponseDto;
-//
-//
-//
-//
-//    }
+
+    public PostComment findById(Long commentId) {
+        PostComment postComment = postCommentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 댓글은 존재하지 않습니다."));
+
+        return postComment;
+    }
+
+
 }

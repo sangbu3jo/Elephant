@@ -292,6 +292,13 @@ public class PostService {
 
         return postResponseDtoList;
     }
+
+    public Post findById(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시물은 존재하지 않습니다."));
+
+        return post;
+    }
 }
 
 

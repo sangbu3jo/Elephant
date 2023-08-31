@@ -1,13 +1,11 @@
 package com.sangbu3jo.elephant.posts.controller;
 
-import com.amazonaws.AmazonServiceException;
 import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
 import com.sangbu3jo.elephant.posts.entity.Category;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.posts.service.S3Service;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
-import groovy.transform.AutoExternalize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequiredArgsConstructor
 public class S3Controller {
 
     private final S3Service s3Service;
-    private final PostRepository postRepository;
+
 
 
 //
@@ -76,7 +73,7 @@ public class S3Controller {
                                              @AuthenticationPrincipal UserDetailsImpl userDetails,
                                              @PathVariable Long post_id) throws IOException {
 
-        Post post = findByID(post_id);
+        Post post = s3Service.findById(post_id);
 
         if (userDetails.getUser().getId().equals(post.getUser().getId())) {
             s3Service.modifiedPost(image, category, postRequestDto, post);
@@ -90,7 +87,7 @@ public class S3Controller {
     public ResponseEntity<String> deleteFile(@RequestParam("fileUrl") String fileUrl,
                                              @PathVariable Long post_id,
                                              @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-        Post post = findByID(post_id);
+        Post post = s3Service.findById(post_id);
 
 
         if (userDetails.getUser().getId().equals(post.getUser().getId())) {
@@ -103,12 +100,7 @@ public class S3Controller {
 
     }
 
-    private Post findByID(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 id는 존재하지 않습니다."));
 
-        return post;
-    }
 
 
 }
