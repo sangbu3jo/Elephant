@@ -458,8 +458,13 @@
                 <a class="list-group-item list-group-item-action" id="leaveButton" data-bs-toggle="modal" th:data-bs-target="'#leaveboard'+${board.id}" >프로젝트 떠나기</a>
                 <a class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#inviteModal" >프로젝트에 초대</a>
                 <a class="list-group-item list-group-item-action" id="gotoCalendar" >달력 보기</a>
-                <a class="list-group-item list-group-item-action" id="gotoChat" >채팅 하기</a>
+                <a class="list-group-item list-group-item-action" id="gotoChat" >단체 채팅 하기</a>
                 <a class="list-group-item list-group-item-action" id="gotoMiniGame" >미니 게임</a>
+
+                <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
+                <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+                <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a> <!--채팅 페이지 테스트 중-->
+                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a> <!--서버에서 admin 여부 true/false로 가져오기-->
             </div>
 
         </div>
