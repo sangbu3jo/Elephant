@@ -24,260 +24,10 @@
     <!-- 로고 -->
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"/>
 
+    <link rel="stylesheet" type="text/css"  href="/css/updatePost.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style>
-        @font-face {
-            font-family: 'GangwonState';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/GangwonState.woff2') format('woff2');
-            font-weight: normal;
-            font-style: normal;
-        }
 
-        * {
-            font-family: 'GangwonState', cursive;
-        }
-
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            color: #101014;
-            background-color: #f5f5fa;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* 가로 가운데 정렬 추가 */
-            align-items: center; /* 세로 가운데 정렬 추가 */
-        }
-
-        /* 상단 메뉴 */
-        .top {
-            height: 15vh;
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-        }
-
-        button {
-            background-color: transparent;
-            border: none;
-        }
-
-        .right {
-            height: 100%;
-            width: 35%;
-            padding-left: 30px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-
-        .middle {
-            height: 100%;
-            width: 30%;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .middle img {
-            margin-right: 5px;
-        }
-
-        .left {
-            height: 100%;
-            width: 35%;
-            padding-right: 30px;
-            display: flex;
-            flex-direction: row;
-            justify-content: end;
-            align-items: center;
-        }
-
-        /* 알림 */
-        .notification-icon {
-            width: 40px;
-            height: 40px;
-            font-size: 30px;
-            cursor: pointer;
-            margin-right: 10px;
-            display: flex;
-            flex-direction: row;
-        }
-
-        .notification-icon div {
-            width: 40px;
-            height: 40px;
-            position: relative;
-        }
-
-        @keyframes shake {
-            0%, 100% {
-                transform: translateX(0);
-            }
-            10%, 30%, 50%, 70%, 90% {
-                transform: translateX(-3px);
-            }
-            20%, 40%, 60%, 80% {
-                transform: translateX(3px);
-            }
-        }
-
-        .new-notification {
-            color: red;
-            animation: shake 1.5s infinite; /* 흔들기 애니메이션 적용 */
-        }
-
-        .nobadge {
-            background-color: red;
-            color: white;
-            border-radius: 50%;
-            padding: 4px 8px;
-            font-size: 12px;
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
-
-        .notification-list {
-            position: absolute;
-            top: 100px; /* Adjust the top position to your preference */
-            right: 70px;
-            width: 295px;
-            background-color: white;
-            border: 1px solid #ddd;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-            max-height: 700px;
-            overflow-y: auto;
-            display: none;
-            z-index: 10;
-            margin-top: 45px; /* 헤더의 높이만큼 여백 추가 */
-        }
-
-        .notification-list-header {
-            background-color: #ccc;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            position: fixed;
-            top: 100px;
-            width: 13%; /* 가로 너비를 꽉 채우도록 설정 */
-            z-index: 9998; /* 헤더 위에 배치 */
-        }
-
-        .notification-list-item {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            cursor: pointer;
-            background-color: white;
-        }
-
-        .notification-list-item.read {
-            background-color: #f0f0f0;
-        }
-
-        .list-group-item {
-            background-color: transparent;
-            cursor: pointer;
-        }
-
-        .offcanvas {
-            background-color: #f5f5fa;
-        }
-
-
-        /* 하단 게시판 */
-
-        .bottom {
-            height: 85vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            width: 80vw;
-        }
-
-
-        .post-form {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .form-group {
-            margin-top: 10px;
-            margin-bottom: 10px;
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            background-color: transparent;
-        }
-
-        .form-group label {
-            width: 15%;
-        }
-
-        .form-group select,
-        .form-group input,
-        .form-group textarea {
-            width: 85%;
-        }
-
-        .form-group select {
-            background-color: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            outline: none;
-            resize: none;
-        }
-
-        .form-group:nth-child(2) input {
-            background-color: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-        }
-
-        .form-group textarea {
-            height: 35vh;
-            background-color: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            outline: none;
-            resize: none;
-        }
-
-        .submit-button {
-            margin-top: 10px;
-            background-color: #e9e9e9;
-            color: #1a1515;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .submit-button:hover {
-            background-color: #d6d6d6;
-        }
-
-        .mark-all-read-button {
-            position: absolute;
-            top: 10px; /* 버튼 위치 조정 */
-            right: 10px; /* 버튼 위치 조정 */
-            padding: 1px 4px;
-            font-size: 12px;
-            z-index: 9999; /* 다른 요소보다 앞에 표시되도록 설정 */
-        }
 
     </style>
 
@@ -578,6 +328,17 @@
         fileInput.value = ''; // 파일 입력 필드의 값 초기화
     });
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-center',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
 
     $(document).ready(function () {
         pageSetting();
@@ -625,7 +386,10 @@
         };
 
         // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
-        fetchUserInfo();
+        const token = Cookies.get('Authorization');
+        if(token){ // 토큰 있을 경우
+            fetchUserInfo();
+        }
 
         // 알림 목록 업데이트 함수
         const updateNotificationList = () => {
@@ -646,17 +410,15 @@
             // "전체 읽음" 버튼에 이벤트 리스너 연결
             const button = document.getElementById('markAllReadButton');
             button.addEventListener('click', function () {
-                const confirmResult = confirm('알림 전체 읽음처리 하시겠습니까?');
-                if (confirmResult) {
-                    // 확인을 선택한 경우 서버에 요청 보내기
-                    markAllNotificationsAsRead();
-                    // alert('알림이 전체 읽음 처리되었습니다.');
-                    window.location.href = window.location.href;
-                } else {
-                    // 취소를 선택한 경우
-                    // 아무 작업도 하지 않음
-                }
-
+                Swal.fire({
+                    icon: "waning",
+                    title: "알림 전체 읽음처리 하시겠습니까?"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        markAllNotificationsAsRead();
+                        window.location.reload();
+                    }
+                })
             });
 
 
@@ -753,29 +515,20 @@
             };
         });
 
-        // // 전체읽음 버튼 클릭 시 실행되는 함수
-        // document.getElementById('markAllReadButton').addEventListener('click', function() {
-        //     const confirmResult = confirm('알림 전체 읽음처리 하시겠습니까?');
-        //     if (confirmResult) {
-        //         // 확인을 선택한 경우 서버에 요청 보내기
-        //         markAllNotificationsAsRead();
-        //         window.location.href = window.location.href;
-        //     } else {
-        //         // 취소를 선택한 경우
-        //         // 아무 작업도 하지 않음
-        //     }
-        // });
-
         // 알림 전체 읽음 처리 함수
         function markAllNotificationsAsRead() {
             $.post(`/api/mark-all-notifications-as-read/${userId}`)
-                .done(function (response) {
-                    alert(response); // 성공 메시지 출력
-                    // 서버 응답에 따라 적절한 처리를 수행할 수 있습니다.
-                    // 예를 들어 알림 목록을 다시 가져와서 업데이트하는 등의 작업을 수행할 수 있습니다.
+                .done(function(response) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: "전체 읽음 처리 되었습니다!",
+                    })
                 })
-                .fail(function (response) {
-                    alert(response); // 오류 메시지 출력
+                .fail(function(response) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: "전체 읽음 처리 실패!",
+                    })
                 });
         }
 
@@ -794,11 +547,17 @@
             contentType: "application/json",
             success: function (data) {
                 console.log(data);
-                alert("로그인 연장 성공");
+                Toast.fire({
+                    icon: 'success',
+                    title: "로그인 연장 성공",
+                })
             },
             error: function (data) {
                 console.log(data);
-                alert("로그인 연장 실패 \n 재로그인 부탁드립니다.");
+                Toast.fire({
+                    icon: 'error',
+                    title: "로그인 연장 실패. 재로그인 부탁드립니다.",
+                })
                 redirectToLoginPage();
             }
         });
@@ -833,12 +592,21 @@
             contentType: "application/json",
             success: function (data) {
                 removeToken();
-                alert("로그아웃 성공");
-                window.location.reload();
+                Toast.fire({
+                    icon: 'success',
+                    title: "로그아웃 성공",
+                }).then(function () {
+                    window.location.href = "/main";
+                })
+
             },
             error: function () {
-                alert("로그아웃 실패");
-                window.location.reload();
+                Toast.fire({
+                    icon: 'error',
+                    title: "로그아웃 실패",
+                }).then(function () {
+                    window.location.reload();
+                })
             }
         });
     }
