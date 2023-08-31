@@ -75,6 +75,7 @@ public class PostViewController {
       @AuthenticationPrincipal UserDetailsImpl userDetails,
       Model model) {
     PostResponseDto postResponseDto = postService.getPost(post_id, userDetails.getUser());
+    postResponseDto.convertContent();
     model.addAttribute("post", postResponseDto);
     model.addAttribute("loginUser", userDetails.getUser().getId());
     checkAdmin(model,userDetails);
