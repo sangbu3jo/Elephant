@@ -15,7 +15,7 @@ public class RefreshTokenRepository {
   private final RedisTemplate redisTemplate;
 
   // 리프레스 토큰 만료시간
-  private final long RRFRESH_TOKEN_TIME = 60 * 60 * 1000L; // 60분
+  private final long RRFRESH_TOKEN_TIME = 60 * 60 * 24; // 24시간
 
   public void save(final RefreshToken refreshToken) {
     ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
