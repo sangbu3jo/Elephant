@@ -1,9 +1,7 @@
 package com.sangbu3jo.elephant.posts.controller;
 
 import com.sangbu3jo.elephant.posts.dto.PostCommentRequestDto;
-import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.entity.PostComment;
-import com.sangbu3jo.elephant.posts.repository.PostCommentRepository;
 import com.sangbu3jo.elephant.posts.service.PostCommentService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;

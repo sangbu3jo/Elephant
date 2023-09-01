@@ -2,7 +2,6 @@ package com.sangbu3jo.elephant.posts.controller;
 
 import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
 import com.sangbu3jo.elephant.posts.entity.Post;
-import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.posts.service.PostService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -21,6 +20,12 @@ public class PostController {
     private final PostService postService;
 
 
+    /**
+     *
+     * @param userDetails 로그인한 유저 정보
+     * @param postRequestDto 클라이언트에서 받아온 값
+     * @return 성공 실패 ResponseEntity 반환
+     */
     //게시글 생성
     @PostMapping("/posts")
     public ResponseEntity<String> createPost(@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -38,7 +43,15 @@ public class PostController {
     }
 
 
-    //게시글 수정
+    /**
+     *
+     * @param userDetails 로그인한 유저 정보
+     * @param postRequestDto 클라이언트에서 받아온 값
+     * @param post_id 수정할 게시글 id
+     * @return 성공 실패 ResponseEntity 반환
+     * @throws Exception 예외처리
+     */
+   // 게시글 수정
     @PutMapping("/posts/{post_id}")
     public ResponseEntity<String> modifiedPost(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @Valid @RequestBody PostRequestDto postRequestDto,
@@ -54,6 +67,12 @@ public class PostController {
     }
 
 
+    /**
+     *
+     * @param userDetails 로그인한 유저 정보
+     * @param post_id 삭제할 게시글 id
+     * @return 성공 실패 ResponseEntity 반환
+     */
     //게시글 삭제
     @DeleteMapping("/posts/{post_id}")
     public ResponseEntity<String> deletePost(@AuthenticationPrincipal UserDetailsImpl userDetails,

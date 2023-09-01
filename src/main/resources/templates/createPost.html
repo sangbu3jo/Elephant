@@ -175,14 +175,6 @@
 
             console.log(files);
 
-            // Create an object with the data to send to the server
-            // var postData = {
-            //     category: selectedCategory,
-            //     title: title,
-            //     content: content
-            // };
-
-
             if (files) {
                 // FormData 객체를 생성하여 데이터를 담습니다.
                 var formData = new FormData();
@@ -199,8 +191,6 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    // contentType: false,
-                    // contentType: "multipart/form-data",
                     success: function (response) {
                         $("#result").text(response); // 성공 메시지를 표시합니다.
 
@@ -395,7 +385,6 @@
             } else {
                 notificationIcon.classList.remove('new-notification');
                 notificationBadge.style.display = "none";
-                // notificationBadge.innerText = '';
             }
         };
 
