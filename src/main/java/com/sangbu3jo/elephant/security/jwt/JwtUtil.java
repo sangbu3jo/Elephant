@@ -42,7 +42,7 @@ public class JwtUtil {
   private final long ACCESS_TOKEN_TIME = 60 * 60 * 1000L; // 1시간
 
   // 리프레시 토큰 만료시간
-  private final long REFRESH_TOKEN_TIME = 60 * 60 * 24; // 24시간
+  private final long REFRESH_TOKEN_TIME = 60 * 60 * 24 * 1000L; // 24시간
 
 
   @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
