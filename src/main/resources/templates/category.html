@@ -182,27 +182,6 @@
            th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">11/11 11:11:11</p>
       </div>
     </div>
-
-    <!--    <div>-->
-    <!--      <ol class="list-group list-group" style="width: 65%;-->
-    <!--margin-left: 17%; margin-top: 2%;">-->
-    <!--        <li class="list-group-item d-flex justify-content-between align-items-start"-->
-    <!--            th:each="post, postIndex : ${posts}">-->
-    <!--          <div class="fw-bold-left" th:text="${postIndex.index + 1}"></div>-->
-    <!--          <div class="ms-3 me-auto" style="-->
-    <!--    text-align: left;-->
-    <!--">-->
-    <!--            <a th:href="@{/api/posts/{postId}(postId=${post.id})}">-->
-    <!--              <div class="fw-bold-left" th:text="|제목 : ${post.title}|"></div>-->
-    <!--              <span-->
-    <!--                  th:text="|내용 : ${post.content.length() > 10 ? #strings.substring(post.content, 0, 10) + '...' : post.content}|"></span>-->
-    <!--            </a>-->
-    <!--          </div>-->
-    <!--          <span class="badge bg-primary rounded-pill" style="font-size: 15px; width: 10%;"-->
-    <!--                th:text="|조회수 : ${post.view_cnt}|"></span>-->
-    <!--        </li>-->
-    <!--      </ol>-->
-    <!--    </div>-->
   </div>
 
   <!--페이징 처리 코드 -->
@@ -216,13 +195,6 @@
             <span>이전</span>
           </a>
         </li>
-        <!--                <li th:each="page: ${#numbers.sequence(0, boards.getTotalPages() -1)}"-->
-        <!--                    th:if="${page >= page - 5 and page <= page + 5}"-->
-        <!--                    th:classappend="${page == boards.getPageable().getPageNumber()} ? 'active'"-->
-        <!--                    class="page-item">-->
-        <!--                    <a th:text="${page + 1}" class="page-link" th:href="@{|?page=${page + 1}|}" style="background-color: #e6e6e6;">1</a>-->
-        <!--                </li>-->
-
         <li th:each="page: ${#numbers.sequence(0, posts.getTotalPages() -1)}"
             th:if="${page >= page - 5 and page <= page + 5}"
             class="page-item">

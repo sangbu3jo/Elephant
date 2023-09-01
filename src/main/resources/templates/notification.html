@@ -280,20 +280,6 @@
       fetchNotifications(userId);
     };
 
-    // // 알림 데이터 주기적으로 업데이트
-    // setInterval(fetchNotifications, 10000); // 10초마다 업데이트
-
-    // 이전에 받은 알림 데이터를 Local Storage에 저장
-    // const saveNotificationsToLocalStorage = () => {
-    //   localStorage.setItem(`notifications_${userId}`, JSON.stringify(notificationsList));
-    // };
-
-
-    // 알림이 추가될 때마다 Local Storage 업데이트
-    // window.addEventListener('beforeunload', saveNotificationsToLocalStorage);
-
-
-
     fetchUserInfo().then(() => {
       const sse = new EventSource(`/api/notifications/${userId}`);
       sse.onmessage = (event) => {
