@@ -617,65 +617,49 @@
                 const postId = checkedPostCheckbox.getAttribute('data-postid');
 
                 // 게시글 정보를 가져와서 수정 창을 띄우기
-                fetch(`/api/posts/${postId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch post');
-                        }
-                        return response.json();
-                    })
-                    .then(post => {
-                        Swal.fire({
-                            title: '게시글을 숨김 처리하시겠습니까?',
-                            text: '되돌릴 수 없습니다.',
-                            icon: 'warning',
+                Swal.fire({
+                    title: '게시글을 숨김 처리하시겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
 
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: '삭제',
-                            cancelButtonText: '취소',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '숨김',
+                    cancelButtonText: '취소',
 
-                            reverseButtons: false, // 버튼 순서 거꾸로
-                        }).then(result => {
-                            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
-                                // 게시글 수정 API 호출
-                                fetch(`/api/posts/${postId}/admin`, {
-                                    method: 'PUT',
-                                    headers: {
-                                        'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({
-                                        title: "숨김 처리된 게시글입니다.",
-                                        content: "숨김 처리된 게시글입니다.",
-                                        category: "",
-                                        completed: false
-                                    })
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        // 게시글 수정 API 호출
+                        fetch(`/api/posts/${postId}/admin`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                title: "숨김 처리된 게시글입니다.",
+                                content: "숨김 처리된 게시글입니다.",
+                                completed: false
+                            })
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to update post');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
                                 })
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error('Failed to update post');
-                                        }
-                                        return response.text();
-                                    })
-                                    .then(responseText => {
-                                        Toast.fire({
-                                            icon: 'success',
-                                            title: responseText,
-                                        })
-                                        fetchAndRenderPosts();
-                                    })
-                                    .catch(error => console.error('Error updating post:', error));
-                            }
-                        });
-                    })
-                    .catch(error => console.error('Error fetching post:', error));
+                                fetchAndRenderPosts();
+                            })
+                            .catch(error => console.error('Error updating post:', error));
+                    }
+                });
             } else {
                 Swal.fire({
                     icon: 'warning',
@@ -697,7 +681,7 @@
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: '삭제',
+                    confirmButtonText: '숨김',
                     cancelButtonText: '취소',
 
                     reverseButtons: false, // 버튼 순서 거꾸로
