@@ -559,7 +559,7 @@
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: '삭제',
+                    confirmButtonText: '수정',
                     cancelButtonText: '취소',
 
                     reverseButtons: false, // 버튼 순서 거꾸로
@@ -617,6 +617,7 @@
                 const postId = checkedPostCheckbox.getAttribute('data-postid');
 
                 // 게시글 정보를 가져와서 수정 창을 띄우기
+
                 Swal.fire({
                     title: '게시글을 숨김 처리하시겠습니까?',
                     text: '되돌릴 수 없습니다.',
@@ -654,6 +655,7 @@
                                 Toast.fire({
                                     icon: 'success',
                                     title: responseText,
+
                                 })
                                 fetchAndRenderPosts();
                             })
@@ -741,7 +743,7 @@
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: '삭제',
+                    confirmButtonText: '탈퇴',
                     cancelButtonText: '취소',
 
                     reverseButtons: false, // 버튼 순서 거꾸로
@@ -773,7 +775,7 @@
                 Swal.fire({
                     icon: 'warning',
                     title: '선택 오류',
-                    text: '삭제할 유저를 선택해주세요.',
+                    text: '탈퇴할 유저를 선택해주세요.',
                 });
             } else {
                 Swal.fire({
