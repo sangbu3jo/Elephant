@@ -156,7 +156,8 @@
     <!--게시글 목록 코드-->
     <div class="card" id="cardArea" th:each="post, postIndex : ${posts}">
       <div class="card-body" style="text-align: left;">
-        <a th:href="@{/api/posts/{postId}(postId=${post.id})}">
+        <a th:onclick="'gotoPost(\'' + ${post.id} + '\')'">
+<!--        <a th:href="@{/api/posts/{postId}(postId=${post.id})}">-->
           <h5 class="card-title"
               th:text="|${post.title.length() > 15 ? #strings.substring(post.title, 0, 15) + '...' : post.title}|">
           스터디원 구함 </h5>
@@ -250,13 +251,64 @@
     window.location.href = "/main";
   }
 
+  function gotoPost(postId){
+    const token = Cookies.get('Authorization');
+    if(token){ // 토큰 있을 경우
+      window.location.href = `/api/posts/${postId}`;
+    } else {
+      Swal.fire({
+        title: '로그인한 사용자만 조회할 수 있습니다.',
+        text: '로그인/회원가입 하러가기',
+        icon: 'warning',
+
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+
+        reverseButtons: false, // 버튼 순서 거꾸로
+      }).then(result => {
+        if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+          window.location.href = '/api/auth/login-page';
+        }
+      });
+    }
+  }
+
   // 게시글 생성 버튼 클릭 이벤트 핸들러
   $("#create-post-button").click(function () {
     // 게시글 생성 페이지로 이동
-    window.location.href = "/api/post-page";
+    goToCreatePost();
   });
 
-  //titlecontaing 검색
+  // 로그인 여부 확인 후 게시글 생성 페이지로 이동
+  function goToCreatePost(){
+    const token = Cookies.get('Authorization');
+    if(token){ // 토큰 있을 경우
+      window.location.href = "/api/post-page";
+    } else {
+      Swal.fire({
+        title: '로그인한 사용자만 작성할 수 있습니다.',
+        text: '로그인/회원가입 하러가기',
+        icon: 'warning',
+
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+
+        reverseButtons: false, // 버튼 순서 거꾸로
+      }).then(result => {
+        if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+          window.location.href = '/api/auth/login-page';
+        }
+      });
+    }
+  }
+
+  // titlecontaing 검색
   function searchByTitle() {
     // 검색어 가져오기
     const currentURL = new URL(window.location.href);
@@ -330,6 +382,8 @@
     const token = Cookies.get('Authorization');
     if (token) { // 토큰 있을 경우
       fetchUserInfo();
+    }else {
+
     }
 
     // 알림 목록 업데이트 함수
