@@ -1120,15 +1120,16 @@
                             if (!response.ok) {
                                 throw new Error('Failed to sign out');
                             }
-                            return response.json();
+                            // return response.json();
                         })
                         .then(responseData => {
                             // 회원 탈퇴 성공 처리 및 새로 로그인 화면 등으로 이동
                             Toast.fire({
                                 icon: 'success',
-                                title: responseData.message,
+                                title: "회원 탈퇴가 완료되었습니다.",
                             })
-                            window.location.href="/api/auth/login-page";
+                            window.location.href = window.location.origin + "/api/auth/login-page";
+
                         })
                         .catch(error => console.error('Error signing out:', error));
                 } else {
