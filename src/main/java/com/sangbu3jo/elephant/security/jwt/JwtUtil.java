@@ -104,7 +104,7 @@ public class JwtUtil {
     // 방법2) 응답 헤더에 쿠키를 넣은 형태로 응답함.
     Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // 쿠키 생성
     cookie.setPath("/");
-    cookie.setMaxAge((int) ACCESS_TOKEN_TIME);
+    cookie.setMaxAge(60*60); // 1시간
     cookie.setSecure(true);
     res.addCookie(cookie);
 
@@ -120,7 +120,7 @@ public class JwtUtil {
 
     Cookie cookie = new Cookie(REFRESH_HEADER, refreshToken); // Name-Value
     cookie.setPath("/");
-    cookie.setMaxAge((int)REFRESH_TOKEN_TIME);
+    cookie.setMaxAge(60*60*24); // 24시간
     cookie.setHttpOnly(true);
     cookie.setSecure(true);
     res.addCookie(cookie);
@@ -132,7 +132,7 @@ public class JwtUtil {
       return tokenValue.substring(7);
     }
     logger.error("Not Found Token");
-    throw new NullPointerException("Not Found Token");
+    throw new IllegalArgumentException("Not Found Token");
   }
 
   // 토큰 검증
