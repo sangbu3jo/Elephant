@@ -567,15 +567,79 @@
                     `width=${popupWidth},height=${popupHeight},left=${left},top=${top}`);
 
                 const popupContent = `
-                <h3>게시글 수정</h3>
-                <label for="title">제목:</label>
-                <input type="text" id="title" name="title" value="${defaultTitle}" required><br>
-                <label for="content">내용:</label>
-                <textarea id="content" name="content" required>${defaultContent}</textarea><br>
-                <label for="completed">완료 여부:</label>
-                <input type="checkbox" id="completed" name="completed" ${defaultCompleted
-                    ? 'checked' : ''}><br>
-                <button id="updateButton">수정</button>
+                <div class="popup">
+                    <style>
+                        /* GangwonState 폰트 추가 */
+                        @font-face {
+                            font-family: 'GangwonState';
+                            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/GangwonState.woff2') format('woff2');
+                            font-weight: normal;
+                            font-style: normal;
+                        }
+
+                        * {
+                            font-family: 'GangwonState', cursive;
+                        }
+
+                        /* 팝업 스타일 시작 */
+                        .popup {
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background-color: #f5f5f5; /* 배경색 변경 */
+                            border: 1px solid #ccc;
+                            padding: 20px;
+                            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                            z-index: 9999;
+                            max-width: 400px; /* 최대 너비 설정 */
+                            width: 100%;
+                            max-height: 500px; /* 최대 높이 설정 */
+                            height: 100%; /* 높이 설정 */
+                            text-align: center;
+                        }
+
+                        .popup h3 {
+                            margin-top: 0;
+                            color: #007BFF; /* 제목 색상 변경 */
+                        }
+
+                        .popup label {
+                            display: block;
+                            margin-bottom: 5px;
+                            font-weight: bold; /* 라벨 글꼴 두껍게 변경 */
+                        }
+
+                        .popup input[type="text"],
+                        .popup textarea,
+                        .popup input[type="checkbox"] {
+                            width: 100%;
+                            padding: 8px;
+                            margin-bottom: 10px;
+                            border: 1px solid #ccc; /* 입력 필드 테두리 추가 */
+                        }
+
+                        .popup button {
+                            padding: 10px 20px;
+                            background-color: #007BFF;
+                            color: white;
+                            border: none;
+                            cursor: pointer;
+                            font-weight: bold; /* 버튼 글꼴 두껍게 변경 */
+                        }
+
+                        /* 팝업 스타일 종료 */
+                    </style>
+                    <h3>게시글 수정</h3>
+                    <label for="title">제목:</label>
+                    <input type="text" id="title" name="title" value="${defaultTitle}" required><br>
+                    <label for="content">내용:</label>
+                    <textarea id="content" name="content" required>${defaultContent}</textarea><br>
+                    <label for="completed">완료 여부:</label>
+                    <input type="checkbox" id="completed" name="completed" ${defaultCompleted ? 'checked' : ''}><br>
+                    <button id="updateButton">수정</button>
+                </div>
+
             `;
 
                 // 팝업 창에 HTML 내용을 쓰기
@@ -647,10 +711,72 @@
                     `width=${popupWidth},height=${popupHeight},left=${left},top=${top}`);
 
                 const popupContent = `
-                <h3>댓글 수정</h3>
-                <label for="content">내용:</label>
-                <textarea id="content" name="content" required>${defaultContent}</textarea><br>
-                <button id="updateCommentButton">수정</button>
+                <div class="popup">
+                    <style>
+                        /* GangwonState 폰트 추가 */
+                        @font-face {
+                            font-family: 'GangwonState';
+                            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/GangwonState.woff2') format('woff2');
+                            font-weight: normal;
+                            font-style: normal;
+                        }
+
+                        * {
+                            font-family: 'GangwonState', cursive;
+                        }
+
+                        /* 팝업 스타일 시작 */
+                        .popup {
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background-color: #f5f5f5; /* 배경색 변경 */
+                            border: 1px solid #ccc;
+                            padding: 20px;
+                            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                            z-index: 9999;
+                            max-width: 400px; /* 최대 너비 설정 */
+                            width: 100%;
+                            text-align: center;
+                        }
+
+                        .popup h3 {
+                            margin-top: 0;
+                            color: #007BFF; /* 제목 색상 변경 */
+                        }
+
+                        .popup label {
+                            display: block;
+                            margin-bottom: 5px;
+                            font-weight: bold; /* 라벨 글꼴 두껍게 변경 */
+                        }
+
+                        .popup textarea {
+                            width: 100%;
+                            padding: 8px;
+                            margin-bottom: 10px;
+                            border: 1px solid #ccc; /* 입력 필드 테두리 추가 */
+                        }
+
+                        .popup button {
+                            padding: 10px 20px;
+                            background-color: #007BFF;
+                            color: white;
+                            border: none;
+                            cursor: pointer;
+                            font-weight: bold; /* 버튼 글꼴 두껍게 변경 */
+                        }
+
+                        /* 팝업 스타일 종료 */
+                    </style>
+                    <h3>댓글 수정</h3>
+                    <label for="content">내용:</label>
+                    <textarea id="content" name="content" required>${defaultContent}</textarea><br>
+                    <button id="updateCommentButton">수정</button>
+                </div>
+
+
             `;
 
                 popupWindow.document.body.innerHTML = popupContent;
@@ -1138,21 +1264,23 @@
             postDiv.classList.add('user-info');
             postDiv.innerHTML = `
             <table>
-                <tr>
-                    <td><input type="checkbox" class="user-checkbox" data-postid="${post.id}" data-title="${post.title}" data-content="${post.content}"  data-completed="${post.completed}"></td>
-                    <td>게시글 작성자 : </td>
-                    <td>${post.username}(${post.nickname})</td>
-                <tr>
-                    <td></td>
-                    <td>게시글 제목 : </td>
-                    <td>${post.title}</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>게시글 내용 : </td>
-                    <td>${post.content.substring(0, 20)}...</td>
-                </tr>
-            </table>
+                    <tr>
+                        <td><input type="checkbox" class="user-checkbox" data-postid="${post.id}" data-title="${post.title}" data-content="${post.content}"  data-completed="${post.completed}"></td>
+                        <td>게시글 작성자 :</td>
+                        <td>${post.username}(${post.nickname})</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>게시글 제목 :</td>
+                        <td>${post.title}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>게시글 내용 :</td>
+                        <td>${post.content.substring(0, 20)}...</td>
+                    </tr>
+                </table>
+
         `;
             userInfoList.appendChild(postDiv);
         });
@@ -1171,21 +1299,22 @@
             commentDiv.classList.add('user-info');
             commentDiv.innerHTML = `
             <table>
-                 <tr>
-                    <td><input type="checkbox" class="user-checkbox" data-commentid="${comment.id}" data-content="${comment.content}"></td>
-                    <td>댓글 작성자 : </td>
-                    <td>${comment.username}(${comment.nickname})</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>댓글 내용 : </td>
-                    <td>${comment.content.substring(0, 20)}...</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>게시글 제목 : </td>
-                    <td>${comment.postTitle}</td>
-            </table>
+                    <tr>
+                        <td><input type="checkbox" class="user-checkbox" data-commentid="${comment.id}" data-content="${comment.content}"></td>
+                        <td>댓글 작성자 :</td>
+                        <td>${comment.username}(${comment.nickname})</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>댓글 내용 :</td>
+                        <td>${comment.content.substring(0, 20)}...</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>게시글 제목 :</td>
+                        <td>${comment.postTitle}</td>
+                    </tr>
+                </table>
         `;
             userInfoList.appendChild(commentDiv);
         });
