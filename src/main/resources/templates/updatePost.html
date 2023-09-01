@@ -230,25 +230,39 @@
         // 게시물 파일 삭제
         //게시믈 null로 변경?
         //게시물만 삭제 가능?
-        if (confirm("현재 이미지를 삭제하시겠습니까?")) {
-            $.ajax({
-                url: `/api/posts/${postFileDelId}/file?fileUrl=${fileUrl}`,
-                type: "DELETE",
-                success: function (data) {
-                    console.log(data);
-                    // 삭제에 성공한 경우
-                    // 화면에서 해당 댓글을 제거하거나 업데이트
-                    image.remove(); // 이미지를 DOM에서 제거
-                    button.remove(); // 버튼을 DOM에서 제거
 
-                    window.location.reload();
-                },
-                error: function (error) {
-                    console.error("댓글 삭제 실패");
-                }
-            });
-        }
+        Swal.fire({
+            title: "현재 이미지를 삭제하시겠습니까?",
+            text: '이미지를 삭제합니다.',
+            icon: 'warning',
 
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
+
+            reverseButtons: false, // 버튼 순서 거꾸로
+        }).then(result => {
+            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                $.ajax({
+                    url: `/api/posts/${postFileDelId}/file?fileUrl=${fileUrl}`,
+                    type: "DELETE",
+                    success: function (data) {
+                        console.log(data);
+                        // 삭제에 성공한 경우
+                        // 화면에서 해당 댓글을 제거하거나 업데이트
+                        image.remove(); // 이미지를 DOM에서 제거
+                        button.remove(); // 버튼을 DOM에서 제거
+
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        console.error("댓글 삭제 실패");
+                    }
+                });
+            }
+        });
     }
 
     $(document).ready(function () {
@@ -270,26 +284,41 @@
                 formData.append("content", content);
                 formData.append("image", files);
                 formData.append("completed", completed);
-                if (confirm("게시글을 수정 하시겠습니까?")) {
-                    $.ajax({
-                        type: "PUT",
-                        url: "/api/posts/new_file/" + postUpdateId, // 게시글 생성 엔드포인트 URL을 설정합니다.
-                        // data: JSON.stringify(postData),
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        // contentType: false,
-                        // contentType: "multipart/form-data",
-                        success: function (response) {
-                            $("#result").text(response); // 성공 메시지를 표시합니다.
 
-                            window.location.href = "/api/posts/" + postUpdateId
-                        },
-                        error: function (error) {
-                            $("#result").text("에러 발생: " + error.responseText); // 에러 메시지를 표시합니다.
-                        }
-                    });
-                }
+                Swal.fire({
+                    title: "게시글을 수정 하시겠습니까?",
+                    text: '게시글을 수정합니다.',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        $.ajax({
+                            type: "PUT",
+                            url: "/api/posts/new_file/" + postUpdateId, // 게시글 생성 엔드포인트 URL을 설정합니다.
+                            // data: JSON.stringify(postData),
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            // contentType: false,
+                            // contentType: "multipart/form-data",
+                            success: function (response) {
+                                $("#result").text(response); // 성공 메시지를 표시합니다.
+
+                                window.location.href = "/api/posts/" + postUpdateId
+                            },
+                            error: function (error) {
+                                $("#result").text("에러 발생: " + error.responseText); // 에러 메시지를 표시합니다.
+                            }
+                        });
+                    }
+                });
             } else {
 
                 // Create an object with the data to send to the server
@@ -299,21 +328,36 @@
                     content: content,
                     completed: completed
                 };
-                if (confirm("게시글을 수정 하시겠습니까?")) {
-                    $.ajax({
-                        type: "PUT",
-                        url: "/api/posts/" + postUpdateId, // URL을 올바르게 수정
-                        data: JSON.stringify(postData),
-                        contentType: "application/json",
-                        success: function (response) {
-                            $("#result").text(response); // 성공 메시지를 표시합니다.
-                            window.location.href = "/api/posts/" + postUpdateId;
-                        },
-                        error: function (error) {
-                            $("#result").text("에러 발생: " + error.responseText); // 에러 메시지를 표시합니다.
-                        }
-                    });
-                }
+
+                Swal.fire({
+                    title: "게시글을 수정 하시겠습니까?",
+                    text: '게시글을 수정합니다.',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        $.ajax({
+                            type: "PUT",
+                            url: "/api/posts/" + postUpdateId, // URL을 올바르게 수정
+                            data: JSON.stringify(postData),
+                            contentType: "application/json",
+                            success: function (response) {
+                                $("#result").text(response); // 성공 메시지를 표시합니다.
+                                window.location.href = "/api/posts/" + postUpdateId;
+                            },
+                            error: function (error) {
+                                $("#result").text("에러 발생: " + error.responseText); // 에러 메시지를 표시합니다.
+                            }
+                        });
+                    }
+                });
             }
         });
     });
