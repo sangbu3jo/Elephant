@@ -218,21 +218,36 @@
     // 게시물 삭제 함수
     function deletePost() {
         const postId = window.location.href.split('/').pop(); // 현재 주소에서 postId 추출
-        if (confirm("게시물을 삭제하시겠습니까?")) {
-            $.ajax({
-                type: "DELETE",
-                url: "/api/posts/" + postId, // 삭제할 게시물의 URL
-                success: function (response) {
-                    console.log(response);
-                    // 삭제 성공 시 페이지 리로드 또는 다른 동작 수행
-                    window.location.href = "/";
-                },
-                error: function (error) {
-                    console.error("게시물 삭제 실패:", error);
-                    // 오류 처리 (예: 오류 메시지 표시)
-                }
-            });
-        }
+
+        Swal.fire({
+            title: "게시물을 삭제하시겠습니까?",
+            text: '되돌릴 수 없습니다.',
+            icon: 'warning',
+
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
+
+            reverseButtons: false, // 버튼 순서 거꾸로
+        }).then(result => {
+            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                $.ajax({
+                    type: "DELETE",
+                    url: "/api/posts/" + postId, // 삭제할 게시물의 URL
+                    success: function (response) {
+                        console.log(response);
+                        // 삭제 성공 시 페이지 리로드 또는 다른 동작 수행
+                        window.location.href = "/";
+                    },
+                    error: function (error) {
+                        console.error("게시물 삭제 실패:", error);
+                        // 오류 처리 (예: 오류 메시지 표시)
+                    }
+                });
+            }
+        });
     }
 
     $("#update-post-button").click(function () {
@@ -283,27 +298,41 @@
 
 
     function deleteComment(commentId) {
-        // Ajax로 DELETE 요청 보내기
-        if (confirm("댓글을 삭제하시겠습니까?")) {
-            $.ajax({
-                url: `/api/posts/comments/${commentId}`,
-                type: "DELETE",
-                success: function (data) {
-                    console.log(data);
-                    // 삭제에 성공한 경우
-                    // 화면에서 해당 댓글을 제거하거나 업데이트
-                    const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
-                    if (commentElement) {
-                        commentElement.remove(); // 해당 댓글을 화면에서 제거
-                    }
+        Swal.fire({
+            title: '댓글을 삭제하시겠습니까?',
+            text: '되돌릴 수 없습니다.',
+            icon: 'warning',
 
-                    window.location.reload();
-                },
-                error: function (error) {
-                    console.error("댓글 삭제 실패");
-                }
-            });
-        }
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
+
+            reverseButtons: false, // 버튼 순서 거꾸로
+        }).then(result => {
+            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                $.ajax({
+                    url: `/api/posts/comments/${commentId}`,
+                    type: "DELETE",
+                    success: function (data) {
+                        console.log(data);
+                        // 삭제에 성공한 경우
+                        // 화면에서 해당 댓글을 제거하거나 업데이트
+                        const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
+                        if (commentElement) {
+                            commentElement.remove(); // 해당 댓글을 화면에서 제거
+                        }
+
+                        window.location.reload();
+                    },
+                    error: function (error) {
+                        console.error("댓글 삭제 실패");
+                    }
+                });
+            }
+        });
+
     }
 
 
@@ -333,28 +362,42 @@
         console.log(commentId);
         console.log(commentContent)
 
-        if (confirm("댓글을 수정하시겠습니까?")) {
-            $.ajax({
-                type: "PUT",
-                url: "/api/posts/comments/" + commentId, // 수정할 댓글의 URL
-                data: JSON.stringify(postData),
-                contentType: "application/json",
-                success: function (response) {
-                    // 성공 시 서버의 응답을 처리합니다.
-                    $("#result").text(response); // 성공 메시지를 표시합니다.
+        Swal.fire({
+            title: "댓글을 수정하시겠습니까?",
+            text: '댓글을 수정합니다.',
+            icon: 'warning',
 
-                    // 수정이 성공하면 모달을 닫을 수 있습니다.
-                    // const modal = document.getElementById('commentModal');
-                    // modal.style.display = 'none';
-                    window.location.reload();
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '삭제',
+            cancelButtonText: '취소',
 
-                },
-                error: function (error) {
-                    // 에러 시 에러 메시지를 처리합니다.
-                    $("#result").text("에러 발생: " + error.responseText);
-                }
-            });
-        }
+            reverseButtons: false, // 버튼 순서 거꾸로
+        }).then(result => {
+            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                $.ajax({
+                    type: "PUT",
+                    url: "/api/posts/comments/" + commentId, // 수정할 댓글의 URL
+                    data: JSON.stringify(postData),
+                    contentType: "application/json",
+                    success: function (response) {
+                        // 성공 시 서버의 응답을 처리합니다.
+                        $("#result").text(response); // 성공 메시지를 표시합니다.
+
+                        // 수정이 성공하면 모달을 닫을 수 있습니다.
+                        // const modal = document.getElementById('commentModal');
+                        // modal.style.display = 'none';
+                        window.location.reload();
+
+                    },
+                    error: function (error) {
+                        // 에러 시 에러 메시지를 처리합니다.
+                        $("#result").text("에러 발생: " + error.responseText);
+                    }
+                });
+            }
+        });
     });
 
 
@@ -555,19 +598,6 @@
                 updateNotificationIcon();
             };
         });
-
-        // // 전체읽음 버튼 클릭 시 실행되는 함수
-        // document.getElementById('markAllReadButton').addEventListener('click', function() {
-        //     const confirmResult = confirm('알림 전체 읽음처리 하시겠습니까?');
-        //     if (confirmResult) {
-        //         // 확인을 선택한 경우 서버에 요청 보내기
-        //         markAllNotificationsAsRead();
-        //         window.location.href = window.location.href;
-        //     } else {
-        //         // 취소를 선택한 경우
-        //         // 아무 작업도 하지 않음
-        //     }
-        // });
 
         // 알림 전체 읽음 처리 함수
         function markAllNotificationsAsRead() {

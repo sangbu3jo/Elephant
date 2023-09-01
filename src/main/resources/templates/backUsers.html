@@ -162,6 +162,19 @@
     function gotoMain() {
         window.location.href = "/main";
     }
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-center',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
     // header js 코드 추가
     $(document).ready(function () {
         pageSetting();
@@ -209,7 +222,10 @@
         };
 
         // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
-        fetchUserInfo();
+        const token = Cookies.get('Authorization');
+        if (token) { // 토큰 있을 경우
+            fetchUserInfo();
+        }
 
         // 알림 목록 업데이트 함수
         const updateNotificationList = () => {
@@ -340,12 +356,16 @@
         function markAllNotificationsAsRead() {
             $.post(`/api/mark-all-notifications-as-read/${userId}`)
                 .done(function(response) {
-                    alert(response); // 성공 메시지 출력
-                    // 서버 응답에 따라 적절한 처리를 수행할 수 있습니다.
-                    // 예를 들어 알림 목록을 다시 가져와서 업데이트하는 등의 작업을 수행할 수 있습니다.
+                    Toast.fire({
+                        icon: 'success',
+                        title: "전체 읽음 처리 되었습니다!",
+                    })
                 })
                 .fail(function(response) {
-                    alert(response); // 오류 메시지 출력
+                    Toast.fire({
+                        icon: 'error',
+                        title: "전체 읽음 처리 실패!",
+                    })
                 });
         }
 
@@ -399,18 +419,6 @@
         }
 
     }
-
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'center-center',
-        showConfirmButton: false,
-        timer: 1000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    })
 
     function logout() { // 로그아웃
         $.ajax({
@@ -601,7 +609,10 @@
                             return response.text();
                         })
                         .then(responseText => {
-                            alert(responseText);
+                            Toast.fire({
+                                icon: 'success',
+                                title: responseText,
+                            })
                             fetchAndRenderPosts();
                         })
                         .catch(error => console.error('Error updating post:', error));
@@ -609,9 +620,17 @@
                     popupWindow.close();
                 });
             } else if (checkedPostCheckboxes.length > 1) {
-                alert('하나의 게시글만 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '하나의 게시글만 선택해주세요.',
+                });
             } else {
-                alert('수정할 게시글을 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '수정할 게시글을 선택해주세요.',
+                });
             }
         } else if (myCommentsButton.classList.contains('active')) {
             const checkedCommentCheckboxes = document.querySelectorAll('.user-checkbox:checked');
@@ -660,7 +679,10 @@
                             return response.text();
                         })
                         .then(responseText => {
-                            alert(responseText);
+                            Toast.fire({
+                                icon: 'success',
+                                title: responseText,
+                            })
                             fetchAndRenderComments();
                         })
                         .catch(error => console.error('Error updating comment:', error));
@@ -668,9 +690,17 @@
                     popupWindow.close();
                 });
             } else if (checkedCommentCheckboxes.length > 1) {
-                alert('하나의 댓글만 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '하나의 댓글만 선택해주세요.',
+                });
             } else {
-                alert('수정할 댓글을 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '수정할 댓글을 선택해주세요.',
+                });
             }
         } else if (profileButton.classList.contains('active')) {
             const popupWidth = 400;
@@ -804,7 +834,10 @@
                                 return response.text();
                             })
                             .then(responseText => {
-                                alert(responseText);
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
                                 fetchAndRenderUsers(); // 정보 업데이트 후 화면 갱신
                                 popupWindow.close();
                             })
@@ -828,33 +861,55 @@
             if (checkedPostCheckboxes.length === 1) {
                 const postId = checkedPostCheckboxes[0].getAttribute('data-postid');
 
-                // 확인 팝업 띄우기
-                const confirmation = confirm('게시글을 삭제하시겠습니까?');
+                Swal.fire({
+                    title: '게시글을 삭제하시겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
 
-                if (confirmation) {
-                    // 게시글 삭제 API 호출
-                    fetch(`/api/user/posts/${postId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                        }
-                    })
-                        .then(response => {
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        // 게시글 삭제 API 호출
+                        fetch(`/api/user/posts/${postId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                            }
+                        }).then(response => {
                             if (!response.ok) {
                                 throw new Error('Failed to delete post');
                             }
                             return response.text();
-                        })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderPosts(); // 삭제 후 화면 갱신
-                        })
-                        .catch(error => console.error('Error deleting post:', error));
-                }
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
+                                fetchAndRenderPosts(); // 삭제 후 화면 갱신
+                            })
+                            .catch(error => console.error('Error deleting post:', error));
+                    }
+                });
+
             } else if (checkedPostCheckboxes.length > 1) {
-                alert('하나의 게시글만 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '하나의 게시글만 선택해주세요.',
+                });
             } else {
-                alert('삭제할 게시글을 선택해주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '삭제할 게시글을 선택해주세요.',
+                });
             }
         } else if (myCommentsButton.classList.contains('active')) {
             const checkedCommentCheckboxes = document.querySelectorAll('.user-checkbox:checked');
@@ -862,12 +917,74 @@
             if (checkedCommentCheckboxes.length === 1) {
                 const commentId = checkedCommentCheckboxes[0].getAttribute('data-commentid');
 
-                // 확인 팝업 띄우기
-                const confirmation = confirm('댓글을 삭제하시겠습니까?');
+                Swal.fire({
+                    title: '댓글을 삭제하시겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
 
-                if (confirmation) {
-                    // 댓글 삭제 API 호출
-                    fetch(`/api/user/comments/${commentId}`, {
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        // 댓글 삭제 API 호출
+                        fetch(`/api/user/comments/${commentId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                            }
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to delete comment');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
+                                fetchAndRenderComments(); // 삭제 후 화면 갱신
+                            })
+                            .catch(error => console.error('Error deleting comment:', error));
+                    }
+                });
+
+            } else if (checkedCommentCheckboxes.length > 1) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '하나의 댓글만 선택해주세요.',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '삭제할 댓글을 선택해주세요.',
+                });
+            }
+        } else if (profileButton.classList.contains('active')) {
+            Swal.fire({
+                title: '회원 탈퇴를 진행하시겠습니까?',
+                text: '되돌릴 수 없습니다.',
+                icon: 'warning',
+
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: '삭제',
+                cancelButtonText: '취소',
+
+                reverseButtons: false, // 버튼 순서 거꾸로
+            }).then(result => {
+                if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                    // 회원 탈퇴 API 호출
+                    fetch('/api/users/signOut', {
                         method: 'DELETE',
                         headers: {
                             'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
@@ -875,48 +992,29 @@
                     })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error('Failed to delete comment');
+                                throw new Error('Failed to sign out');
                             }
-                            return response.text();
+                            return response.json();
                         })
-                        .then(responseText => {
-                            alert(responseText);
-                            fetchAndRenderComments(); // 삭제 후 화면 갱신
+                        .then(responseData => {
+                            // 회원 탈퇴 성공 처리 및 새로 로그인 화면 등으로 이동
+                            Toast.fire({
+                                icon: 'success',
+                                title: responseData.message,
+                            })
+                            window.location.href="/api/auth/login-page";
                         })
-                        .catch(error => console.error('Error deleting comment:', error));
+                        .catch(error => console.error('Error signing out:', error));
+                } else {
+                    // 취소된 경우에 대한 처리
+                    Swal.fire({
+                        icon: 'error',
+                        title: '선택 오류',
+                        text: '회원 탈퇴가 취소되었습니다.',
+                    });
                 }
-            } else if (checkedCommentCheckboxes.length > 1) {
-                alert('하나의 댓글만 선택해주세요.');
-            } else {
-                alert('삭제할 댓글을 선택해주세요.');
-            }
-        } else if (profileButton.classList.contains('active')) {
-            const confirmation = confirm('회원 탈퇴를 진행하시겠습니까?');
+            });
 
-            if (confirmation) {
-                // 회원 탈퇴 API 호출
-                fetch('/api/users/signOut', {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to sign out');
-                        }
-                        return response.json();
-                    })
-                    .then(responseData => {
-                        // 회원 탈퇴 성공 처리 및 새로 로그인 화면 등으로 이동
-                        alert(responseData.message); // 성공 메시지 출력
-                        // 여기에 새로 로그인 화면으로 이동하는 코드 추가
-                    })
-                    .catch(error => console.error('Error signing out:', error));
-            } else {
-                // 취소된 경우에 대한 처리
-                alert('회원 탈퇴가 취소되었습니다.');
-            }
         }
 
     });
