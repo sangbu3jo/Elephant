@@ -59,7 +59,13 @@ public class JwtUtil {
     key = Keys.hmacShaKeyFor(bytes);
   }
 
-  // 엑세스 토큰 생성
+
+  /**
+   * 엑세스 토큰 생성 메서드
+   * @param username 사용자 id값
+   * @param role 사용자 권한
+   * @return 생성된 jwt 토큰값
+   */
   public String createToken(String username, UserRoleEnum role) {
     Date date = new Date();
 
@@ -73,10 +79,14 @@ public class JwtUtil {
             .compact();
   }
 
-  // refresh token 생성
-  public RefreshToken createRefreshToken(String username, UserRoleEnum role){
-//    return new RefreshToken(username, UUID.randomUUID().toString());
 
+  /**
+   * refresh token 생성 메서드
+   * @param username 사용자 id값
+   * @param role 사용자 권한
+   * @return RefreshToken 토큰값
+   */
+  public RefreshToken createRefreshToken(String username, UserRoleEnum role){
     Date date = new Date();
 
     return new RefreshToken(username,BEARER_PREFIX +
@@ -89,32 +99,28 @@ public class JwtUtil {
             .compact());
   }
 
-  // JWT Cookie 에 access token 저장
+
+  /**
+   * JWT Cookie 에 access token 저장 메서드
+   * @param token access token
+   * @param res 요청 Servlet
+   */
   public void addJwtToCookieAccessToken(String token, HttpServletResponse res) {
     token = URLEncoder.encode(token, StandardCharsets.UTF_8).replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
-    // 방법1) HTTP 응답에 다양한 유형의 헤더를 추가하는 방법 -> addHeader
-/*    ResponseCookie responseCookie = ResponseCookie.from(AUTHORIZATION_HEADER, token)
-        .path("/")
-        .secure(true)
-        .maxAge(ACCESS_TOKEN_TIME)
-        .build();
-    res.addHeader("Set-Cookie",responseCookie.toString());*/
-
-    // 방법2) 응답 헤더에 쿠키를 넣은 형태로 응답함.
     Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // 쿠키 생성
     cookie.setPath("/");
     cookie.setMaxAge(60*60); // 1시간
     cookie.setSecure(true);
     res.addCookie(cookie);
-
-/*    // 서버 -> 클라이언트 (HttpServletResponse 응답 헤더에 name-value 형태로 응답함.)
-    res.addHeader(AUTHORIZATION_HEADER, token);*/
-
   }
 
 
-  // JWT Cookie 에 refresh token 저장
+  /**
+   * JWT Cookie 에 refresh token 저장 메서드
+   * @param refreshToken refresh token
+   * @param res 요청 Servlet
+   */
   public void addJwtToCookieRefreshToken(String refreshToken, HttpServletResponse res) {
     refreshToken = URLEncoder.encode(refreshToken, StandardCharsets.UTF_8).replaceAll("\\+", "%20"); // Cookie Value 에는 공백이 불가능해서 encoding 진행
 
@@ -126,7 +132,12 @@ public class JwtUtil {
     res.addCookie(cookie);
   }
 
-  // JWT 토큰 substring
+
+  /**
+   * JWT 토큰 substring 메서드
+   * @param tokenValue "Bearer " 을 substring 할 token 값
+   * @return "Bearer " 을 substring 한 token 값
+   */
   public String substringToken(String tokenValue) {
     if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
       return tokenValue.substring(7);
@@ -135,7 +146,12 @@ public class JwtUtil {
     throw new IllegalArgumentException("Not Found Token");
   }
 
-  // 토큰 검증
+
+  /**
+   * 토큰 검증 메서드
+   * @param token 검증할 토큰값
+   * @return 검증 여부 boolean 값으로 반환
+   */
   public boolean validateToken(String token) {
     try {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -152,19 +168,32 @@ public class JwtUtil {
     return false;
   }
 
-  // 토큰에서 사용자 정보 가져오기
+
+  /**
+   * 토큰에서 사용자 정보 가져오기
+   * @param token "Bearer " 을 substring 한 token 값
+   * @return 사용자 정보가 저장된 Claims 객체
+   */
   public Claims getUserInfoFromToken(String token) {
     return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
   }
 
-  // 사용자 권한 가져오기
+  /**
+   * 사용자 권한 가져오기
+   * @param info 사용자 정보가 저장된 Claims 객체
+   * @return 사용자 권한 UserRoleEnum 타입으로 반환
+   */
   public UserRoleEnum getUserRole(Claims info) {
     String roleValue = info.get(AUTHORIZATION_KEY).toString();
     return roleValue.equals("USER") ? UserRoleEnum.USER : UserRoleEnum.ADMIN;
   }
 
 
-  // HttpServletRequest 에서 Cookie Value : JWT access Token 가져오기
+  /**
+   * HttpServletRequest 에서 Cookie Value : JWT access Token 가져오기
+   * @param req 요청 Servlet
+   * @return JWT access Token 값
+   */
   public String getAccessTokenFromRequest(HttpServletRequest req) {
     Cookie[] cookies = req.getCookies();
     if(cookies != null) {
@@ -177,8 +206,11 @@ public class JwtUtil {
     return null;
   }
 
-
-  // HttpServletRequest 에서 Cookie Value : JWT refresh Token 가져오기
+  /**
+   * HttpServletRequest 에서 Cookie Value : JWT refresh Token 가져오기
+   * @param req 요청 Servlet
+   * @return JWT refresh Token 값
+   */
   public String getRefreshTokenFromRequest(HttpServletRequest req) {
     Cookie[] cookies = req.getCookies();
     if(cookies != null) {
@@ -191,8 +223,11 @@ public class JwtUtil {
     return null;
   }
 
-
-  // 엑세스, 리프레시 쿠키 날짜를 0으로 만들어 만료시킴
+  /**
+   * 엑세스, 리프레시 쿠키 날짜를 0으로 만들어 만료시키는 메서드
+   * @param request 요청 Servlet
+   * @param response 응답 Servlet
+   */
   public void deleteCookie(HttpServletRequest request, HttpServletResponse response) {
     Cookie[] cookies = request.getCookies();
     if (cookies == null) {

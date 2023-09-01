@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api")
 public class AuthViewController {
 
-  // 사용자 로그인 페이지
+  /**
+   * 사용자 로그인 페이지 url 메서드
+   * @return 로그인 페이지 .html 파일명
+   */
   @GetMapping("/auth/login-page")
   public String loginPage() {
     return "login-page";
