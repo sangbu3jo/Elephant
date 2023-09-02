@@ -22,6 +22,13 @@ public class CardcommentService {
     private final CardcommentRepository cardcommentRepository;
     private final CardRepository cardRepository;
 
+    /**
+     * 카드에 댓글 작성
+     * @param user: 댓글을 작성할 사용자
+     * @param cardId: 댓글을 달 카드의 ID
+     * @param cardcommentRequestDto: 댓글의 내용을 받아옴
+     * @return: 작성한 댓글의 내용(CardcommentResponstDto)를 반환
+     */
     @Transactional
     public CardcommentResponseDto createCardComment(User user, Long cardId, CardcommentRequestDto cardcommentRequestDto) {
         Card card = cardRepository.findById(cardId).orElseThrow();
@@ -33,6 +40,13 @@ public class CardcommentService {
         return new CardcommentResponseDto(comment);
     }
 
+    /**
+     * 카드에 달린 댓글 수정
+     * @param user: 댓글을 단 사용자인지 아닌지 판단하기 위한 사용자의 정보
+     * @param commentId: 수정할 댓글의 ID
+     * @param cardcommentRequestDto: 수정할 댓글의 내용을 받아옴
+     * @return: 수정한 댓글의 내용(CardcommentResponsetDto)를 반환
+     */
     @Transactional
     public CardcommentResponseDto updateCardComment(User user, Long commentId, CardcommentRequestDto cardcommentRequestDto) {
         CardComment comment = findCardComment(commentId);
@@ -44,7 +58,11 @@ public class CardcommentService {
         return new CardcommentResponseDto(comment);
     }
 
-
+    /**
+     * 카드에 달린 댓글 삭제
+     * @param user: 댓글을 단 사용자인지 아닌지 판단하기 위한 사용자의 정보
+     * @param commentId: 삭제할 댓글의 ID
+     */
     @Transactional
     public void deleteCardComment(User user, Long commentId) {
         CardComment comment = findCardComment(commentId);
@@ -58,7 +76,11 @@ public class CardcommentService {
         cardcommentRepository.delete(comment);
     }
 
-
+    /**
+     * 카드에 달린 댓글의 ID로 카드 댓글을 찾음
+     * @param commentId: 찾을 카드의 댓글의 ID
+     * @return: CardComment를 반환
+     */
     public CardComment findCardComment(Long commentId) {
         return cardcommentRepository.findById(commentId).orElseThrow(IllegalArgumentException::new);
     }

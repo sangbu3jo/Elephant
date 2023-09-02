@@ -82,8 +82,4 @@ public class Columns {
         this.cards.remove(card);
     }
 
-    public void changeCardOrder(Card card, Integer cardOrder) {
-        this.cards.remove(card);
-        this.cards.add(cardOrder, card);
-    }
 }

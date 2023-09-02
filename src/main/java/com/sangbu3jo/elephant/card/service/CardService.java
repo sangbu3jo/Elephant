@@ -35,11 +35,22 @@ public class CardService {
     private final BoardUserRepository boardUserRepository;
     private final UserRepository userRepository;
 
+    /**
+     * 카드 단건 조회
+     * @param cardId: 단건 조회할 카드의 ID
+     * @return: 단건 조회할 카드의 정보(CardOneResponseDto)를 반환
+     */
     public CardOneResponseDto getOneCard(Long cardId) {
         Card card = findCard(cardId);
         return new CardOneResponseDto(card);
     }
 
+    /**
+     * 카드 생성
+     * @param columnId: 카드를 생성할 컬럼의 ID
+     * @param cardRequestDto: 생성할 카드의 제목, 내용을 받아옴
+     * @return: 생성한 카드의 정보(CardResponseDto)를 반환
+     */
     public CardResponseDto createCard(Long columnId, CardRequestDto cardRequestDto) {
         Columns columns = findColumns(columnId);
 
@@ -49,6 +60,12 @@ public class CardService {
         return new CardResponseDto(card);
     }
 
+    /**
+     * 카드 수정
+     * @param cardId: 수정할 카드의 ID
+     * @param cardRequestDto: 수정할 카드의 제목, 내용, 마감일을 받아옴
+     * @return: 수정한 카드의 정보(CardResponseDto)를 반환
+     */
     @Transactional
     public CardResponseDto updateCard(Long cardId, CardRequestDto cardRequestDto) {
         Card card = findCard(cardId);
@@ -58,6 +75,10 @@ public class CardService {
         return new CardResponseDto(card);
     }
 
+    /**
+     * 카드 삭제
+     * @param cardId: 삭제할 카드의 ID
+     */
     @Transactional
     public void deleteCard(Long cardId) {
         Card card = findCard(cardId);
@@ -67,6 +88,11 @@ public class CardService {
         cardRepository.delete(card);
     }
 
+    /**
+     * 카드 담당자 변경
+     * @param cardId: 담당자를 변경할 카드의 ID
+     * @param cardUserRequestDto: 카드에 할당할 username의 리스트를 가져옴
+     */
     @Transactional
     public void updateCardUser(Long cardId, CardUserRequestDto cardUserRequestDto) {
         // update 하려는 카드의 유저를 찾음
@@ -85,6 +111,11 @@ public class CardService {
         }
     }
 
+    /**
+     * 카드 순서 이동
+     * @param cardId: 순서를 이동할 카드의 ID
+     * @param cardOrderRequestDto: 이동할 컬럼의 ID와, 이동한 카드의 순서
+     */
     @Transactional
     public void changeCardOrder(Long cardId, CardOrderRequestDto cardOrderRequestDto) {
         // 이동하는 카드 찾기
@@ -179,7 +210,12 @@ public class CardService {
 
     }
 
-    // 카드 유저 , 보드 유저 전체 조회
+    /**
+     * 카드 유저 조회, 보드 유저 전체 조회
+     * @param board: 찾을 보드 Board
+     * @param cardId: 카드에 해당하는 유저를 찾기 위한 카드의 ID
+     * @return: 찾은 사용자를 리스트로 담아 반환
+     */
     public List<BoardUserResponseDto> findCardUsers(Board board, Long cardId) {
         // 해당 카드를 찾음
         Card card = findCard(cardId);
@@ -215,15 +251,30 @@ public class CardService {
         return users;
     }
 
+    /**
+     * 보드에 존재하는 카드들 전부 찾기
+     * @param boardId: 카드들을 찾을 보드의 ID
+     * @return: 보드에 존재하는 카드들 리스트를 반환
+     */
     public List<CardCalendarResponseDto> findAllCardsInBoard(Long boardId) {
         Board board = boardService.findBoard(boardId);
         return cardRepository.findAllByBoard(board).stream().map(CardCalendarResponseDto::new).toList();
     }
 
+    /**
+     * 컬럼 찾기
+     * @param columnId: 찾을 컬럼의 ID
+     * @return: Columns 반환
+     */
     public Columns findColumns(Long columnId) {
         return columnsRepository.findById(columnId).orElseThrow(IllegalArgumentException::new);
     }
 
+    /**
+     * 카드 찾기
+     * @param cardId: 찾을 카드의 ID
+     * @return: Card 반환
+     */
     public Card findCard(Long cardId) {
         return cardRepository.findById(cardId).orElseThrow(IllegalArgumentException::new);
     }
