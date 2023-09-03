@@ -42,4 +42,16 @@ public class PostComment extends TimeStamped {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public void setUser(User user){
+        this.user = user;
+    }
+
+    public void setPost(Post post){
+        this.post = post;
+    }
+
+    public void setId(Long id){
+        this.id = id;
+    }
 }

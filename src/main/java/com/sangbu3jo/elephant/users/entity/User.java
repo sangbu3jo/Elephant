@@ -23,6 +23,7 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
 
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(nullable = false, updatable = false)
@@ -103,5 +104,9 @@ public class User {
 
   public void setRole(UserRoleEnum role) {
     this.role = role;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
   }
 }
