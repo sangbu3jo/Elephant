@@ -222,7 +222,7 @@ public class CardService {
         // 해당 카드에 존재하는 user들을 모두 찾음
         List<CardUser> cardUsers = cardUserRepository.findAllByCard(card);
         // 현재 보드에 존재하는 user들을 모두 찾음
-        log.info(board.getId().toString());
+//        log.info(board.getId().toString());
         List<BoardUser> boardUsers = boardUserRepository.findAllByBoard(board);
         log.info(String.valueOf(boardUsers.size()));
 

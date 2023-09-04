@@ -1,5 +1,6 @@
 package com.sangbu3jo.elephant.chat.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public class ChatMessageRequestDto {
         this.message = message;
     }
 
+    @Builder
     public ChatMessageRequestDto (String nickname, String username, MessageType type, Long chatRoomId) {
         this.nickname = nickname;
         this.username = username;

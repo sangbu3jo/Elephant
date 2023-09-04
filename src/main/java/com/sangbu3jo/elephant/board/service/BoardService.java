@@ -127,7 +127,10 @@ public class BoardService {
         }
 
         // MongoDB에서 해당 채팅방의 메세지 내역 삭제
-        mongoTemplate.getCollection(board.getId().toString()).drop();
+        if (mongoTemplate.getCollection(boardId.toString()) != null) {
+            mongoTemplate.getCollection(boardId.toString()).drop();
+        }
+
 
         /* Board 엔티티 안에 Set<BoardUser>를 orphanremoval = true 속성을 주었기 때문에, 해당 레포지토리에서 따로 찾아서 삭제해줄 필요 없음
          * ChatRoom (채팅방) 또한 1:1 매핑으로 cascade = CascadeType.REMOVAL 을 주었음 */

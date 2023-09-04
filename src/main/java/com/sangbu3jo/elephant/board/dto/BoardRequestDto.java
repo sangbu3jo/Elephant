@@ -1,9 +1,11 @@
 package com.sangbu3jo.elephant.board.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
 
+@Builder
 @Getter
 public class BoardRequestDto {
 
