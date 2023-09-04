@@ -7,6 +7,7 @@ import com.sangbu3jo.elephant.carduser.entity.CardUser;
 import com.sangbu3jo.elephant.columns.entity.Columns;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -80,6 +81,10 @@ public class Card {
     /**
      * 서비스 메소드 - 외부에서 엔티티를 수정할 메소드를 정의합니다. (단일 책임을 가지도록 주의합니다.)
      */
+    public void updateId(Long id) {
+        this.id = id;
+    }
+
     public void updateCard(CardRequestDto cardRequestDto) {
         if (cardRequestDto.getTitle() != null) {
             this.title = cardRequestDto.getTitle();

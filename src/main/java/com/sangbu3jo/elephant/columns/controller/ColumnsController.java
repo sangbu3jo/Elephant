@@ -14,13 +14,19 @@ import java.util.List;
 
 @Slf4j(topic = "컬럼 컨트롤러")
 @Controller
-@RequestMapping("/api")
+@RequestMapping("/api/boards")
 @RequiredArgsConstructor
 public class ColumnsController {
 
     private final ColumnsService columnsService;
 
-    @PostMapping("/boards/{board_id}/columns")
+    /**
+     * 컬럼 생성
+     * @param board_id: URL에 매핑되어 있는 프로젝트(보드)의 ID 값
+     * @param columnsRequestDto: 컬럼의 제목을 받아옴
+     * @return: 생성된 컬럼에 대한 내용(ColumnsResponseDto)와 상태코드 반환
+     */
+    @PostMapping("/{board_id}/columns")
     @ResponseBody
     public ResponseEntity<ColumnsResponseDto> createColumns(@PathVariable Long board_id,
                                                             @RequestBody ColumnsRequestDto columnsRequestDto) {
@@ -28,7 +34,14 @@ public class ColumnsController {
         return ResponseEntity.ok().body(columnsResponseDto);
     }
 
-    @PutMapping("/boards/{board_id}/columns/{column_id}")
+    /**
+     * 컬럼 수정
+     * @param board_id: URL에 매핑되어 있는 프로젝트(보드)의 ID 값
+     * @param column_id: URL에 매핑되어 있는 수정할 컬럼의 ID 값
+     * @param columnsRequestDto: 수정할 컬럼의 제목을 받아옴
+     * @return: 수정된 컬럼에 대한 내용(ColumnsResponseDto)와 상태코드 반환
+     */
+    @PutMapping("/{board_id}/columns/{column_id}")
     @ResponseBody
     public ResponseEntity<ColumnsResponseDto> updateColumns(@PathVariable Long board_id,
                                                             @PathVariable Long column_id,
@@ -37,7 +50,13 @@ public class ColumnsController {
         return ResponseEntity.ok().body(columnsResponseDto);
     }
 
-    @DeleteMapping("/boards/{board_id}/columns/{column_id}")
+    /**
+     * 컬럼 삭제
+     * @param board_id: URL에 매핑되어 있는 프로젝트(보드)의 ID 값
+     * @param column_id: URL에 매핑되어 있는 삭제할 컬럼의 ID 값
+     * @return: 메세지와 상태코드 반환
+     */
+    @DeleteMapping("/{board_id}/columns/{column_id}")
     @ResponseBody
     public ResponseEntity<String> deleteColumns(@PathVariable Long board_id,
                                                 @PathVariable Long column_id) {
@@ -49,8 +68,14 @@ public class ColumnsController {
         }
     }
 
-    // 컬럼 순서 변경
-    @PatchMapping("/boards/{board_id}/columns/{column_id}")
+    /**
+     * 컬럼 순서 변경(이동)
+     * @param board_id: URL에 매핑되어 있는 프로젝트(보드)의 ID 값
+     * @param column_id: URL에 매핑되어 있는 이동할 컬럼의 ID 값
+     * @param columnsOrderRequestDto: 변경할 컬럼의 순서를 받아옴
+     * @return: 변경된 컬럼이 포함된 프로젝트(보드)에 존재하는 컬럼의 리스트와 상태코드 반환
+     */
+    @PatchMapping("/{board_id}/columns/{column_id}")
     @ResponseBody
     public ResponseEntity<List<ColumnsResponseDto>> changeOrderColumns(@PathVariable Long board_id,
                                                                       @PathVariable Long column_id,
