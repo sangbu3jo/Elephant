@@ -26,7 +26,11 @@ public class AuthController {
   private final AuthServiceImpl authService;
 
 
-  // 회원가입 메서드 구현
+  /**
+   * 회원가입 메서드 구현
+   * @param requestDto 회원가입 요청한 데이터
+   * @return http status code 와 회원가입 성공 여부
+   */
   @PostMapping("/auth/signup")
   public ResponseEntity<String> signUp(
       @RequestBody @Valid SignupRequestDto requestDto) {
@@ -34,8 +38,13 @@ public class AuthController {
     return ResponseEntity.ok().body(result);
   }
 
-
-  // 로그아웃 메서드 구현
+  /**
+   * 로그아웃 메서드 구현
+   * @param request 요청 Servlet
+   * @param response 응답 Servlet
+   * @param userDetails
+   * @return http status code 와 로그아웃 성공 여부
+   */
   @DeleteMapping("/auth/logout")
   public ResponseEntity<String> logout(
       HttpServletRequest request, HttpServletResponse response,
@@ -45,7 +54,13 @@ public class AuthController {
   }
 
 
-  // 만료 전 access token 재발급
+  /**
+   * 만료 전 access token 재발급 메서드
+   * @param request 요청 Servlet
+   * @param response 응답 Servlet
+   * @return http status code 와 토큰 재발급 성공 여부
+   * @throws IOException
+   */
   @GetMapping("/auth/refresh/access-token")
   public ResponseEntity<String> generateRefreshToken(
       HttpServletRequest request, HttpServletResponse response) throws IOException {

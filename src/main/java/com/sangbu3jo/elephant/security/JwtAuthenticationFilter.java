@@ -21,17 +21,30 @@ import org.springframework.util.StringUtils;
   public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
   private final JwtUtil jwtUtil;
   private final RefreshTokenRepository refreshTokenRepository;
-  public static int AuthenCNT = 1;
 
+
+  /**
+   * JwtAuthenticationFilter 클래스의 생성자 메서드
+   * @param jwtUtil jwt 관련 빈 객체
+   * @param refreshTokenRepository 리프레시 토큰 repository 빈 객체
+   */
   public JwtAuthenticationFilter(JwtUtil jwtUtil, RefreshTokenRepository refreshTokenRepository) {
     this.refreshTokenRepository = refreshTokenRepository;
     this.jwtUtil = jwtUtil;
     setFilterProcessesUrl("/api/auth/login");
   }
 
+
+  /**
+   * 인증을 위한 메서드
+   * @param request from which to extract parameters and perform the authentication
+   * @param response the response, which may be needed if the implementation has to do a
+   * redirect as part of a multi-stage authentication process (such as OIDC).
+   * @return 인증 객체
+   * @throws AuthenticationException
+   */
   @Override
   public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-    log.info("JwtAuthenticationFilter attemptAuthentication " + AuthenCNT++);
     String AccessTokenValue = jwtUtil.getAccessTokenFromRequest(request);
     String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(request);
 
@@ -55,6 +68,16 @@ import org.springframework.util.StringUtils;
     }
   }
 
+
+  /**
+   * 인증 성공 후 메서드
+   * @param request 요청 Servlet
+   * @param response 응답 Servlet
+   * @param chain 시큐리티 필터 체인
+   * @param authResult the object returned from the <tt>attemptAuthentication</tt>
+   * method.
+   * @throws IOException
+   */
   @Override
   protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
     log.info("로그인 성공 및 JWT 생성");
@@ -73,6 +96,13 @@ import org.springframework.util.StringUtils;
     log.info("로그인 성공");
   }
 
+
+  /**
+   * 인증 실패 후 메서드
+   * @param request 요청 Servlet
+   * @param response 응답 Servlet
+   * @param failed AuthenticationException 인증 예외 객체
+   */
   @Override
   protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
     log.info("로그인 실패");

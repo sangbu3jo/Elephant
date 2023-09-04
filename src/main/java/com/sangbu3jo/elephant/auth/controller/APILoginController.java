@@ -25,6 +25,13 @@ public class APILoginController {
   private final NaverServiceImpl naverService;
   private final JwtUtil jwtUtil;
 
+  /**
+   * 카카오 서버로 부터 받아온 엑세스 코드를 통한 회원가입, 로그인 후 jwt 토큰 발급 코드
+   * @param code 카카오 서버로 부터 받아온 엑세스 코드
+   * @param response 응답 Servlet
+   * @return redirect 할 main url
+   * @throws JsonProcessingException
+   */
   @GetMapping("/auth/kakao/callback")
   public String kakaoLogin(@RequestParam String code, HttpServletResponse response)
       throws JsonProcessingException {
@@ -34,6 +41,13 @@ public class APILoginController {
     return "redirect:/";
   }
 
+  /**
+   * 구글 서버로 부터 받아온 엑세스 코드를 통한 회원가입, 로그인 후 jwt 토큰 발급 코드
+   * @param code 구글 서버로 부터 받아온 엑세스 코드
+   * @param response 응답 Servlet
+   * @return redirect 할 main url
+   * @throws JsonProcessingException
+   */
   @GetMapping("/auth/google/callback")
   public String googleLogin(@RequestParam String code, HttpServletResponse response)
       throws JsonProcessingException {
@@ -43,6 +57,14 @@ public class APILoginController {
     return "redirect:/";
   }
 
+  /**
+   * 네이버 서버로 부터 받아온 엑세스 코드를 통한 회원가입, 로그인 후 jwt 토큰 발급 코드
+   * @param code 네이버 서버로 부터 받아온 엑세스 코드
+   * @param response 응답 Servlet
+   * @return redirect 할 main url
+   * @throws JsonProcessingException
+   * @throws UnsupportedEncodingException
+   */
   @GetMapping("/auth/naver/callback")
   public String naverLogin(@RequestParam String code, HttpServletResponse response)
       throws JsonProcessingException, UnsupportedEncodingException {

@@ -26,17 +26,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
   private final JwtUtil jwtUtil;
   private final RedisServiceImpl redisService;
   private final UserDetailsServiceImpl userDetailsService;
-  public static int AututhCNT = 1;
 
-/*  @Override
-  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-    // 해당 필터를 거치지 않아야 할 url을 기재하여 처리할 수 있습니다.
-*//*        String[] excludePath = {"/" , "/api/auth/login-page" , "/api/auth/login" , "/api/auth/signup",
-            "/api/auth/google/callback" , "/api/auth/kakao/callback" , "/api/auth/naver/callback"};*//*
-    String path = request.getRequestURI();
-    return Arrays.stream(excludePath).anyMatch(path::startsWith);
-  }*/
 
+  /**
+   * 토큰을 검증하여 사용자의 인증을 처리하는 필터
+   * @param request 요청 Servlet
+   * @param response 응답 Servlet
+   * @param filterChain 보안 필터 체인 객체
+   * @throws ServletException
+   * @throws IOException
+   * @throws IOException
+   */
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException, IOException {
@@ -92,7 +92,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  // 인증 처리
+
+  /**
+   * 인증 처리 메서드
+   * @param username 사용자 id값
+   */
   public void setAuthentication(String username) {
     SecurityContext context = SecurityContextHolder.createEmptyContext();
     Authentication authentication = createAuthentication(username);
@@ -101,7 +105,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     SecurityContextHolder.setContext(context);
   }
 
-  // 인증 객체 생성
+
+  /**
+   * 인증 객체 생성 메서드
+   * @param username 사용자 id값
+   * @return 인증 객체 반환
+   */
   private Authentication createAuthentication(String username) {
     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
     return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
