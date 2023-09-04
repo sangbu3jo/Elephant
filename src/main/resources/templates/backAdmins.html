@@ -144,7 +144,6 @@
 
         <!-- 페이지 네비게이션 -->
         <div class="pagination">
-            <!-- style="position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);"-->
             <!-- 페이지 번호 버튼들이 여기에 생성될 것입니다. -->
         </div>
 
@@ -152,17 +151,6 @@
             <button id="editButton">권한 수정</button>
             <button id="deleteButton">회원 삭제</button>
         </div>
-
-        <!-- 여러 개의 사용자 정보를 생성하여 표시 -->
-        <!--    <div class="user-info">-->
-        <!--        <input type="checkbox" class="user-checkbox">-->
-        <!--        <p>사용자 정보를 표시하는 부분</p>-->
-        <!--    </div>-->
-        <!--    <div class="user-info">-->
-        <!--        <input type="checkbox" class="user-checkbox">-->
-        <!--        <p>다른 사용자 정보를 표시하는 부분</p>-->
-        <!--    </div>-->
-        <!-- 추가적인 사용자 정보 표시 -->
 
         <!-- 수정 삭제 버튼을 여기에 이동 -->
     </div>
@@ -1047,12 +1035,6 @@
             userInfoList.appendChild(postDiv);
         });
     }
-
-    // // 날짜 형식 변환 함수
-    // function formatDate(dateString) {
-    //     const date = new Date(dateString);
-    //     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-    // }
 
     // 댓글 정보를 해당 페이지에 표시하는 함수
     function renderCommentsForPage(page) {
