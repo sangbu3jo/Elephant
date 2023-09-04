@@ -22,33 +22,15 @@ public class S3Controller {
     private final S3Service s3Service;
 
 
-
-//
-//    @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
-//    @PostMapping(value="/api/posts/newFile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public String saveFile(HttpServletRequest request, @RequestParam(value= "files") MultipartFile files, Post post) throws  IOException {
-////        Long postId = s3Service.keepPost(files, post);
-//        return s3Service.keepPost(files, post);
-//    }
-
-//    @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
-//    @PostMapping(value="/api/posts/newFile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    public Long saveFile(HttpServletRequest request, @RequestParam(value= "image") MultipartFile image,
-//                         @ModelAttribute Post post) throws  IOException {
-//        // 파일 업로드를 통해 게시물을 저장하고 게시물 ID를 반환
-//        Long postId = s3Service.keepPost(image, post);
-//        return postId;
-//    }
-
-//    @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
-//    @PostMapping( "/api/posts/newFile")
-//    public Long saveFile(@RequestPart(value = "image") MultipartFile image,
-//                         @AuthenticationPrincipal UserDetailsImpl userDetails,
-//                         @RequestPart PostRequestDto postRequestDto) throws IOException {
-//        // 파일 업로드를 통해 게시물을 저장하고 게시물 ID를 반환
-//        Long postId = s3Service.keepPost(image, userDetails.getUser(), postRequestDto);
-//        return postId;
-//    }
+    /**
+     * 게시글 이미지 추가 생성
+     * @param image 이미지 url
+     * @param category 카테고리 선택
+     * @param postRequestDto 클라이언트에서 보낸 게시글 정보
+     * @param userDetails 로그인한 유저
+     * @return id 값으로 게시글 확인
+     * @throws IOException 예외처리
+     */
 
     @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
     @PostMapping(value = "/api/posts/new_file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -65,6 +47,16 @@ public class S3Controller {
         return postId;
     }
 
+    /**
+     * 게시글 수정
+     * @param image 새 이미지
+     * @param category 새 카테고리
+     * @param postRequestDto 새 게시글 정보 값
+     * @param userDetails 로그인한 회원 정보
+     * @param post_id 수정 할 게시글 id 값
+     * @return 성공 실패 ResponseEntity 반환
+     * @throws IOException 예외처리
+     */
     @PutMapping(value = "/api/posts/new_file/{post_id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateFile(@RequestParam(value = "image") MultipartFile image,
                                              @RequestParam(value = "category") Category category,
@@ -82,6 +74,14 @@ public class S3Controller {
 
     }
 
+    /**
+     * 이미지 삭제
+     * @param fileUrl 삭제할 이미지 url
+     * @param post_id 게시글 id
+     * @param userDetails 로그인한 회원 정보
+     * @return 성공 실패 ResponseEntity 반환
+     * @throws IOException 예외처리
+     */
     @DeleteMapping("/api/posts/{post_id}/file")
     public ResponseEntity<String> deleteFile(@RequestParam("fileUrl") String fileUrl,
                                              @PathVariable Long post_id,

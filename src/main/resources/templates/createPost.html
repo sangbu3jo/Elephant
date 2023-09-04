@@ -191,8 +191,6 @@
                     data: formData,
                     processData: false,
                     contentType: false,
-                    // contentType: false,
-                    // contentType: "multipart/form-data",
                     success: function (response) {
                         $("#result").text(response); // 성공 메시지를 표시합니다.
 
@@ -387,7 +385,6 @@
             } else {
                 notificationIcon.classList.remove('new-notification');
                 notificationBadge.style.display = "none";
-                // notificationBadge.innerText = '';
             }
         };
 

@@ -2,7 +2,6 @@ package com.sangbu3jo.elephant.posts.service;
 
 import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.posts.dto.PostCommentRequestDto;
-import com.sangbu3jo.elephant.posts.dto.PostCommentResponseDto;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.entity.PostComment;
 import com.sangbu3jo.elephant.posts.repository.PostCommentRepository;

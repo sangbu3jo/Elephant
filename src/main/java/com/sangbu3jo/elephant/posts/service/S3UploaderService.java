@@ -2,15 +2,12 @@ package com.sangbu3jo.elephant.posts.service;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +29,6 @@ public class S3UploaderService {
     private final PostRepository postRepository;
 
     //업로드 구현
-
-//    @Value("${cloud.aws.s3.bucket}")
-//    private String bucket;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;

@@ -84,8 +84,7 @@ public class S3Service {
     @Transactional
     public void deleteFile(String fileUrl, Post post) {
 
-//        Post post = postRepository.findById(podId)
-//                .orElseThrow(()-> new IllegalArgumentException("해당 URL은 존재하지 않습니다."));
+
 
         String s3Key = fileUrl.substring("https://sangbusamjoelephant.s3.ap-northeast-2.amazonaws.com/".length());
 

@@ -1,10 +1,8 @@
 package com.sangbu3jo.elephant.posts.dto;
 
 import com.sangbu3jo.elephant.posts.entity.PostComment;
-import com.sangbu3jo.elephant.posts.service.PostCommentService;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter

@@ -8,17 +8,15 @@ import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor

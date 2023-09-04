@@ -1,9 +1,7 @@
 package com.sangbu3jo.elephant.posts.controller;
 
 import com.sangbu3jo.elephant.posts.dto.PostCommentRequestDto;
-import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.entity.PostComment;
-import com.sangbu3jo.elephant.posts.repository.PostCommentRepository;
 import com.sangbu3jo.elephant.posts.service.PostCommentService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +19,13 @@ public class PostCommentController {
     private final PostCommentService postCommentService;
 
 
-    //댓글 생성
+    /**
+     * 댓글 생성
+     * @param post_id 게시글 id
+     * @param userDetails 로그인한 회원
+     * @param postCommentRequestDto  댓글 정보
+     * @return 성공 실패 여부 ResponseEntity로 반환
+     */
 
     @PostMapping("/posts/{post_id}/comments")
     public ResponseEntity<String> createComment(@PathVariable Long post_id,
@@ -38,7 +42,13 @@ public class PostCommentController {
         }
     }
 
-    //댓글 수정
+    /**
+     * 댓글 수정
+     * @param comment_id 수정할 댓글 id
+     * @param userDetails 로그인한 회원 정보
+     * @param postCommentRequestDto 새 댓글
+     * @return 성공 실패 여부 ResponseEntity로 반환
+     */
     @PutMapping("/posts/comments/{comment_id}")
     public ResponseEntity<String> modifiedComment(@PathVariable Long comment_id,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -52,7 +62,12 @@ public class PostCommentController {
         } else return ResponseEntity.badRequest().body("수정 권한이 없습니다.");
     }
 
-    //댓글 삭제
+    /**
+     * 댓글 삭제
+     * @param comment_id 삭제할 댓글 id
+     * @param userDetails 로그인한 회원 정보
+     * @return 성공 실패 여부 ResponseEntity로 반환
+     */
     @DeleteMapping("/posts/comments/{comment_id}")
     public ResponseEntity<String> deleteComment(@PathVariable Long comment_id,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
