@@ -20,6 +20,7 @@ public class Notification{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String type;
     private Long userId;
     private String content;
     private String url;
@@ -51,6 +52,8 @@ public class Notification{
         isRead = read;
     }
 
-
+    public void setType(String type){
+        this.type = type;
+    }
 
 }

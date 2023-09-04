@@ -67,6 +67,8 @@ public class NotificationService {
         notification.setContent("\uD83D\uDD14댓글 알림\uD83D\uDD14<br>" + commentAuthor);
         notification.setUrl("http://localhost:8080/api/posts/" + postId);
         notification.setRead(false);
+        notification.setType("comment");
+
 
         notificationRepository.save(notification);
         sendNotificationToUser(userId, notification);
@@ -81,6 +83,7 @@ public class NotificationService {
         notification.setContent("\uD83D\uDD14프로젝트 알림\uD83D\uDD14<br>" + addUserAuthor);
         notification.setUrl("http://localhost:8080/api/boards/" + boardId);
         notification.setRead(false);
+        notification.setType("addUserBoard");
 
         notificationRepository.save(notification);
         sendNotificationToUser(userId, notification);
@@ -95,6 +98,7 @@ public class NotificationService {
         notification.setContent("\uD83D\uDD14프로젝트 알림\uD83D\uDD14<br>" + inviteAuthor);
         notification.setUrl("http://localhost:8080/api/boards");
         notification.setRead(false);
+        notification.setType("invited");
 
         notificationRepository.save(notification);
         sendNotificationToUser(userId, notification);
