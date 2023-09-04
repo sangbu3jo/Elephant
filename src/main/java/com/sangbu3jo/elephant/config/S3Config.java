@@ -1,4 +1,4 @@
-package com.sangbu3jo.elephant.posts.awss3;
+package com.sangbu3jo.elephant.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
