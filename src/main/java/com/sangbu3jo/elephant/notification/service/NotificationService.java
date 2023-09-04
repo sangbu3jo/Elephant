@@ -67,7 +67,23 @@ public class NotificationService {
         notification.setContent("\uD83D\uDD14댓글 알림\uD83D\uDD14<br>" + commentAuthor);
         notification.setUrl("http://localhost:8080/api/posts/" + postId);
         notification.setRead(false);
-        notification.setType("comment");
+        notification.setType("Comment");
+
+
+        notificationRepository.save(notification);
+        sendNotificationToUser(userId, notification);
+    }
+
+    // 게시글 신고시 관리자에게 알림 생성 및 전송
+    public void reportPostNotification(Long userId, Long postId, String commentAuthor, String url) {
+        Notification notification = new Notification();
+        LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
+        notification.setCreatedAt(currentTime); // 생성 시간 설정
+        notification.setUserId(userId);
+        notification.setContent("\uD83D\uDD14신고 알림\uD83D\uDD14<br>" + commentAuthor);
+        notification.setUrl("http://localhost:8080/api/posts/" + postId);
+        notification.setRead(false);
+        notification.setType("Report");
 
 
         notificationRepository.save(notification);
@@ -83,7 +99,7 @@ public class NotificationService {
         notification.setContent("\uD83D\uDD14프로젝트 알림\uD83D\uDD14<br>" + addUserAuthor);
         notification.setUrl("http://localhost:8080/api/boards/" + boardId);
         notification.setRead(false);
-        notification.setType("addUserBoard");
+        notification.setType("AddUserBoard");
 
         notificationRepository.save(notification);
         sendNotificationToUser(userId, notification);
@@ -98,7 +114,7 @@ public class NotificationService {
         notification.setContent("\uD83D\uDD14프로젝트 알림\uD83D\uDD14<br>" + inviteAuthor);
         notification.setUrl("http://localhost:8080/api/boards");
         notification.setRead(false);
-        notification.setType("invited");
+        notification.setType("Invited");
 
         notificationRepository.save(notification);
         sendNotificationToUser(userId, notification);
