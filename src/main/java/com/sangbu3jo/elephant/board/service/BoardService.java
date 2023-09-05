@@ -188,7 +188,7 @@ public class BoardService {
             String notificationContent = "보드 \"" + board.getTitle() + "\" 가 마감까지 얼마남지 않았습니다. (24시간 미만)";
             List<BoardUser> boardUsers = boardUserRepository.findAllByBoardId(board.getId());
             for (BoardUser boardUser : boardUsers) {
-                notificationService.addUserAndSendNotification(boardUser.getUser().getId(), board.getId(), notificationContent);
+                notificationService.boarddDeadlineNotification(boardUser.getUser().getId(), board.getId(), notificationContent);
             }
         }
     }
