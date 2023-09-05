@@ -170,7 +170,8 @@
     window.location.href = "/main";
   }
 
-  var selectedResult = null; // 단일 결과를 저장하는 변수
+  // 선택한 결과를 저장하는 배열
+  var selectedResults = [];
 
   function addResultToSearchResults(user) {
     var resultItem = $("<li>")
@@ -179,13 +180,11 @@
 
     // 클릭 이벤트를 추가하여 선택/해제 토글
     resultItem.on("click", function() {
-      if (selectedResult === user) {
-        // 이미 선택된 결과와 같은 결과를 클릭하면 선택 해제
-        selectedResult = null;
-        $("#selectedResultsModal").empty();
-      } else {
-        // 새로운 결과를 선택하면 선택한 결과를 업데이트
-        selectedResult = user;
+      var index = selectedResults.indexOf(user);
+
+      if (index === -1) {
+        // 선택한 결과가 배열에 없으면 선택 추가
+        selectedResults.push(user);
 
         // 선택한 결과를 버튼으로 만들어서 #selectedResultsModal에 추가
         var selectedButton = $("<button>")
@@ -193,15 +192,25 @@
                 .html(user.username);
 
         selectedButton.on("click", function() {
-          // 선택한 결과를 선택 해제
-          selectedResult = null;
+          // 선택한 결과를 배열에서 제거
+          var selectedIndex = selectedResults.indexOf(user);
+          if (selectedIndex !== -1) {
+            selectedResults.splice(selectedIndex, 1);
+          }
 
           // 버튼을 제거
           selectedButton.remove();
         });
 
-        // #selectedResultsModal에 버튼 추가 (기존 버튼을 대체)
-        $("#selectedResultsModal").empty().append(selectedButton);
+        // #selectedResultsModal에 버튼 추가
+        $("#selectedResultsModal").append(selectedButton);
+      } else {
+        // 선택한 결과가 배열에 있으면 선택 해제
+        selectedResults.splice(index, 1);
+
+        // 선택한 결과를 버튼으로 만든 것을 제거
+        var selectedButton = $("#selectedResultsModal").find("button:contains('" + user.username + "')");
+        selectedButton.remove();
       }
     });
 
@@ -223,13 +232,24 @@
 
   const inviteUserBtn = document.getElementById('inviteUsers');
   inviteUserBtn.addEventListener('click', function () {
-    console.log(selectedResult.username);
+    console.log(selectedResults);
+
+    var selectedTexts = [];
+    $("#selectedResultsModal button").each(function() {
+      selectedTexts.push($(this).text());
+    });
+
+    // 선택한 결과를 서버로 전송하고자 하는 코드 작성
+    // 예를 들어, JSON 형식으로 변환하여 서버로 전송하는 경우:
+    var selectedResultsJSON = JSON.stringify(selectedTexts);
+
+    console.log(selectedResultsJSON);
 
     $.ajax({
       type: "POST",
       url : "/api/chatRooms",
       contentType: "application/json",
-      data: JSON.stringify({ username : selectedResult.username }),
+      data: JSON.stringify({ username : selectedTexts }),
       success: function (data) {
         console.log(data);
         window.location.href = "http://localhost:8080" + data;
@@ -240,6 +260,7 @@
 
   });
 
+  // 유저 검색
   $(document).ready(function() {
     $("#searchInput").on("input", function() {
       var searchText = $(this).val();

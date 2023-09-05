@@ -10,6 +10,7 @@ import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -134,7 +135,8 @@ public class ChatController {
     public String getPrivateChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                       Model model) {
         // model에 List혹은 Slice 형태로 담아서 보내기 (프론트에서 list 받아서 출력해주기)
-        List<PrivateChatRoomResponseDto> chatRoomResponseDtos = chatRoomService.findAllPrivateChatRooms(userDetails.getUser().getUsername()); // username으로 찾기
+        log.info("채팅방 리스트 반환 (개인 & 단체)");
+        List<PrivateChatRoomResponseDto> chatRoomResponseDtos = chatRoomService.findAllPrivateChatRooms(userDetails.getUser()); // username으로 찾기
         model.addAttribute("chatrooms", chatRoomResponseDtos);
         checkAdmin(model, userDetails);
         return "chatRooms";
@@ -154,7 +156,7 @@ public class ChatController {
     }
 
     /**
-     * 개인 채팅방 생성 or 연결
+     * 개인 채팅방 (단체 & 개인) 생성 or 연결
      * @param userDetails: 로그인한 사용자인지 확인하기 위함 & 채팅할 사용자 확인 (JWT로 검증)
      * @param chatUserRequestDto: 채팅에 참여할 사용자의 이름(username)을 받아옴
      * @return: 채팅 페이지 URL 반환
@@ -163,7 +165,8 @@ public class ChatController {
     @ResponseBody
     public String createPrivateChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                          @RequestBody ChatUserRequestDto chatUserRequestDto) {
-        return chatRoomService.findPrivateChatRoom(userDetails.getUser().getUsername(), chatUserRequestDto.getUsername());
+        log.info("개인 채팅방 생성 요청 넘어옴");
+        return chatRoomService.findPrivateChatRoom(userDetails.getUser(), chatUserRequestDto.getUsername());
     }
 
     /**
@@ -176,10 +179,31 @@ public class ChatController {
     @GetMapping("/api/chatRooms/{chatRoom_id}")
     public String getPersonalChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
                                       @PathVariable String chatRoom_id) {
+        Boolean groupOrPrivate = chatRoomService.findGroupOrPrivate(chatRoom_id);
+        model.addAttribute("group", groupOrPrivate);
         model.addAttribute("username", userDetails.getUser().getUsername());
         model.addAttribute("nickname", userDetails.getUser().getNickname());
         return "privateChat";
     }
+
+    /**
+     * 개인 채팅 (단체만) 에서 유저 떠나기
+     * @param userDetails: 떠날 유저의 정보
+     * @param chatRoom_id: 떠날 채팅방
+     * @return: 상태코드와 메세지 반환
+     */
+    @PutMapping("/api/chatRooms/{chatRoom_id}")
+    public ResponseEntity<String> leavePrivateChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                       @PathVariable String chatRoom_id) {
+        log.info(chatRoom_id);
+        try {
+            chatRoomService.leavePrivateChatRoom(userDetails.getUser(), chatRoom_id);
+            return ResponseEntity.ok().body("성공");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("실패");
+        }
+    }
+
 
     /**
      * 개인 채팅방 구독 요청
