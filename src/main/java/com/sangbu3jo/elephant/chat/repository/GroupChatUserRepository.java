@@ -2,7 +2,6 @@ package com.sangbu3jo.elephant.chat.repository;
 
 import com.sangbu3jo.elephant.chat.entity.GroupChatRoom;
 import com.sangbu3jo.elephant.chat.entity.GroupChatUser;
-import com.sangbu3jo.elephant.openai.controller.OpenAIController;
 import com.sangbu3jo.elephant.users.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

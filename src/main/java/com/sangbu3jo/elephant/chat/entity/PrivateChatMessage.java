@@ -2,6 +2,7 @@ package com.sangbu3jo.elephant.chat.entity;
 
 import com.sangbu3jo.elephant.chat.dto.ChatMessageRequestDto;
 import com.sangbu3jo.elephant.chat.dto.PrivateChatMessageRequestDto;
+import com.sangbu3jo.elephant.users.entity.User;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.Getter;
@@ -22,15 +23,13 @@ public class PrivateChatMessage implements Serializable {
     private String id;
     private String type; // 메시지 타입
     private String title;
-    private String nickname; // 클라이언트에서 표시용
-    private String username; // 서버와 통신용
+    private User user;
     private String message;
     private LocalDateTime sendTime;
 
-    public PrivateChatMessage(PrivateChatMessageRequestDto chatMessageRequestDto) {
+    public PrivateChatMessage(PrivateChatMessageRequestDto chatMessageRequestDto, User user) {
         this.title = chatMessageRequestDto.getTitle();
-        this.nickname = chatMessageRequestDto.getNickname();
-        this.username = chatMessageRequestDto.getUsername();
+        this.user = user;
         this.message = chatMessageRequestDto.getMessage();
         this.sendTime = chatMessageRequestDto.getSendTime();
         this.type = chatMessageRequestDto.getType().toString();

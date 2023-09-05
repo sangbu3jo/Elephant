@@ -7,6 +7,7 @@ import com.sangbu3jo.elephant.chat.entity.PrivateChatMessage;
 import com.sangbu3jo.elephant.chat.entity.PrivateChatRoom;
 import com.sangbu3jo.elephant.chat.repository.PrivateChatRoomRepository;
 import lombok.Getter;
+import org.springframework.cglib.core.Local;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -19,11 +20,13 @@ public class PrivateChatRoomResponseDto {
     private String showUser;
     private String message;
     private String date;
+    private LocalDateTime time;
 
     public PrivateChatRoomResponseDto(PrivateChatRoom privateChatRoom, String username, PrivateChatMessage privateChatMessage) {
         this.title = privateChatRoom.getTitle();
         // username과 동일하면 다른 사람을 showUser에 담아서 반환하도록 함
         this.showUser = setPrivateChatTitle(username, privateChatRoom);
+        this.time = privateChatMessage.getSendTime();
 
         // 최근 메세지 내역이 있으면 그 내용을 보여줌
         if (privateChatMessage != null) {

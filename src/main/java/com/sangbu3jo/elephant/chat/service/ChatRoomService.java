@@ -61,7 +61,8 @@ public class ChatRoomService {
      * @param chatMessageRequestDto: 메세지 타입과, 보내는 채팅방의 ID, 유저 정보, 메세지 내용, 보내는 시간을 받아옴
      */
     public void saveChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
-        ChatMessage chatMessage = new ChatMessage(chatMessageRequestDto);
+        User user = userRepository.findByUsername(chatMessageRequestDto.getUsername()).orElseThrow();
+        ChatMessage chatMessage = new ChatMessage(chatMessageRequestDto, user);
         mongoTemplate.save(chatMessage, chatMessageRequestDto.getChatRoomId().toString());
     }
 
@@ -199,7 +200,8 @@ public class ChatRoomService {
      * @param chatMessageRequestDto: 메세지 타입과, 보내는 채팅방의 ID, 유저 정보, 메세지 내용, 보내는 시간을 받아옴
      */
     public void savePrivateChatMessage(PrivateChatMessageRequestDto chatMessageRequestDto) {
-        PrivateChatMessage chatMessage = new PrivateChatMessage(chatMessageRequestDto);
+        User user = userRepository.findByUsername(chatMessageRequestDto.getUsername()).orElseThrow();
+        PrivateChatMessage chatMessage = new PrivateChatMessage(chatMessageRequestDto, user);
         mongoTemplate.save(chatMessage, chatMessageRequestDto.getTitle().toString());
     }
 
@@ -249,5 +251,9 @@ public class ChatRoomService {
         groupChatRoom.getGroupChatUsers().remove(groupChatUser);
         // 레파지토리에서 유저 삭제
         groupChatUserRepository.delete(groupChatUser.get());
+
+        if (groupChatRoom.getGroupChatUsers().size() == 0) {
+            groupChatRoomRepository.delete(groupChatRoom);
+        }
     }
 }

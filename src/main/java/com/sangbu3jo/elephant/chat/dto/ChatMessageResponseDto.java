@@ -19,11 +19,10 @@ public class ChatMessageResponseDto {
     public ChatMessageResponseDto(ChatMessage chatMessage) {
         this.type = chatMessage.getType();
         this.chatRoomId = chatMessage.getChatRoomId();
-        this.nickname = chatMessage.getNickname();
-        this.username = chatMessage.getUsername();
+        this.nickname = chatMessage.getUser().getNickname();
+        this.username = chatMessage.getUser().getUsername();
         this.message = chatMessage.getMessage();
         this.sendTime = chatMessage.getSendTime();
-//        this.sendTime = LocalDateTime.parse(chatMessage.getSendTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
     }
 
 }
