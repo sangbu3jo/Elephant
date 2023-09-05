@@ -9,6 +9,8 @@ import com.sangbu3jo.elephant.board.repository.BoardRepository;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUserRoleEnum;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
+import com.sangbu3jo.elephant.chat.repository.ChatRoomRepository;
+import com.sangbu3jo.elephant.chat.repository.ChatUserRepository;
 import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
@@ -42,6 +44,10 @@ class BoardServiceTest {
     @Mock
     BoardUserRepository boardUserRepository;
     @Mock
+    ChatRoomRepository chatRoomRepository;
+    @Mock
+    ChatUserRepository chatUserRepository;
+    @Mock
     UserRepository userRepository;
     @Mock
     JPAQueryFactory jpaQueryFactory;
@@ -58,6 +64,8 @@ class BoardServiceTest {
         boardService = new BoardService(
                 this.boardRepository = boardRepository,
                 this.boardUserRepository = boardUserRepository,
+                this.chatRoomRepository = chatRoomRepository,
+                this.chatUserRepository = chatUserRepository,
                 this.userRepository = userRepository,
                 this.jpaQueryFactory = jpaQueryFactory,
                 this.notificationService = notificationService,

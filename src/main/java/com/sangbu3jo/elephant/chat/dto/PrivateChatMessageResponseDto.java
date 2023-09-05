@@ -19,8 +19,8 @@ public class PrivateChatMessageResponseDto {
     public PrivateChatMessageResponseDto (PrivateChatMessage privateChatMessage) {
         this.type = privateChatMessage.getType();
         this.title = privateChatMessage.getTitle();
-        this.nickname = privateChatMessage.getNickname();
-        this.username = privateChatMessage.getUsername();
+        this.nickname = privateChatMessage.getUser().getNickname();
+        this.username = privateChatMessage.getUser().getUsername();
         this.message = privateChatMessage.getMessage();
         this.sendTime = privateChatMessage.getSendTime();
     }

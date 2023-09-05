@@ -219,6 +219,24 @@ a:hover {
 .list-group-item {
     background-color: transparent;
     cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#selectedResultsModal{
+    margin-top: 10px;
+}
+
+#selectedResultsModal > button {
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+#searchResults {
+    overflow-y: auto;
+    max-height: 300px;
 }
 
 .offcanvas{
@@ -230,12 +248,7 @@ a:hover {
     color: #a9a9a9;
 }
 
-#selectedResultsModal{
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+
 
 /* 채팅 리스트 출력 */
 .bottom-bottom {

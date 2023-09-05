@@ -1,4 +1,4 @@
-package com.sangbu3jo.elephant.chat.config;
+package com.sangbu3jo.elephant.chat.handler;
 
 import com.sangbu3jo.elephant.chat.entity.StompPrincipal;
 import org.springframework.http.server.ServerHttpRequest;
