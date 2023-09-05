@@ -236,25 +236,9 @@ public class BoardService {
      * @param searching: 검색어 (검색할 username 혹은 nickname)
      * @return: 결과를 Slice에 담아서 반환
      */
-    public Slice<BoardUserResponseDto> search(String searching) {
-        Pageable pageable = PageRequest.of(0, 5);
-
-        QUser user = QUser.user;
-        QueryResults<BoardUserResponseDto> queryResults = jpaQueryFactory
-                .select(Projections.constructor(BoardUserResponseDto.class, user.username, user.nickname))
-                .from(user)
-                .where(
-                        user.username.contains(searching)
-                        .or(user.nickname.contains(searching))
-                )
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetchResults();
-
-        List<BoardUserResponseDto> content = queryResults.getResults();
-        long total = queryResults.getTotal();
-
-        return new SliceImpl<>(content, pageable, total != pageable.getOffset() + content.size());
+    public Slice<BoardUserResponseDto> search(String searching, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findByUsernameOrNickname(searching, pageable);
     }
 
     /**

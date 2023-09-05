@@ -166,12 +166,11 @@ public class BoardController {
      * @return: 검색어에 해당하는 user 정보를 Slice에 담아 상태코드와 전달
      */
     @GetMapping("/boards/search/{searching}")
-    public ResponseEntity<Slice<BoardUserResponseDto>> findUsersToInvite(@PathVariable String searching) {
-        Slice<BoardUserResponseDto> users = boardService.search(searching);
-        for (BoardUserResponseDto b :  users) {
-            log.info(b.getUsername());
-            log.info(b.getNickname());
-        }
+    public ResponseEntity<Slice<BoardUserResponseDto>> findUsersToInvite(@PathVariable String searching,
+                                                                         @RequestParam(value = "page", defaultValue = "0") int page,
+                                                                         @RequestParam(value = "size", defaultValue = "5") int size) {
+
+        Slice<BoardUserResponseDto> users = boardService.search(searching, page, size);
         return ResponseEntity.ok().body(users);
     }
 
