@@ -129,6 +129,10 @@
             <h2 style="font-size: 1.4rem;
         margin: 10px;">게시물 관리</h2>
         </div>
+        <div class="feature" id="reportPostManagement">
+            <h2 style="font-size: 1.4rem;
+        margin: 10px;">신고 관리</h2>
+        </div>
         <div class="feature" id="commentManagement">
             <h2 style="font-size: 1.4rem;
         margin: 10px;">댓글 관리</h2>
@@ -448,6 +452,7 @@
     const userPerPage = 5;
     const userManagementButton = document.getElementById('userManagement');
     const postManagementButton = document.getElementById('postManagement');
+    const reportPostManagementButton = document.getElementById('reportPostManagement');
     const commentManagementButton = document.getElementById('commentManagement');
     const userInfoList = document.querySelector('.user-info-list');
     const paginationContainer = document.querySelector('.pagination');
@@ -458,6 +463,7 @@
     let totalUsers = 0;
     let users = []; // 사용자 정보를 저장할 배열
     let posts = [];
+    let reportposts = [];
     let comments = [];
 
     // 새로 추가한 내용
@@ -468,6 +474,7 @@
         currentPage = 1;
         users = [];
         posts = [];
+        reportposts = [];
         comments = [];
         fetchAndRenderUsers();
         editButton.textContent = '권한 수정';
@@ -478,6 +485,7 @@
         // 다른 기능 버튼의 활성화 클래스 제거
         postManagementButton.classList.remove('active');
         commentManagementButton.classList.remove('active');
+        reportPostManagementButton.classList.remove('active');
         // 현재 기능 버튼에 활성화 클래스 추가
         userManagementButton.classList.add('active');
     });
@@ -486,6 +494,7 @@
         currentPage = 1;
         users = [];
         posts = [];
+        reportposts = [];
         comments = [];
         fetchAndRenderPosts();
         editButton.textContent = '게시글 숨김';
@@ -496,14 +505,36 @@
         // 다른 기능 버튼의 활성화 클래스 제거
         userManagementButton.classList.remove('active');
         commentManagementButton.classList.remove('active');
+        reportPostManagementButton.classList.remove('active');
         // 현재 기능 버튼에 활성화 클래스 추가
         postManagementButton.classList.add('active');
+    });
+
+    reportPostManagementButton.addEventListener('click', () => {
+        currentPage = 1;
+        users = [];
+        posts = [];
+        reportposts = [];
+        comments = [];
+        fetchAndRenderReportPosts();
+        editButton.textContent = '게시글 숨김';
+        deleteButton.textContent = '게시글 삭제';
+        // 권한 수정, 회원 삭제 버튼 표시
+        editButton.style.display = 'block';
+        deleteButton.style.display = 'block';
+        // 다른 기능 버튼의 활성화 클래스 제거
+        userManagementButton.classList.remove('active');
+        commentManagementButton.classList.remove('active');
+        postManagementButton.classList.remove('active');
+        // 현재 기능 버튼에 활성화 클래스 추가
+        reportPostManagementButton.classList.add('active');
     });
 
     commentManagementButton.addEventListener('click', () => {
         currentPage = 1;
         users = [];
         posts = [];
+        reportposts = [];
         comments = [];
         fetchAndRenderComments();
         editButton.textContent = '댓글 숨김';
@@ -514,6 +545,7 @@
         // 다른 기능 버튼의 활성화 클래스 제거
         userManagementButton.classList.remove('active');
         postManagementButton.classList.remove('active');
+        reportPostManagementButton.classList.remove('active');
         // 현재 기능 버튼에 활성화 클래스 추가
         commentManagementButton.classList.add('active');
     });
@@ -528,6 +560,8 @@
                 renderPostsForPage(currentPage);
             } else if (commentManagementButton.classList.contains('active')) {
                 renderCommentsForPage(currentPage);
+            } else if (reportPostManagementButton.classList.contains('active')){
+                renderReportPostsForPage(currentPage);
             }
         }
     });
@@ -657,7 +691,66 @@
                     text: '숨길 게시글을 선택해주세요.',
                 });
             }
-        } else if (commentManagementButton.classList.contains('active')) {
+        } else if (reportPostManagementButton.classList.contains('active')) {
+            const checkedReportPostCheckbox = document.querySelector('.user-checkbox:checked');
+
+            if (checkedReportPostCheckbox) {
+                const oriPostId = checkedReportPostCheckbox.getAttribute('data-oripostId');
+
+                // 게시글 정보를 가져와서 수정 창을 띄우기
+
+                Swal.fire({
+                    title: '게시글을 숨김 처리하시겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '숨김',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        // 게시글 수정 API 호출
+                        fetch(`/api/posts/${oriPostId}/admin`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                title: "숨김 처리된 게시글입니다.",
+                                content: "숨김 처리된 게시글입니다.",
+                                completed: false
+                            })
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to update post');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+
+                                })
+                                fetchAndRenderReportPosts();
+                            })
+                            .catch(error => console.error('Error updating post:', error));
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '숨길 게시글을 선택해주세요.',
+                });
+            }
+        }   else if (commentManagementButton.classList.contains('active')) {
             const checkedCommentCheckbox = document.querySelector('.user-checkbox:checked'); // 수정: user-checkbox -> comment-checkbox
 
             if (checkedCommentCheckbox) {
@@ -826,7 +919,61 @@
                     text: '하나의 게시글만 선택해주세요.',
                 });
             }
-        } else if (commentManagementButton.classList.contains('active')) {
+        } else if (reportPostManagementButton.classList.contains('active')) {
+            // 게시글 삭제 기능 추가
+            if (checkedCheckboxes.length === 1) {
+                const oriPostId = checkedCheckboxes[0].getAttribute('data-oriPostId');
+
+                Swal.fire({
+                    title: '게시글을 삭제하시겠습니까?',
+                    text: '되돌릴 수 없습니다.',
+                    icon: 'warning',
+
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '삭제',
+                    cancelButtonText: '취소',
+
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        fetch(`/api/posts/${oriPostId}/admin`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+                            }
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to delete post');
+                                }
+                                return response.text();
+                            })
+                            .then(responseText => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: responseText,
+                                })
+                                fetchAndRenderReportPosts();
+                            })
+                            .catch(error => console.error('Error deleting post:', error));
+                    }
+                });
+            } else if (checkedCheckboxes.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '삭제할 게시글을 선택해주세요.',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '선택 오류',
+                    text: '하나의 게시글만 선택해주세요.',
+                });
+            }
+        }else if (commentManagementButton.classList.contains('active')) {
             const checkedCommentCheckbox = document.querySelector('.user-checkbox:checked');
 
             if (checkedCommentCheckbox) {
@@ -925,6 +1072,31 @@
             .catch(error => console.error('Error fetching posts:', error));
     }
 
+    function fetchAndRenderReportPosts() {
+        fetch('/api/posts/report', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch posts');
+                }
+                return response.json();
+            })
+            .then(responsePosts => {
+                reportposts = responsePosts; // 게시물 정보를 저장
+                totalreportPosts = reportposts.length;
+                renderPagination();
+                userInfoList.innerHTML = '';
+                renderReportPostsForPage(currentPage);
+            })
+            .catch(error => console.error('Error fetching posts:', error));
+    }
+
+
+
     function fetchAndRenderComments() {
         fetch('/api/comments', {
             method: 'GET',
@@ -957,6 +1129,8 @@
             totalPages = Math.ceil(posts.length / userPerPage);
         } else if (commentManagementButton.classList.contains('active')) {
             totalPages = Math.ceil(comments.length / userPerPage);
+        } else if (reportPostManagementButton.classList.contains('active')) {
+            totalPages = Math.ceil(reportposts.length / userPerPage);
         }
 
         paginationContainer.innerHTML = '';
@@ -1033,6 +1207,43 @@
             </table>
         `;
             userInfoList.appendChild(postDiv);
+        });
+    }
+
+    function renderReportPostsForPage(page) {
+        const startIndex = (page - 1) * userPerPage;
+        const endIndex = startIndex + userPerPage;
+        const reportPostsToShow = reportposts.slice(startIndex, endIndex);
+
+        userInfoList.innerHTML = '';
+
+        reportPostsToShow.forEach(reportPost => {
+            const reportPostDiv = document.createElement('div');
+            reportPostDiv.classList.add('user-info');
+            reportPostDiv.innerHTML = `
+            <table>
+                <tr>
+                    <td><input type="checkbox" class="user-checkbox" data-reportpostid="${reportPost.id}" data-oripostid="${reportPost.oripostId}"></td>
+                    <td>게시글 작성자 : </td>
+                    <td>${reportPost.username}(${reportPost.nickname})</td>
+                <tr>
+                    <td></td>
+                    <td>게시글 제목 : </td>
+                    <td>${reportPost.title}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>게시글 내용 : </td>
+                    <td>${reportPost.content.substring(0, 20)}...</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>신고 사유 : </td>
+                    <td>${reportPost.reason.substring(0, 20)}...</td>
+                </tr>
+            </table>
+        `;
+            userInfoList.appendChild(reportPostDiv);
         });
     }
 
