@@ -12,6 +12,9 @@ import com.sangbu3jo.elephant.boarduser.dto.BoardUserResponseDto;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUserRoleEnum;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
+import com.sangbu3jo.elephant.chat.entity.ChatRoom;
+import com.sangbu3jo.elephant.chat.repository.ChatRoomRepository;
+import com.sangbu3jo.elephant.chat.repository.ChatUserRepository;
 import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.users.entity.QUser;
@@ -38,6 +41,8 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardUserRepository boardUserRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatUserRepository chatUserRepository;
     private final UserRepository userRepository;
     private final JPAQueryFactory jpaQueryFactory;
     private final NotificationService notificationService;
@@ -131,9 +136,13 @@ public class BoardService {
             mongoTemplate.getCollection(boardId.toString()).drop();
         }
 
+        if (board.getChatRoom() != null) {
+            ChatRoom chatRoom = chatRoomRepository.findById(board.getChatRoom().getId()).orElseThrow();
+            chatUserRepository.deleteAll(chatUserRepository.findAllByChatroom(chatRoom));
+            chatRoomRepository.delete(chatRoom);
+        }
 
-        /* Board 엔티티 안에 Set<BoardUser>를 orphanremoval = true 속성을 주었기 때문에, 해당 레포지토리에서 따로 찾아서 삭제해줄 필요 없음
-         * ChatRoom (채팅방) 또한 1:1 매핑으로 cascade = CascadeType.REMOVAL 을 주었음 */
+        /* Board 엔티티 안에 Set<BoardUser>를 orphanremoval = true 속성을 주었기 때문에, 해당 레포지토리에서 따로 찾아서 삭제해줄 필요 없음 */
         boardRepository.delete(board);
     }
 

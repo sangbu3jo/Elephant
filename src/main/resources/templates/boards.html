@@ -364,7 +364,10 @@
                         window.location.href="/api/boards";
                     },
                     error: function (data) {
-
+                        Toast.fire({
+                            icon: 'error',
+                            title: "매니저만 삭제 가능합니다!",
+                        })
                     }
                 })
             });
