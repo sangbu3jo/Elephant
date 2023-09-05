@@ -37,7 +37,23 @@
     <div class="container__form container--signup">
         <div class="form" id="form1">
             <h2 class="form__title">회원가입</h2>
-            <input type="text" placeholder="아이디" name="username" id="username" class="input"/>
+            <input type="text" placeholder="Email ID" name="username" id="username" class="input" th:value="${email}"/>
+
+            <!--인증 여부 값 hidden-->
+            <input id="email-check" type="hidden" name="emailCheck" checked="off" style="display:none">
+
+            <a href="#" id="sendEmail" style="
+            margin-left: -53%;
+            font-size:14px;" onclick="sendEmail()">이메일 인증번호 보내기</a>
+            <div class="modal" style="margin-left:-17%;
+            margin-top:5px;">
+                <div class="modal-content">
+                    <!-- 모달 내용 -->
+                    <input type="text" id="email-password" name="email-password" placeholder="인증번호 입력">
+                    <button id="check-email-btn" onclick="checkEmail()">인증하기</button>
+                </div>
+            </div>
+
             <input type="password" placeholder="비밀번호" name="password" id="password" class="input"/>
             <a href="" id="showSignupPwBtn" style="margin-left: -70%; font-size:14px;">비밀번호 보기</a>
             <input type="text" placeholder="닉네임" name="nickname" id="nickname" class="input"/>
