@@ -1,4 +1,4 @@
-package com.sangbu3jo.elephant.chat.config;
+package com.sangbu3jo.elephant.config;
 
 
 import org.springframework.context.annotation.Bean;
