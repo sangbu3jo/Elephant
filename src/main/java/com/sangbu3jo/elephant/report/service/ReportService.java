@@ -2,6 +2,7 @@ package com.sangbu3jo.elephant.report.service;
 
 import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
+import com.sangbu3jo.elephant.posts.dto.ReportPostResponseDto;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.repository.PostRepository;
 import com.sangbu3jo.elephant.report.dto.ReportRequestDto;
@@ -37,6 +38,15 @@ public class ReportService {
                 () -> new IllegalArgumentException("존재하지 않는 사용자 입니다.")
         );
 
+
+        if(requestuser.getRole().equals(UserRoleEnum.ADMIN)){
+            return "관리자는 게시글을 신고할 수 없습니다.";
+        }
+
+        if(post.getUser().getId().equals(requestuser.getId())){
+            return "본인의 게시글은 신고할 수 없습니다.";
+        }
+
         Report report = new Report(post, user, reportRequestDto.getReason());
         reportRepository.save(report);
 
@@ -44,7 +54,7 @@ public class ReportService {
         List<User> users = userRepository.findAll();
         for(User adminUser : users) {
             String notificationContent = user.getNickname() + "님이 \"" + post.getTitle() + "\" 게시글을 신고하였습니다. 사유 : " + reportRequestDto.getReason();
-            String notificationUrl = "/posts/" + post.getId(); // 게시글로 이동할 수 있는 URL
+            String notificationUrl = "/api/view/admins"; // 게시글로 이동할 수 있는 URL
 
             if(adminUser.getRole().equals(UserRoleEnum.ADMIN)) {
                 notificationService.reportPostNotification(adminUser.getId(), post.getId(), notificationContent, notificationUrl);
@@ -55,20 +65,19 @@ public class ReportService {
     }
 
     // 신고당한 게시글 조회
-    public List<PostResponseDto> getReportPosts(User requestuser) {
+    public List<ReportPostResponseDto> getReportPosts(User requestuser) {
         if(!requestuser.getRole().equals(UserRoleEnum.ADMIN)){
             throw new IllegalArgumentException("관리자 기능입니다.");
         }
 
         List<Report> reportedPosts = reportRepository.findAll();
-        List<PostResponseDto> postResponseDtos = new ArrayList<>();
+        List<ReportPostResponseDto> reportPostResponseDtos = new ArrayList<>();
 
         for(Report report : reportedPosts){
-            Post post = report.getPost();
-            PostResponseDto postResponseDto = new PostResponseDto(post);
-            postResponseDtos.add(postResponseDto);
+            ReportPostResponseDto reportPostResponseDto = new ReportPostResponseDto(report);
+            reportPostResponseDtos.add(reportPostResponseDto);
         }
 
-        return postResponseDtos;
+        return reportPostResponseDtos;
     }
 }

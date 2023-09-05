@@ -2,6 +2,7 @@ package com.sangbu3jo.elephant.posts.entity;
 
 import com.sangbu3jo.elephant.common.TimeStamped;
 import com.sangbu3jo.elephant.posts.dto.PostRequestDto;
+import com.sangbu3jo.elephant.report.entity.Report;
 import com.sangbu3jo.elephant.users.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -50,6 +51,9 @@ public class Post extends TimeStamped {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostComment> commentList = new ArrayList<>(); //댓글
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Report> reportList = new ArrayList<>(); // 신고 목록
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();

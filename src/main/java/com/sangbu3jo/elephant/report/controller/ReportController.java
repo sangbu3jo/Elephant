@@ -2,6 +2,7 @@ package com.sangbu3jo.elephant.report.controller;
 
 
 import com.sangbu3jo.elephant.posts.dto.PostResponseDto;
+import com.sangbu3jo.elephant.posts.dto.ReportPostResponseDto;
 import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.report.dto.ReportRequestDto;
 import com.sangbu3jo.elephant.report.service.ReportService;
@@ -31,8 +32,8 @@ public class ReportController {
 
     // 신고당한 게시글 조회
     @GetMapping("/posts/report")
-    public ResponseEntity<List<PostResponseDto>> getReportPosts(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        List<PostResponseDto> posts = reportService.getReportPosts(userDetails.getUser());
+    public ResponseEntity<List<ReportPostResponseDto>> getReportPosts(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        List<ReportPostResponseDto> posts = reportService.getReportPosts(userDetails.getUser());
         return ResponseEntity.ok(posts);
     }
 
