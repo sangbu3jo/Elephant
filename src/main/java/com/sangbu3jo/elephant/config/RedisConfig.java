@@ -1,4 +1,4 @@
-package com.sangbu3jo.elephant.auth.redis;
+package com.sangbu3jo.elephant.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
