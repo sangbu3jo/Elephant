@@ -1,4 +1,5 @@
-package com.sangbu3jo.elephant.email;
+package com.sangbu3jo.elephant.email.dto;
+
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,9 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class EmailDto {
-    private String sendTo;
+public class EmailMessage {
+
+    private String to;
     private String subject;
     private String message;
-    private String sendFrom;
+    private String from;
 }

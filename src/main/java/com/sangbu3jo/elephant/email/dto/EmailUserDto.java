@@ -1,4 +1,4 @@
-package com.sangbu3jo.elephant.email;
+package com.sangbu3jo.elephant.email.dto;
 
 import lombok.Getter;
 

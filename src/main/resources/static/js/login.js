@@ -52,7 +52,7 @@ const Toast = Swal.mixin({
 })
 
 function signup() {
-  var checkBox = document.getElementById("email-check");
+  let checkBox = $('#email-check').val();
   let username = $('#username').val();
   let password = $('#password').val();
   let nickname = $('#nickname').val();
@@ -83,7 +83,7 @@ function signup() {
     return false;
   }
 
-  if (checkBox.checked === "off") {
+  if (checkBox === "false") {
     Swal.fire({
       icon: 'warning',
       title: '이메일 인증 요망',
@@ -182,7 +182,6 @@ function sendEmail() {
     type: "GET",
     url: `/api/auth/email/${userEmail}/invited`,
     success: function (data) {
-      console.log("이메일 전송 성공");
       console.log(data);
     },
     error: function (error) {
@@ -191,29 +190,31 @@ function sendEmail() {
   });
 }
 
+
 function checkEmail() {
   // 인증 여부 저장할 hidden
   var checkBox = document.getElementById("email-check");
   // 사용자가 입력한 인증 번호
-  var inputPassword = $("#email-password").val();
+  var inputPassword  = $("#email-password");
+  var inputPasswordValue  = $("#email-password").val();
 
   // ajax 통신을 통해 확인함.
-  checkEmailPassword(inputPassword).then(function (result) {
+  checkEmailPassword(inputPasswordValue).then(function (result) {
+    console.log(result);
     if (result) {
       // successful
       // 이메일 인증 성공했을 경우에 checked = true
       console.log("email check successful");
-      checkBox.checked = "on";
+      checkBox.value = "true";
     } else {
       // fail
       console.log("email check failed");
-      checkBox.checked = "off";
+      checkBox.value = "false";
     }
   });
 }
 
 function checkEmailPassword(inputPassword) {
-  console.log("inputPassword: " + inputPassword);
   return new Promise(function (resolve, reject) {
     let userEmail = $('#username').val();
 
@@ -223,15 +224,20 @@ function checkEmailPassword(inputPassword) {
       contentType: "application/json",
       data: JSON.stringify({password: inputPassword}),
     })
-    .done(function () {
-      return true;
+    .done(function (data) {
+      Toast.fire({
+        icon: 'success',
+        title: data,
+      }).then(function () {
+        resolve(true);
+      })
     })
     .fail(function (jqXHR, textStatus) {
       Toast.fire({
         icon: 'warning',
         title: '인증 정보가 일치하지않습니다.'
       }).then(function () {
-        return false;
+        resolve(false);
       })
     });
   });

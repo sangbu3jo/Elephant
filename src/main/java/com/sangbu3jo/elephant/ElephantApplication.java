@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 
 @SpringBootApplication
-@EnableCaching
+@EnableCaching // Redis Cache
 @EnableJpaAuditing
 public class ElephantApplication {
 

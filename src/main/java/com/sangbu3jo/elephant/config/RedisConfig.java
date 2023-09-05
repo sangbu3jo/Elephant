@@ -32,7 +32,8 @@ public class RedisConfig {
   }
 
   /**
-   * RedisConnection 에서 넘겨준 byte 값 객체 직렬화 RedisTemplate 은 Redis 데이터를 저장하고 조회하는 기능을 하는 클래스 Redis cli
+   * RedisConnection 에서 넘겨준 byte 값 객체 직렬화 RedisTemplate 은
+   * Redis 데이터를 저장하고 조회하는 기능을 하는 클래스 Redis cli
    * 를 사용해 Redis 데이터를 직접 조회할 때, Redis 데이터를 문자열로 반환하기 위한 설정
    */
   @Bean
