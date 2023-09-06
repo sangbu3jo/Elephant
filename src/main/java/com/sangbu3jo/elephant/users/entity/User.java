@@ -57,11 +57,6 @@ public class User {
   @Column(name = "profile_url")
   private String profileUrl =  "https://cdn-icons-png.flaticon.com/128/1864/1864497.png";
 
-//  @Column(name = "old_profile_url")
-//  private String oldProfileUrl = "https://cdn-icons-png.flaticon.com/128/1864/1864497.png";
-
-//  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-//  private List<Post> posts = new ArrayList<>();
 
   @Builder
   public User(SignupRequestDto signupRequestDto, String password, UserRoleEnum role) {
