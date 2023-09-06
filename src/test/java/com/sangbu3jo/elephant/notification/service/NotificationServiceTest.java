@@ -7,18 +7,22 @@ import com.sangbu3jo.elephant.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
 
     @Mock
@@ -153,8 +157,7 @@ class NotificationServiceTest {
         notifications.add(notification1);
         notifications.add(notification2);
 
-        NotificationService notificationService = Mockito.mock(NotificationService.class);
-        Mockito.when(notificationRepository.findAllByUserId(userId)).thenReturn(notifications);
+        when(notificationRepository.findAllByUserId(userId)).thenReturn(notifications);
 
         // when
         List<Notification> result = notificationService.getNotificationList(userId);
@@ -175,8 +178,7 @@ class NotificationServiceTest {
         notification.setId(notificationId);
         notification.setRead(false);
 
-        NotificationService notificationService = Mockito.mock(NotificationService.class);
-        Mockito.when(notificationRepository.findById(notificationId)).thenReturn(java.util.Optional.of(notification));
+        when(notificationRepository.findById(notificationId)).thenReturn(java.util.Optional.of(notification));
 
         // when
         notificationService.markNotificationAsRead(notificationId);
@@ -203,8 +205,7 @@ class NotificationServiceTest {
         notifications.add(notification1);
         notifications.add(notification2);
 
-        NotificationService notificationService = Mockito.mock(NotificationService.class);
-        Mockito.when(notificationRepository.findAllByUserIdAndIsRead(userId, false)).thenReturn(notifications);
+        when(notificationRepository.findAllByUserIdAndIsRead(userId, false)).thenReturn(notifications);
 
         // when
         notificationService.markAllNotificationsAsRead(userId);
@@ -223,14 +224,11 @@ class NotificationServiceTest {
         user.setId(userId);
         user.setNickname("gunwook");
 
-        NotificationService notificationService = Mockito.mock(NotificationService.class);
-        Mockito.when(userRepository.findById(userId)).thenReturn(java.util.Optional.of(user));
-
         // when
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         User result = notificationService.getUserInfo(user);
 
         // then
         assertEquals("gunwook", result.getNickname());
-
     }
 }
