@@ -77,7 +77,7 @@ public class S3UploaderService {
     }
 
     //file 삭제
-    @Transactional
+
     public void fileDelete(String s3Key) {
         try {
             amazonS3.deleteObject(this.bucket, s3Key);

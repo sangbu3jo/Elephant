@@ -6,6 +6,7 @@ import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.entity.PostComment;
 import com.sangbu3jo.elephant.posts.repository.PostCommentRepository;
 import com.sangbu3jo.elephant.posts.repository.PostRepository;
+import com.sangbu3jo.elephant.posts.service.S3UploaderService;
 import com.sangbu3jo.elephant.users.dto.ProfileRequestDto;
 import com.sangbu3jo.elephant.users.dto.UpdateUserCommentsDto;
 import com.sangbu3jo.elephant.users.dto.UpdateUserPostsDto;
@@ -17,8 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class UserService {
     private final PostRepository postRepository;
     private final PostCommentRepository postcommentRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3UploaderService s3UploaderService;
 
     public UserResponseDto getUserInfo(User requestuser) {
 
@@ -46,23 +49,79 @@ public class UserService {
     public String updateProfile(User requestuser, ProfileRequestDto profileRequestDto) {
         // 유저 조회
         User user = userRepository.findById(requestuser.getId()).orElse(null);
-        if(user == null){
+        if (user == null) {
             return "존재하지 않는 회원입니다.";
         }
 
+
+
         // 프로필수정 요청한 user, 프로필수정 할 user 비교
-        if(!requestuser.getId().equals(user.getId())){
+        if (!requestuser.getId().equals(user.getId())) {
             return "본인의 프로필만 수정이 가능합니다.";
         }
 
         // 프로필 수정
-        if(profileRequestDto.getPassword() != null) user.setPassword(passwordEncoder.encode(profileRequestDto.getPassword()));
-        if(profileRequestDto.getNickname() != null) user.setNickname(profileRequestDto.getNickname());
-        if(profileRequestDto.getIntroduction() != null) user.setIntroduction(profileRequestDto.getIntroduction());
+        if (profileRequestDto.getPassword() != null)
+            user.setPassword(passwordEncoder.encode(profileRequestDto.getPassword()));
+        if (profileRequestDto.getNickname() != null) user.setNickname(profileRequestDto.getNickname());
+        if (profileRequestDto.getIntroduction() != null) user.setIntroduction(profileRequestDto.getIntroduction());
+        if (profileRequestDto.getProfileUrl() != null) user.setProfileUrl(profileRequestDto.getProfileUrl());
 
         userRepository.save(user);
         return "프로필 수정이 완료되었습니다.";
     }
+
+
+    /**
+     * 프로필 이미지 수정
+     *
+     * @param requestuser 로그인한 회원 정보
+     * @param image 이미지 url 데이터
+     * @return 프로필 수정 완료
+     * @throws IOException 예외처리
+     */
+
+    @Transactional
+    public String updateImg(User requestuser, MultipartFile image) throws IOException {
+
+        // 유저 조회
+        User user = userRepository.findById(requestuser.getId()).orElse(null);
+        if (user == null) {
+            return "존재하지 않는 회원입니다.";
+        }
+
+        // 프로필수정 요청한 user, 프로필수정 할 user 비교
+        if (!requestuser.getId().equals(user.getId())) {
+            return "본인의 프로필만 수정이 가능합니다.";
+        }
+
+
+        //이미지 변경
+        if (!image.isEmpty()) {
+            String storedFileName = s3UploaderService.upload(image, "image");
+            // 값을 받아오면 같은 값 넣어주기
+            user.setProfileUrl(storedFileName);
+
+        }
+
+        userRepository.save(user);
+        return "프로필 수정이 완료되었습니다.";
+    }
+
+
+
+
+    @Transactional
+    public void deleteImage(String fileUrl) {
+
+
+        String s3Key = fileUrl.substring("https://sangbusamjoelephant.s3.ap-northeast-2.amazonaws.com/".length());
+
+        s3UploaderService.fileDelete(s3Key);
+
+
+    }
+
 
 
     // 회원 탈퇴 메서드
@@ -70,12 +129,12 @@ public class UserService {
     public String signOut(User requestuser) {
         // 유저 조회
         User user = userRepository.findById(requestuser.getId()).orElse(null);
-        if(user == null){
+        if (user == null) {
             return "존재하지 않는 회원입니다.";
         }
 
         // 회원탈퇴를 요청한 user, 회원탈퇴 할 user 비교
-        if(!requestuser.getId().equals(user.getId())){
+        if (!requestuser.getId().equals(user.getId())) {
             return "본인만 회원탈퇴가 가능합니다.";
         }
 
@@ -95,7 +154,7 @@ public class UserService {
         );
 
         // 게시글 조회를 요청한 user, 게시글 조회를 할 user 비교
-        if(!requestuser.getId().equals(user.getId())){
+        if (!requestuser.getId().equals(user.getId())) {
             throw new IllegalArgumentException("본인의 게시글만 조회가 가능합니다.");
         }
 
@@ -103,7 +162,7 @@ public class UserService {
         List<Post> posts = postRepository.findByUser(user);
         List<PostResponseDto> postResponseDtos = new ArrayList<>();
 
-        for(Post post : posts){
+        for (Post post : posts) {
             postResponseDtos.add(new PostResponseDto(post));
         }
 
@@ -119,13 +178,13 @@ public class UserService {
         );
 
         // 작성자 비교
-        if(!requestuser.getId().equals(post.getUser().getId())){
+        if (!requestuser.getId().equals(post.getUser().getId())) {
             throw new IllegalArgumentException("본인의 게시글만 수정이 가능합니다.");
         }
 
-        if(updateUserPostsDto.getTitle() != null) post.setTitle(updateUserPostsDto.getTitle());
-        if(updateUserPostsDto.getContent() != null) post.setContent(updateUserPostsDto.getContent());
-        if(updateUserPostsDto.getCompleted() != null) post.setCompleted(updateUserPostsDto.getCompleted());
+        if (updateUserPostsDto.getTitle() != null) post.setTitle(updateUserPostsDto.getTitle());
+        if (updateUserPostsDto.getContent() != null) post.setContent(updateUserPostsDto.getContent());
+        if (updateUserPostsDto.getCompleted() != null) post.setCompleted(updateUserPostsDto.getCompleted());
 
         postRepository.save(post);
         return "게시글 수정되었습니다";
@@ -140,7 +199,7 @@ public class UserService {
         );
 
         // 작성자 비교
-        if(!requestuser.getId().equals(post.getUser().getId())){
+        if (!requestuser.getId().equals(post.getUser().getId())) {
             throw new IllegalArgumentException("본인의 게시글만 삭제가 가능합니다.");
         }
 
@@ -157,7 +216,7 @@ public class UserService {
         );
 
         // 댓글 조회를 요청한 user, 댓글 조회를 할 user 비교
-        if(!requestuser.getId().equals(user.getId())){
+        if (!requestuser.getId().equals(user.getId())) {
             throw new IllegalArgumentException("본인의 게시글만 조회가 가능합니다.");
         }
 
@@ -165,7 +224,7 @@ public class UserService {
         List<PostComment> postcomments = postcommentRepository.findByUser(user);
         List<PostCommentResponseDto> postCommentResponseDtos = new ArrayList<>();
 
-        for(PostComment postComment : postcomments){
+        for (PostComment postComment : postcomments) {
             postCommentResponseDtos.add(new PostCommentResponseDto(postComment));
         }
 
@@ -181,7 +240,7 @@ public class UserService {
         );
 
         // 작성자 비교
-        if(!requestuser.getId().equals(postComment.getUser().getId())){
+        if (!requestuser.getId().equals(postComment.getUser().getId())) {
             throw new IllegalArgumentException("본인의 댓글만 수정이 가능합니다.");
         }
 
@@ -197,7 +256,7 @@ public class UserService {
         );
 
         // 작성자 비교
-        if(!requestuser.getId().equals(postComment.getUser().getId())){
+        if (!requestuser.getId().equals(postComment.getUser().getId())) {
             throw new IllegalArgumentException("본인의 댓글만 삭제가 가능합니다.");
         }
 
@@ -205,7 +264,6 @@ public class UserService {
         return "댓글이 삭제되었습니다.";
 
     }
-
 
 
 }

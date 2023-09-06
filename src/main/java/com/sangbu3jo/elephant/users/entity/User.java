@@ -54,6 +54,12 @@ public class User {
   @Enumerated(value = EnumType.STRING)
   private UserRoleEnum role;
 
+  @Column(name = "profile_url")
+  private String profileUrl =  "https://cdn-icons-png.flaticon.com/128/1864/1864497.png";
+
+//  @Column(name = "old_profile_url")
+//  private String oldProfileUrl = "https://cdn-icons-png.flaticon.com/128/1864/1864497.png";
+
 //  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
 //  private List<Post> posts = new ArrayList<>();
 
@@ -90,6 +96,7 @@ public class User {
     return this;
   }
 
+
   public void setPassword(String password) {
     this.password = password;
   }
@@ -108,5 +115,9 @@ public class User {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public void setProfileUrl(String profileUrl) {
+    this.profileUrl = profileUrl;
   }
 }

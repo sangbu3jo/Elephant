@@ -10,6 +10,7 @@ public class UserResponseDto {
     private String password;
     private String nickname;
     private String introduction;
+    private String profileUrl;
 
     public UserResponseDto(User user) {
         this.id = user.getId();
@@ -17,5 +18,6 @@ public class UserResponseDto {
         this.password = user.getPassword();
         this.nickname = user.getNickname();
         this.introduction = user.getIntroduction();
+        this.profileUrl = user.getProfileUrl();
     }
 }
