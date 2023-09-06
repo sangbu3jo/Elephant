@@ -2,15 +2,11 @@ package com.sangbu3jo.elephant.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
-//@Builder
 public class SignupRequestDto {
 
   @NotBlank(message = "Id 입력이 안되었습니다.")
@@ -27,5 +23,13 @@ public class SignupRequestDto {
   private boolean admin;
 
   private String adminToken;
+
+  @Builder
+  public SignupRequestDto(String username, String password, String nickname, String introduction) {
+    this.username = username;
+    this.password = password;
+    this.nickname = nickname;
+    this.introduction = introduction;
+  }
 
 }
