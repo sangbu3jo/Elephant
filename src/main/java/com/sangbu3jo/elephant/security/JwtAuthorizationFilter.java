@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,8 +29,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
   /**
    * 토큰을 검증하여 사용자의 인증을 처리하는 필터
-   * @param request 요청 Servlet
-   * @param response 응답 Servlet
+   * @param request     요청 Servlet
+   * @param response    응답 Servlet
    * @param filterChain 보안 필터 체인 객체
    * @throws ServletException
    * @throws IOException
@@ -44,54 +43,50 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     String AccessTokenValue = jwtUtil.getAccessTokenFromRequest(request);
     String refreshTokenValue = jwtUtil.getRefreshTokenFromRequest(request);
 
-    if (StringUtils.hasText(AccessTokenValue)) { // 엑세스 토큰 있을 때
-
-      // 로그인 페이지 요청 시 -> 토큰 모두 삭제
-      if (request.getRequestURI().equals("/api/auth/login-page")) {
-        jwtUtil.deleteCookie(request, response);
-      } else {
-        // 엑세스 토큰 substring
+    // 로그인 페이지 요청 시 -> 토큰 모두 삭제
+    if (request.getRequestURI().equals("/api/auth/login-page")) {
+      jwtUtil.deleteCookie(request, response);
+    } else {
+      // 엑세스 토큰 유효할 경우
+      if(StringUtils.hasText(AccessTokenValue)){
         AccessTokenValue = jwtUtil.substringToken(AccessTokenValue);
-
-        // 엑세스 토큰 만료 시 if() 내에 코드를 수행합니다.
-        if (!jwtUtil.validateToken(AccessTokenValue)) {
-          log.error("Access Token does not valid.");
-
-          if (request.getRequestURI().equals("/api/auth/logout")) { // 만료된 토큰으로 로그아웃 요청 시
-            jwtUtil.deleteCookie(request, response); // 토큰 모두 삭제
+        if(jwtUtil.validateToken(AccessTokenValue)) {
+          Claims info = jwtUtil.getUserInfoFromToken(AccessTokenValue);
+          try {
+            setAuthentication(info.getSubject());
+          } catch (Exception e) {
+            log.error(e.getMessage());
             return;
-          }else { // 다른 url 로 접근 시
-
-            if (StringUtils.hasText(refreshTokenValue)) { // 리프레스 토큰 있을 때
-              refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
-              // 엑세스 토큰 재발급
-              redisService.generateAccessToken(request, response);
-              response.sendRedirect(request.getRequestURI());
-              return;
-            } else { //리프레시 토큰 없을 때
-              jwtUtil.deleteCookie(request, response);
-              return;
-            } // end of inner if~else()
-          } // end of outer if~else()
-        } // end of inner if()
-
-        // 엑세스 토큰 유효성 검사 통과 시 아래 코드를 수행합니다.
-        Claims info = jwtUtil.getUserInfoFromToken(AccessTokenValue);
-
-        try {
-          setAuthentication(info.getSubject());
-        } catch (Exception e) {
-          log.error(e.getMessage());
-          return;
+          }
         }
 
-      } // end of if~else()
+      } else if(StringUtils.hasText(refreshTokenValue)) {
+        // 엑세스 토큰은 유효하지 않으나, 리프레시 토큰이 있을 경우
+        log.error("There is no Access Token. But has RefreshToken");
+        createNewAccessToken(request, response, refreshTokenValue);
+        return;
+      }else {
+        // 구현없습니다.
+      }
 
-    } // end of if()
+    } // end of if~else()
 
     filterChain.doFilter(request, response);
   }
 
+  /**
+   * 리프레시 토큰을 검증하고 엑세스 토큰을 재발급 하는 메서드
+   * @param request 요청 Servlet
+   * @param response 응답 Servlet
+   * @param refreshTokenValue 리프레시 토큰 값
+   * @throws IOException
+   */
+  private void createNewAccessToken(HttpServletRequest request, HttpServletResponse response,
+      String refreshTokenValue) throws IOException {
+      refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
+      redisService.generateAccessToken(request, response);
+      response.sendRedirect(request.getRequestURI());
+  }
 
   /**
    * 인증 처리 메서드
@@ -105,7 +100,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     SecurityContextHolder.setContext(context);
   }
 
-
   /**
    * 인증 객체 생성 메서드
    * @param username 사용자 id값
@@ -113,7 +107,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
    */
   private Authentication createAuthentication(String username) {
     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-    return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    return new UsernamePasswordAuthenticationToken(userDetails, null,
+        userDetails.getAuthorities());
   }
 
 }

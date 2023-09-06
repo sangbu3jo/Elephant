@@ -41,6 +41,7 @@ public class PostViewController {
     Page<PostResponseDto> postResponseDtoList = postService.getCategoryPost(category, pageable,
         pageNo);
     model.addAttribute("categoryName", Category.getCategory(category));
+    model.addAttribute("category", category);
     model.addAttribute("posts", postResponseDtoList);
 
     return "category";
@@ -60,6 +61,7 @@ public class PostViewController {
     Page<PostResponseDto> postResponseDtoList = postService.getSearchTitle(category, pageable,
         pageNo, title);
     model.addAttribute("categoryName", Category.getCategory(category));
+    model.addAttribute("category", category);
     model.addAttribute("searchedTitle", title);
     model.addAttribute("posts", postResponseDtoList);
 

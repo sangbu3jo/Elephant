@@ -1,9 +1,11 @@
-package com.sangbu3jo.elephant.email;
+package com.sangbu3jo.elephant.email.service;
 
 import com.sangbu3jo.elephant.board.entity.Board;
 import com.sangbu3jo.elephant.board.repository.BoardRepository;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
+import com.sangbu3jo.elephant.email.dto.EmailDto;
+import com.sangbu3jo.elephant.email.dto.EmailUserDto;
 import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
