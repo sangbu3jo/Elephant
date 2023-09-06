@@ -98,6 +98,7 @@ class ChatRoomServiceTest {
         chatMessageRequestDto.setMessage("안녕하세요?");
 
         // when
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
         chatRoomService.saveChatMessage(chatMessageRequestDto);
 
         // then
