@@ -7,6 +7,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EmailCheckService {
+public class EmailCheckServiceImpl implements EmailCheckService {
 
   private final JavaMailSender javaMailSender;
   private final UserRepository userRepository;
@@ -26,18 +27,13 @@ public class EmailCheckService {
   private final EmailAuthRepository emailAuthRepository;
 
 
-  /**
-   * 이메일 인증을 위한 인증 번호를 보내는 메서드
-   * @param userEmail 인증 절차를 밟을 이메일 주소
-   * @return 메일 수신 여부에 따른 상태값과 결과값 반환
-   * @throws Exception
-   */
+  @Override
   @Async
   public ResponseEntity<String> sendEmail(String userEmail) throws Exception {
     isExistUsername(userEmail);
 
-    String password = generateAndCachePassword(userEmail);
-    emailAuthRepository.save(new EmailAuth(userEmail,password));
+    String password = UUID.randomUUID().toString();
+    saveEmailPassword(userEmail, password);
 
     try {
       javaMailSender.send(setEmailText(userEmail,password));
@@ -48,9 +44,16 @@ public class EmailCheckService {
     }
   }
 
-  public ResponseEntity<String> checkPassword(String userEmail, String inputPassword) {
 
-    String password = emailAuthRepository.findByUsername(userEmail).get().getPassword();
+  @Override
+  public void saveEmailPassword(String userEmail, String password) {
+    emailAuthRepository.save(new EmailAuth(userEmail, password));
+  }
+
+
+  @Override
+  public ResponseEntity<String> checkPassword(String userEmail, String inputPassword) {
+    String password = getEmailPassword(userEmail);
     log.info("userEmail: " + userEmail + ", password: " + inputPassword + ", checkPW: " + password);
 
     if(password.equals(inputPassword)){
@@ -62,37 +65,26 @@ public class EmailCheckService {
     }
   }
 
-  
-  /**
-   * 이메일 인증 번호 생성 및 저장 메서드
-   * @param userEmail 인증 번호를 저장하려 식별할 이메일
-   */
-  //@Cacheable(value = "emailAuth", key = "#userEmail")
-  public String generateAndCachePassword(String userEmail) {
-    return UUID.randomUUID().toString();
-    //log.info(String.valueOf(String.valueOf(redisCacheManager.getCache("emailAuth")).isEmpty()));
+
+
+  @Override
+  @Cacheable(value = "emailPassword", key = "#username", cacheManager = "testCacheManager")
+  public String getEmailPassword(String userEmail) {
+    return emailAuthRepository.findByUsername(userEmail).get().getPassword();
   }
 
-  
-  /**
-   * 중복된 이메일로 가입한 회원이 있는지 여부 체크 메서드
-   * @param userEmail 수신할 이메일 주소
-   */
-  private void isExistUsername(String userEmail) {
+
+  @Override
+  public void isExistUsername(String userEmail) {
     if (userRepository.existsByUsername(userEmail)) {
       throw new IllegalArgumentException("중복된 이메일로 가입한 내역이 존재합니다.");
     }
   }
 
-  /**
-   * 이메일 제목 밑 내용을 설정하는 메서드
-   * @param userEmail 인증할 이메일 주소
-   * @param password 인증번호
-   * @return MimeMessagePreparator 타입의 객체
-   * @throws Exception
-   */
+
+  @Override
   @Async
-  public MimeMessagePreparator setEmailText(String userEmail, String password) throws Exception {
+  public MimeMessagePreparator setEmailText(String userEmail, String password){
     // 이메일 내용 설정
     return mimeMessage -> {
       MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -100,22 +92,11 @@ public class EmailCheckService {
       messageHelper.setSubject("[코끼리] " + " Email 인증을 진행해주세요. ");
       messageHelper.setText(setMailMessage(userEmail,password),true);
     };
-/*
-    try {
-      javaMailSender.send(messagePreparator);
-      return ResponseEntity.ok("이메일 전송 완료");
-    } catch (MailException e) {
-      e.printStackTrace();
-      throw new Exception("메일 보내는 도중 오류 발생");
-    }*/
   }
 
-  /**
-   * 이메일 내용 설정하는 메서드
-   * @param sendTo 인증 절차를 밟을 이메일 주소
-   * @param password 인증 번호
-   * @return
-   */
+
+
+  @Override
   public String setMailMessage(String sendTo, String password) {
     String msg = "";
     msg += "<html><body style='font-family: Arial, sans-serif; background-color: #ffffff; margin: 0; padding: 0; text-align: center;'>";

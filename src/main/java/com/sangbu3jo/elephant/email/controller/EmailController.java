@@ -2,7 +2,7 @@ package com.sangbu3jo.elephant.email.controller;
 
 import com.sangbu3jo.elephant.email.dto.EmailAuthRequestDto;
 import com.sangbu3jo.elephant.email.dto.EmailUserDto;
-import com.sangbu3jo.elephant.email.service.EmailCheckService;
+import com.sangbu3jo.elephant.email.service.EmailCheckServiceImpl;
 import com.sangbu3jo.elephant.email.service.EmailService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmailController {
 
     private final EmailService emailService;
-    private final EmailCheckService emailCheckService;
+    private final EmailCheckServiceImpl emailCheckService;
 
     // 사용자에게 초대링크 전송하기
     @PostMapping("/boards/{boardId}/invited")
@@ -35,7 +35,7 @@ public class EmailController {
     }
 
   /**
-   * 용자에게 이메일 인증을 위한 메일 전송 메서드
+   * 사용자에게 이메일 인증을 위한 메일 전송 메서드
    * @param userEmail 수신할 이메일 주소
    * @return 메일 수신에 따른 상태 코드값과 결과값
    */

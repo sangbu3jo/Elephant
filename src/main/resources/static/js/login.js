@@ -206,10 +206,12 @@ function checkEmail() {
       // 이메일 인증 성공했을 경우에 checked = true
       console.log("email check successful");
       checkBox.value = "true";
+      inputPassword.val("");
     } else {
       // fail
       console.log("email check failed");
       checkBox.value = "false";
+      inputPassword.val("");
     }
   });
 }

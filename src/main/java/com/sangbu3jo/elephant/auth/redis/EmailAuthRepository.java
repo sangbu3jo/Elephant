@@ -18,7 +18,7 @@ public class EmailAuthRepository {
   private final RedisTemplate redisTemplate;
 
   // 인증번호 만료시간
-  private final long EMAIL_PASSWORD_TIME = 60 * 3; // 3분
+  private final long EMAIL_PASSWORD_TIME = 60 * 5; // 5분
 
   public void save(final EmailAuth emailAuth) {
     ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
