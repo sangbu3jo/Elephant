@@ -68,10 +68,14 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/main").permitAll()
-                        .requestMatchers("/view/**").permitAll() // viewLoad URI 요청 모두 허가
-                        .requestMatchers("/api/**").permitAll() // 회원가입, 로그인으로 시작하는 요청 모두 접근 허가
+                        .requestMatchers(HttpMethod.GET,"/").permitAll() // index.html 페이지 접근 허가
+                        .requestMatchers(HttpMethod.GET,"/main").permitAll() // 메인 페이지 접근 허가
+                        .requestMatchers(HttpMethod.GET,"/api/auth/login-page").permitAll() // 로그인 페이지 접근 허가
+                        .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll() // 로그인 요청 허가
+                        .requestMatchers(HttpMethod.POST,"/api/auth/signup").permitAll() // 회원가입 요청 허가
+                        .requestMatchers("/api/auth/email/**").permitAll() // 회원가입 시 이메일 인증 접근 허가
+                        .requestMatchers(HttpMethod.GET,"/api/auth/*/callback").permitAll() // 소셜 로그인 url 접근 허가
+                        .requestMatchers(HttpMethod.GET,"/api/posts/categories/**").permitAll() // 카테고리별 조회 및 검색 접근 허가
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
