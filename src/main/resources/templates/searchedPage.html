@@ -132,9 +132,9 @@
       <div id="search-bar">
         <input type="text" id="search-input" placeholder="게시글 제목 검색"
                style="height: 34px; padding:10px;" th:value="${searchedTitle}">
-        <button onclick="searchByTitle()" style="
+        <button style="
                 background-color: #e6e6e6; color: #1a1313;
-                border:none; margin-left: 10px;" class="btn btn-primary">검색
+                border:none; margin-left: 10px;" class="btn btn-primary" th:onclick="'searchByTitle(\'' + ${category} + '\')'">검색
         </button>
       </div>
 
@@ -236,13 +236,9 @@
     window.location.replace("/api/post-page");
   });
 
-  //titlecontaing 검색
-  function searchByTitle() {
-    // 검색어 가져오기
-    const currentURL = new URL(window.location.href);
-    const category = currentURL.pathname.split('/')[4]; // 주소창에서 category값 받아오기
+  // 제목으로 게시글 검색
+  function searchByTitle(category) {
     const searchInput = document.getElementById("search-input").value;
-    console.log(category);
 
     // 검색 결과 페이지로 이동
     window.location.replace("/api/posts/categories/" + category + "/titles?title=" + searchInput);
