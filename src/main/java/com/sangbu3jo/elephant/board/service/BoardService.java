@@ -166,10 +166,12 @@ public class BoardService {
         String notificationContent = user.getNickname() + "님이 \"" + board.getTitle() + "\" 프로젝트에 참여하셨습니다.";
 
         List<BoardUser> boardUsers = boardUserRepository.findAllByBoardId(boardId);
-        for(BoardUser boardUsers2 : boardUsers){
-            User members = boardUsers2.getUser();
-            if(!members.getId().equals(user.getId())){
-                notificationService.addUserAndSendNotification(members.getId(), boardId, notificationContent);
+        if (boardUsers.size() > 0) {
+            for(BoardUser boardUsers2 : boardUsers){
+                User members = boardUsers2.getUser();
+                if(!members.getId().equals(user.getId())){
+                    notificationService.addUserAndSendNotification(members.getId(), boardId, notificationContent);
+                }
             }
         }
 

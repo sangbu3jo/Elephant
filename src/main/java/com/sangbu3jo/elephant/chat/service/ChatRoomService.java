@@ -248,7 +248,8 @@ public class ChatRoomService {
         }
 
         // 해당 채팅방에서 유저 삭제
-        groupChatRoom.getGroupChatUsers().remove(groupChatUser);
+        groupChatRoom.removeGroupChatUser(groupChatUser.get());
+        log.info(String.valueOf(groupChatRoom.getGroupChatUsers().size()));
         // 레파지토리에서 유저 삭제
         groupChatUserRepository.delete(groupChatUser.get());
 

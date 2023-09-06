@@ -225,6 +225,21 @@
 </body>
 <script>
 
+    let url = window.location.pathname;
+    let id = url.replace("/api/boards/", "");
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-center',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
     $(document).ready(function () {
         // 메뉴 버튼을 클릭하면 슬라이드 메뉴를 나타내거나 숨깁니다.
         $("#menuButton").click(function () {
@@ -234,21 +249,17 @@
 
     const gotoChatButton = document.getElementById('gotoChat');
     gotoChatButton.addEventListener('click', () => {
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/", "");
-        window.location.href = `http://localhost:8080/api/chat/${id}`
+        window.location.href = `/api/chat/${id}`
     })
 
     const gotoCalendarButton = document.getElementById('gotoCalendar');
     gotoCalendarButton.addEventListener('click', () => {
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/", "");
-        window.location.href = `http://localhost:8080/api/boards/calendar/${id}`
+        window.location.href = `/api/boards/calendar/${id}`
     })
 
     const gotoBoardsButton = document.getElementById('gotoBoards');
     gotoBoardsButton.addEventListener('click', () => {
-        window.location.href = `http://localhost:8080/api/boards`;
+        window.location.href = `/api/boards`;
     })
 
     // 초대 하기
@@ -266,9 +277,6 @@
 
         console.log(selectedResultsJSON);
 
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/", "");
-
         $.ajax({
             method: "POST",
             url: `/api/boards/${id}/invited`,
@@ -281,27 +289,14 @@
                 // 모달을 닫는 코드 추가
                 $("#inviteModal").modal("hide");
 
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'center-center',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-
                 Toast.fire({
                     icon: 'success',
                     title: '사용자 초대 완료 !'
                 }).then(() => {
-                    window.location.href = `http://localhost:8080/api/boards/${id}`;
+                    window.location.href = `/api/boards/${id}`;
                 });
             },
             error: function (data) {
-                console.log("실패");
             }
         })
 
@@ -316,42 +311,18 @@
             type: "DELETE",
             url: `/api/boards/${boardId}/member`,
             success: function () {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'center-center',
-                    showConfirmButton: false,
-                    timer: 1000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-
                 Toast.fire({
                     icon: 'success',
                     title: '프로젝트 떠나기! 안녕히 가세요 ~'
                 }).then(() => {
-                    window.location.href = `http://localhost:8080/api/boards`;
+                    window.location.href = `/api/boards`;
                 });
             }, error: function () {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'center-center',
-                    showConfirmButton: false,
-                    timer: 1000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                })
-
                 Toast.fire({
                     icon: 'error',
                     title: '매니저는 프로젝트를 떠날 수 없습니다'
                 }).then(() => {
-                    window.location.href = `http://localhost:8080/api/boards/${boardId}`;
+                    window.location.href = `/api/boards/${boardId}`;
                 });
             }
         })
@@ -378,11 +349,6 @@
             group: 'list-card',
             animation: 150,
             onEnd: async (evt) => {
-                console.log('카드 이동');
-                console.log('카드 ID:', evt.item.dataset.cardId);
-                console.log('새 컬럼 ID:', evt.item.parentElement.dataset.columnId);
-                console.log('새 위치:', evt.newIndex);
-
                 var cardId = evt.item.dataset.cardId;
                 var cardcolumnId = evt.item.parentElement.dataset.columnId;
                 var cardnewIndex = evt.newIndex;
@@ -396,22 +362,8 @@
                         cardOrder: cardnewIndex
                     }),
                     success: function () {
-                        console.log("success");
                         window.location.reload();
                     }, error: function () {
-                        console.log("error");
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'center-center',
-                            showConfirmButton: false,
-                            timer: 1000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
-                        })
-
                         Toast.fire({
                             icon: 'error',
                             title: '카드 이동 오류'
@@ -419,7 +371,6 @@
                             window.location.reload();
                         });
                     }
-
                 })
             }
         });
@@ -433,18 +384,9 @@
         ghostClass: 'ghost',
         onStart: function (event) {
             fromColumnId = event.from.querySelector(".ghost").getAttribute("data-column-id");
-            console.log("From Column ID: ", fromColumnId);
         },
         onEnd: function (event) {
             const newIndex = Array.from(event.to.children).indexOf(event.item);
-            console.log("At Index:", newIndex);
-
-            // 서버로 데이터 전송하는 함수 호출 (이 부분을 실제 서버 요청 코드로 대체해야 함)
-            let url = window.location.href;
-            let id = url.replace("http://localhost:8080/api/boards/", "");
-            console.log("Board ID: ", id);
-
-            // 여기에 서버 요청 코드를 추가
             $.ajax({
                 type: "PATCH",
                 url: `/api/boards/${id}/columns/${fromColumnId}`,
@@ -457,18 +399,6 @@
                     window.location.reload();
                 },
                 error: function () {
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'center-center',
-                        showConfirmButton: false,
-                        timer: 1000,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.addEventListener('mouseenter', Swal.stopTimer)
-                            toast.addEventListener('mouseleave', Swal.resumeTimer)
-                        }
-                    })
-
                     Toast.fire({
                         icon: 'error',
                         title: '컬럼 이동 오류'
@@ -483,21 +413,15 @@
 
     // 각 컬럼을 삭제하는 함수
     function deleteColumn(columnId) {
-        // id는 cardid값임
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/", "");
-        console.log(id);
-        console.log(columnId);
-
         $.ajax({
             type:"DELETE",
             url:`/api/boards/${id}/columns/${columnId}`,
             contentType:"application/json",
             success: function () {
-                window.location.href = `http://localhost:8080/api/boards/${id}`;
+                window.location.href = `/api/boards/${id}`;
             },
             error: function () {
-                window.location.href = `http://localhost:8080/api/boards/${id}`;
+                window.location.href = `/api/boards/${id}`;
             }
         })
     }
@@ -521,11 +445,6 @@
         boardTitle.textContent = boardEditInput.value;
         const title = boardEditInput.value;
 
-        // id는 postid값임
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/", "");
-        console.log(id);
-
         // 서버쪽으로 수정 내용 전달할 코드 추가하기
         $.ajax({
             type: "PUT",
@@ -533,11 +452,15 @@
             contentType: "application/json",
             data: JSON.stringify({title: title}),
             success: function () {
-                window.location.href = `http://localhost:8080/api/boards/${id}`
+                window.location.href = `/api/boards/${id}`
             },
             error: function () {
-                alert("수정 실패");
-                window.location.href = `http://localhost:8080/api/boards/${id}`
+                Toast.fire({
+                    icon: 'error',
+                    title: '수정 실패'
+                }).then(() => {
+                    window.location.href = `/api/boards/${id}`
+                });
             }
         })
     });
@@ -559,19 +482,12 @@
         });
 
         inputElement.addEventListener('blur', () => {
-            // id는 postid값임
-            let url = window.location.href;
-            let id = url.replace("http://localhost:8080/api/boards/", "");
-            console.log(id);
-
             buttonElement.style.display = 'block';
             columnTitle.style.display = 'block';
             inputElement.style.display = 'none';
             columnTitle.textContent = inputElement.value;
             // 반영된 내용을 서버쪽으로 보내는 코드 필요
             const inputId = inputElement.getAttribute('id'); // id 속성에 columnId를 담아줄 것 (그 id를 서버쪽으로 보내야 함)
-            console.log(inputElement.value);
-            console.log('Input ID:', inputId);
 
             $.ajax({
                 type: "PUT",
@@ -581,11 +497,15 @@
                     title: inputElement.value
                 }),
                 success: function () {
-                    window.location.href = `http://localhost:8080/api/boards/${id}`
+                    window.location.href = `/api/boards/${id}`
                 },
                 error: function () {
-                    alert("Error!");
-                    window.location.href = `http://localhost:8080/api/boards/${id}`
+                    Toast.fire({
+                        icon: 'error',
+                        title: '수정 실패'
+                    }).then(() => {
+                        window.location.href = `/api/boards/${id}`
+                    });
                 }
             })
         });
@@ -616,13 +536,6 @@
         addColumnBtn.style.display = 'block';
         columnNameInput.style.display = 'none';
 
-        // 콘솔에 input 요소의 내용을 표시합니다.
-        console.log('입력한 내용:', inputValue);
-
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/", "");
-        console.log(id);
-
         // 보드 id만 담아서 넘겨주면 될듯 ?
         $.ajax({
             type: "POST",
@@ -632,11 +545,15 @@
                 title: inputValue
             }),
             success: function () {
-                window.location.href = `http://localhost:8080/api/boards/${id}`;
+                window.location.href = `/api/boards/${id}`;
             },
             error: function () {
-                alert("컬럼 추가 Error");
-                window.location.href = `http://localhost:8080/api/boards/${id}`;
+                Toast.fire({
+                    icon: 'error',
+                    title: '추가 실패'
+                }).then(() => {
+                    window.location.href = `/api/boards/${id}`
+                });
             }
         })
     });
@@ -675,34 +592,23 @@
             const columnCardsContainer = column.querySelector('.list-cards');
             columnCardsContainer.appendChild(newCard);
 
-            const id = addCardButton.closest('.add-a-card').id;
-
-            // 컬럼의 id 값을 콘솔에 출력
-            console.log(`컬럼 아이디: ${id}`);
-
-            // // 보드 id 값을 콘솔에 출력
-            let url = window.location.href;
-            let boardid = url.replace("http://localhost:8080/api/boards/", "");
-            console.log(boardid);
+            const columnId = addCardButton.closest('.add-a-card').id;
 
             // 카드 생성을 알리는 서버쪽 코드 추가
-            // 반드시 새로고침하기 (아니면 카드 id가 안생김)
             $.ajax({
                 type: "POST",
-                url: `/api/columns/${id}/cards`,
+                url: `/api/columns/${columnId}/cards`,
                 contentType: "application/json",
                 data: JSON.stringify({
                     title : title,
                     content : content
                 }),
                 success: function () {
-                    window.location.href = `http://localhost:8080/api/boards/${boardid}`;
+                    window.location.href = `/api/boards/${id}`;
                 }, error: function () {
-                    window.location.href = `http://localhost:8080/api/boards/${boardid}`;
+                    window.location.href = `/api/boards/${id}`;
                 }
             })
-
-
         });
     });
 
@@ -720,7 +626,6 @@
 
 
     // 유저 검색하는 부분
-
     // 선택한 결과를 저장하는 배열
     var selectedResults = [];
 
@@ -810,9 +715,7 @@
 
     const gotoGameButton = document.getElementById('gotoMiniGame');
     gotoGameButton.addEventListener('click', () => {
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/", "");
-        window.location.href = `http://localhost:8080/api/minigame/${id}`
+        window.location.href = `/api/minigame/${id}`
     })
 
 </script>

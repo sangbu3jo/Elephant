@@ -9,6 +9,8 @@ import com.sangbu3jo.elephant.board.repository.BoardRepository;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUserRoleEnum;
 import com.sangbu3jo.elephant.boarduser.repository.BoardUserRepository;
+import com.sangbu3jo.elephant.chat.entity.ChatRoom;
+import com.sangbu3jo.elephant.chat.entity.ChatUser;
 import com.sangbu3jo.elephant.chat.repository.ChatRoomRepository;
 import com.sangbu3jo.elephant.chat.repository.ChatUserRepository;
 import com.sangbu3jo.elephant.notification.service.NotificationService;
@@ -24,9 +26,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -81,7 +86,7 @@ class BoardServiceTest {
                 .title("미니프로젝트")
                 .content("한달 동안 미니프로젝트를 진행합니다")
                 .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
-        Board board = new Board(boardRequestDto);
+        Board board = makeBoard();
         var signupRequestDto = SignupRequestDto.builder()
                 .username("su@naver.com")
                 .password("password")
@@ -108,18 +113,8 @@ class BoardServiceTest {
     @DisplayName("프로젝트(보드) 수정 성공")
     void updateBoard() {
         // given
-        var boardRequestDto = BoardRequestDto.builder()
-                .title("미니프로젝트")
-                .content("한달 동안 미니프로젝트를 진행합니다")
-                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
-        Board board = new Board(boardRequestDto);
-        var signupRequestDto = SignupRequestDto.builder()
-                .username("su@naver.com")
-                .password("password")
-                .nickname("susu")
-                .introduction("Hi~").build();
-        String password = passwordEncoder.encode(signupRequestDto.getPassword());
-        User user = new User(signupRequestDto, password, UserRoleEnum.USER);
+        Board board = makeBoard();
+        User user = makeUser();
         BoardUser boardUser = new BoardUser(board, user, BoardUserRoleEnum.MANAGER);
 
         var updateboardRequestDto = BoardRequestDto.builder()
@@ -141,23 +136,12 @@ class BoardServiceTest {
     }
 
     @Test
-    @DisplayName("프로젝트(보드) 삭제 성공")
+    @DisplayName("프로젝트(보드) 삭제 (채팅방 없음) 성공")
     void deleteBoard() {
         // given
-        var boardRequestDto = BoardRequestDto.builder()
-                .title("미니프로젝트")
-                .content("한달 동안 미니프로젝트를 진행합니다")
-                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
-        Board board = new Board(boardRequestDto);
-        var signupRequestDto = SignupRequestDto.builder()
-                .username("su@naver.com")
-                .password("password")
-                .nickname("susu")
-                .introduction("Hi~").build();
-        String password = passwordEncoder.encode(signupRequestDto.getPassword());
-        User user = new User(signupRequestDto, password, UserRoleEnum.USER);
+        Board board = makeBoard();
+        User user = makeUser();
         BoardUser boardUser = new BoardUser(board, user, BoardUserRoleEnum.MANAGER);
-
 
         // when
         when(boardRepository.findById(any(Long.class))).thenReturn(Optional.of(board));
@@ -169,11 +153,107 @@ class BoardServiceTest {
         verify(boardRepository, times(1)).delete(any(Board.class));
         verify(mongoTemplate, times(1)).getCollection(anyString());
     }
+
+    @Test
+    @DisplayName("프로젝트(보드) 삭제 (채팅방 있음) 성공")
+    void deleteBoardWithChat() {
+        // given
+        Board board = makeBoard();
+        User user = makeUser();
+        BoardUser boardUser = new BoardUser(board, user, BoardUserRoleEnum.MANAGER);
+        ChatRoom chatRoom = new ChatRoom(1L, board);
+        ChatUser chatUser = new ChatUser(user.getUsername(), LocalDateTime.now());
+        chatUser.updateChatRoom(chatRoom);
+        board.updateChatRoom(chatRoom);
+
+        // when
+        when(boardRepository.findById(any(Long.class))).thenReturn(Optional.of(board));
+        when(boardUserRepository.findByBoardAndUser(any(Board.class), any(User.class))).thenReturn(Optional.of(boardUser));
+        when(mongoTemplate.getCollection(any(String.class))).thenReturn(null); // 컬렉션이 존재하지 않는 경우(채팅내역 X)
+        when(chatRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(chatRoom));
+        when(chatUserRepository.findAllByChatroom(any(ChatRoom.class))).thenReturn(List.of(chatUser));
+
+        boardService.deleteBoard(1L, user);
+
+        // then
+        verify(chatUserRepository, times(1)).deleteAll(List.of(chatUser));
+        verify(chatRoomRepository, times(1)).delete(any(ChatRoom.class));
+        verify(boardRepository, times(1)).delete(any(Board.class));
+        verify(mongoTemplate, times(1)).getCollection(anyString());
+    }
     
     @Test
-    @DisplayName("프로젝트(보드)에 유저 초대 성공")
+    @DisplayName("프로젝트(보드)에 유저 초대(로그인 X) 성공")
     void inviteUser() {
+        // given
+        User user = makeUser();
+        Board board = makeBoard();
+        BoardUser boardUser = new BoardUser(board, user, BoardUserRoleEnum.MANAGER);
 
+        // when
+        when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(user));
+        when(boardRepository.findById(any(Long.class))).thenReturn(Optional.of(board));
+        when(boardUserRepository.findByBoardAndUser(any(Board.class), any(User.class))).thenReturn(Optional.ofNullable(null));
+        when(boardUserRepository.save(any(BoardUser.class))).thenReturn(boardUser);
+        when(boardUserRepository.findAllByBoardId(any(Long.class))).thenReturn(List.of());
+        String result = boardService.inviteUser(null, 1L, user.getUsername());
+
+        // then
+        assert result.equals("login-page");
+    }
+
+    @Test
+    @DisplayName("프로젝트(보드) 떠나기 - 매니저")
+    void leaveBoard() {
+        // given
+        User user = makeUser();
+        Board board = makeBoard();
+        BoardUser boardUser = new BoardUser(board, user, BoardUserRoleEnum.MANAGER);
+
+        // when
+        when(boardRepository.findById(any(Long.class))).thenReturn(Optional.of(board));
+        when(boardUserRepository.findByBoardAndUser(board, user)).thenReturn(Optional.of(boardUser));
+        ResponseEntity<String> response = boardService.leaveBoard(user, 1L);
+
+        // then
+        assert response.getStatusCode().value() == 400;
+    }
+    
+    @Test
+    @DisplayName("프로젝트(보드) 떠나기 - 멤버")
+    void leaveBoardUser() {
+        // given
+        User user = makeUser();
+        Board board = makeBoard();
+        BoardUser boardUser = new BoardUser(board, user, BoardUserRoleEnum.MEMBER);
+
+        // when
+        when(boardRepository.findById(any(Long.class))).thenReturn(Optional.of(board));
+        when(boardUserRepository.findByBoardAndUser(board, user)).thenReturn(Optional.of(boardUser));
+        ResponseEntity<String> response = boardService.leaveBoard(user, 1L);
+
+        // then
+        assert response.getStatusCode().value() == 200;
+    }
+
+    public User makeUser() {
+        var signupRequestDto = SignupRequestDto.builder()
+                .username("su@naver.com")
+                .password("password")
+                .nickname("susu")
+                .introduction("Hi~").build();
+        String password = passwordEncoder.encode(signupRequestDto.getPassword());
+        User user = new User(signupRequestDto, password, UserRoleEnum.USER);
+        return user;
+    }
+
+    public Board makeBoard() {
+        var boardRequestDto = BoardRequestDto.builder()
+                .title("미니프로젝트")
+                .content("한달 동안 미니프로젝트를 진행합니다")
+                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
+        Board board = new Board(boardRequestDto);
+        return board;
     }
 
 

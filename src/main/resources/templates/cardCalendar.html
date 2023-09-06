@@ -35,25 +35,22 @@
 <div class="bottom">
     <div id='calendar'></div>
 </div>
-
-
 </body>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/calendar/", "");
 
+    let url = window.location.pathname;
+    let id = url.replace("/api/boards/calendar/", "");
+
+    document.addEventListener("DOMContentLoaded", () => {
         $.ajax({
             type: "GET",
             url: `/api/boards/${id}/cards`,
             success: function(data) {
-                // 성공적으로 데이터를 가져왔을 때의 처리
                 initializeCalendar(data); // 데이터를 전달하여 달력 초기화 함수를 호출
             },
             error: function(error) {
-                // 오류 처리
-                console.error("데이터 가져오기 실패:", error);
+
             }
         });
 
@@ -70,9 +67,7 @@
 
     const leaveBtn = document.getElementById('leaveButton');
     leaveBtn.addEventListener('click' , () => {
-        let url = window.location.href;
-        let id = url.replace("http://localhost:8080/api/boards/calendar/", "");
-        window.location.href = `http://localhost:8080/api/boards/${id}`
+        window.location.href = `/api/boards/${id}`
     })
 
     // 카드 클릭 시 상세 페이지로 이동

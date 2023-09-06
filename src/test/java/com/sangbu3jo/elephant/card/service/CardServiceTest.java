@@ -77,31 +77,13 @@ class CardServiceTest {
     @DisplayName("카드 생성 성공")
     void createCard() {
         // given
-        var boardRequestDto = BoardRequestDto.builder()
-                .title("미니프로젝트")
-                .content("한달 동안 미니프로젝트를 진행합니다")
-                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
-        Board board = new Board(boardRequestDto);
-
-        var columnsRequestDto = ColumnsRequestDto.builder()
-                .title("To Do").build();
-        Columns columns = new Columns(columnsRequestDto, board, 0);
-
+        Board board = board();
+        Columns columns = columns(board);
         var cardRequestDto = CardRequestDto.builder()
                 .title("와이어프레임").content("전반적인 와이어프레임을 만들어봅시다").expiredAt(LocalDate.ofEpochDay(2023-9-05)).build();
+        Card card = card(columns, 0);
 
-        Card card = new Card(cardRequestDto, columns, 0);
-
-        LocalDate today = LocalDate.now();
-        Period period = Period.between(today, LocalDate.ofEpochDay(2023-9-05));
-        String Dday = null;
-        if (period.isNegative()) {
-            Dday = "종료";
-        } else if (period.isZero()) {
-            Dday = "D-Day";
-        } else {
-            Dday = "D-" + period.getDays();
-        }
+        String Dday = time();
 
         // when
         when(columnsRepository.findById(any(Long.class))).thenReturn(Optional.of(columns));
@@ -117,34 +99,13 @@ class CardServiceTest {
     @DisplayName("카드 수정 성공")
     void updateCard() {
         // given
-        var boardRequestDto = BoardRequestDto.builder()
-                .title("미니프로젝트")
-                .content("한달 동안 미니프로젝트를 진행합니다")
-                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
-        Board board = new Board(boardRequestDto);
-
-        var columnsRequestDto = ColumnsRequestDto.builder()
-                .title("To Do").build();
-        Columns columns = new Columns(columnsRequestDto, board, 0);
-
-        var cardRequestDto = CardRequestDto.builder()
-                .title("와이어프레임").content("전반적인 와이어프레임을 만들어봅시다").expiredAt(LocalDate.ofEpochDay(2023-9-05)).build();
-
-        Card card = new Card(cardRequestDto, columns, 0);
-
+        Board board = board();
+        Columns columns = columns(board);
+        Card card = card(columns, 0);
         var updateCardRequestDto = CardRequestDto.builder()
                 .title("와이어프레임").content("와이어프레임 피그마에서 만들어봅시다").expiredAt(LocalDate.ofEpochDay(2023-9-06)).build();
 
-        LocalDate today = LocalDate.now();
-        Period period = Period.between(today, LocalDate.ofEpochDay(2023-9-06));
-        String Dday = null;
-        if (period.isNegative()) {
-            Dday = "종료";
-        } else if (period.isZero()) {
-            Dday = "D-Day";
-        } else {
-            Dday = "D-" + period.getDays();
-        }
+        String Dday = time();
 
         // when
         when(cardRepository.findById(any(Long.class))).thenReturn(Optional.of(card));
@@ -159,20 +120,9 @@ class CardServiceTest {
     @DisplayName("카드 삭제 성공")
     void deleteCard() {
         // given
-        var boardRequestDto = BoardRequestDto.builder()
-                .title("미니프로젝트")
-                .content("한달 동안 미니프로젝트를 진행합니다")
-                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
-        Board board = new Board(boardRequestDto);
-
-        var columnsRequestDto = ColumnsRequestDto.builder()
-                .title("To Do").build();
-        Columns columns = new Columns(columnsRequestDto, board, 0);
-
-        var cardRequestDto = CardRequestDto.builder()
-                .title("와이어프레임").content("전반적인 와이어프레임을 만들어봅시다").expiredAt(LocalDate.ofEpochDay(2023-9-05)).build();
-
-        Card card = new Card(cardRequestDto, columns, 0);
+        Board board = board();
+        Columns columns = columns(board);
+        Card card = card(columns, 0);
 
         columns.addCard(card);
 
@@ -188,21 +138,9 @@ class CardServiceTest {
     @DisplayName("카드 담당자 변경 성공")
     void updateCardUser() {
         // given
-        var boardRequestDto = BoardRequestDto.builder()
-                .title("미니프로젝트")
-                .content("한달 동안 미니프로젝트를 진행합니다")
-                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
-        Board board = new Board(boardRequestDto);
-
-        var columnsRequestDto = ColumnsRequestDto.builder()
-                .title("To Do").build();
-        Columns columns = new Columns(columnsRequestDto, board, 0);
-
-        var cardRequestDto = CardRequestDto.builder()
-                .title("와이어프레임").content("전반적인 와이어프레임을 만들어봅시다").expiredAt(LocalDate.ofEpochDay(2023-9-05)).build();
-
-        Card card = new Card(cardRequestDto, columns, 0);
-
+        Board board = board();
+        Columns columns = columns(board);
+        Card card = card(columns, 0);
         columns.addCard(card);
 
         var signupRequestDto = SignupRequestDto.builder()
@@ -259,14 +197,75 @@ class CardServiceTest {
     }
 
     @Test
+    @DisplayName("카드 순서 이동(다른 빈 컬럼으로) 성공")
+    void changeCardOrderAndColumns() {
+        // given
+        Columns columns = mock(Columns.class);
+        Columns columns2 = mock(Columns.class);
+        Card card = card(columns, 0);
+        Card card2 = card(columns, 1);
+        card.updateId(1L);
+        card2.updateId(2L);
+        columns.addCard(card);
+        columns.addCard(card2);
+
+        CardOrderRequestDto cardOrderRequestDto = CardOrderRequestDto.builder()
+                .columnId(2L).cardOrder(0).build();
+
+        // when
+        when(cardRepository.findById(any(Long.class))).thenReturn(Optional.of(card2));
+        when(columns.getId()).thenReturn(1L);
+        when(columns2.getId()).thenReturn(2L);
+        when(columnsRepository.findById(1L)).thenReturn(Optional.of(columns));
+        when(columnsRepository.findById(2L)).thenReturn(Optional.of(columns2));
+        when(cardRepository.findAllByColumnsOrderByCardOrder(columns)).thenReturn(List.of(card));
+        when(cardRepository.findAllByColumnsOrderByCardOrder(columns2)).thenReturn(List.of(card2));
+        cardService.changeCardOrder(2L, cardOrderRequestDto);
+
+        // then
+        verify(columnsRepository, times(2)).save(any(Columns.class));
+        verify(cardRepository, times(2)).save(any(Card.class));
+    }
+
+    @Test
+    @DisplayName("카드 순서 이동(다른 컬럼으로) 성공")
+    void changeCardOrderAndColumns2() {
+        // given
+        Columns columns = mock(Columns.class);
+        Columns columns2 = mock(Columns.class);
+        Card card = card(columns, 0);
+        Card card2 = card(columns, 1);
+        Card card3 = card(columns2, 0);
+        card.updateId(1L);
+        card2.updateId(2L);
+        card3.updateId(3L);
+        columns.addCard(card);
+        columns.addCard(card2);
+        columns2.addCard(card3);
+
+        CardOrderRequestDto cardOrderRequestDto = CardOrderRequestDto.builder()
+                .columnId(2L).cardOrder(0).build();
+
+        // when
+        when(cardRepository.findById(any(Long.class))).thenReturn(Optional.of(card));
+        when(columns.getId()).thenReturn(1L);
+        when(columns2.getId()).thenReturn(2L);
+        when(columnsRepository.findById(1L)).thenReturn(Optional.of(columns));
+        when(columnsRepository.findById(2L)).thenReturn(Optional.of(columns2));
+        when(cardRepository.findAllByColumnsOrderByCardOrder(columns)).thenReturn(List.of(card2));
+        when(cardRepository.findAllByColumnsOrderByCardOrder(columns2)).thenReturn(List.of(card, card3));
+        cardService.changeCardOrder(2L, cardOrderRequestDto);
+
+        // then
+        verify(columnsRepository, times(2)).save(any(Columns.class));
+        verify(cardRepository, times(3)).save(any(Card.class));
+    }
+
+    @Test
     @DisplayName("카드 유저 확인 성공")
     void findCardUsers() {
         // given
-        var boardRequestDto = BoardRequestDto.builder()
-                .title("미니프로젝트")
-                .content("한달 동안 미니프로젝트를 진행합니다")
-                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
-        Board board = new Board(boardRequestDto);
+        Board board = board();
         Columns columns = mock(Columns.class);
         var cardRequestDto = CardRequestDto.builder()
                 .title("와이어프레임").content("전반적인 와이어프레임을 만들어봅시다").expiredAt(LocalDate.ofEpochDay(2023-9-05)).build();
@@ -285,6 +284,41 @@ class CardServiceTest {
         // then
         assert users.get(0).getSelected().equals(true) && users.get(0).getUsername().equals(boardUser1.getUser().getUsername());
         assert users.get(1).getSelected().equals(false) && users.get(1).getUsername().equals(boardUser2.getUser().getUsername());
+    }
+
+    public Board board() {
+        var boardRequestDto = BoardRequestDto.builder()
+                .title("미니프로젝트")
+                .content("한달 동안 미니프로젝트를 진행합니다")
+                .expiredAt(LocalDate.ofEpochDay(2023-10-04)).build();
+        return new Board(boardRequestDto);
+    }
+
+    public Columns columns(Board board) {
+        var columnsRequestDto = ColumnsRequestDto.builder()
+                .title("To Do").build();
+        return new Columns(columnsRequestDto, board, 0);
+    }
+
+    public Card card(Columns columns, Integer order) {
+        var cardRequestDto = CardRequestDto.builder()
+                .title("와이어프레임").content("전반적인 와이어프레임을 만들어봅시다").expiredAt(LocalDate.ofEpochDay(2023-9-05)).build();
+
+        return new Card(cardRequestDto, columns, order);
+    }
+
+    public String time() {
+        LocalDate today = LocalDate.now();
+        Period period = Period.between(today, LocalDate.ofEpochDay(2023-9-05));
+        String Dday = null;
+        if (period.isNegative()) {
+            Dday = "종료";
+        } else if (period.isZero()) {
+            Dday = "D-Day";
+        } else {
+            Dday = "D-" + period.getDays();
+        }
+        return Dday;
     }
 
     public CardUser cardUser(Card card, String username, String password, String nickname, String introduction) {

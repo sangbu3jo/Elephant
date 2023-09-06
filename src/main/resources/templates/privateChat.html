@@ -83,8 +83,8 @@
     var username = '[[${username}]]';
     var nickname = '[[${nickname}]]';
 
-    let url = window.location.href;
-    let id = url.replace("http://localhost:8080/api/chatRooms/", "");
+    let url = window.location.pathname;
+    let id = url.replace("/api/chatRooms/", "");
     var chatRoomId = id;
 
     const goOutBtn = document.getElementById('goOutBtn');
@@ -94,8 +94,7 @@
 
     const leaveChatBtn = document.getElementById('leaveBtn');
     leaveChatBtn.addEventListener('click', () => {
-        // 요청을 보내고 나서 이동
-
+        // 떠나기 요청을 보내고 나서 이동
         $.ajax({
             type: "PUT",
             url: `/api/chatRooms/${chatRoomId}`,
@@ -107,9 +106,6 @@
                 console.log("요청 실패");
             }
         })
-
-
-        // window.location.href = "/api/chatRooms";
     })
 
     $(document).ready(function() {
