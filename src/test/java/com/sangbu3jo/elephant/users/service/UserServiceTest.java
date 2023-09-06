@@ -7,6 +7,8 @@ import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.entity.PostComment;
 import com.sangbu3jo.elephant.posts.repository.PostCommentRepository;
 import com.sangbu3jo.elephant.posts.repository.PostRepository;
+import com.sangbu3jo.elephant.posts.service.S3Service;
+import com.sangbu3jo.elephant.posts.service.S3UploaderService;
 import com.sangbu3jo.elephant.users.dto.ProfileRequestDto;
 import com.sangbu3jo.elephant.users.dto.UpdateUserCommentsDto;
 import com.sangbu3jo.elephant.users.dto.UpdateUserPostsDto;
@@ -40,6 +42,9 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private S3UploaderService s3UploaderService;
+
     private UserService userService;
 
     @BeforeEach
@@ -48,7 +53,7 @@ class UserServiceTest {
         MockitoAnnotations.openMocks(this);
 
         // UserService 초기화
-        userService = new UserService(userRepository,postRepository,postCommentRepository,passwordEncoder);
+        userService = new UserService(userRepository,postRepository,postCommentRepository,passwordEncoder,s3UploaderService);
     }
 
     @Test
@@ -62,7 +67,7 @@ class UserServiceTest {
         UserRepository userRepository = Mockito.mock(UserRepository.class);
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        UserService userService = new UserService(userRepository,postRepository,postCommentRepository,passwordEncoder);
+        UserService userService = new UserService(userRepository,postRepository,postCommentRepository,passwordEncoder,s3UploaderService);
 
         // when
         UserResponseDto userResponseDto = userService.getUserInfo(user);
@@ -87,7 +92,7 @@ class UserServiceTest {
         UserRepository userRepository = Mockito.mock(UserRepository.class);
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        UserService userService = new UserService(userRepository,postRepository,postCommentRepository,passwordEncoder);
+        UserService userService = new UserService(userRepository,postRepository,postCommentRepository,passwordEncoder,s3UploaderService);
 
         // when
         String result = userService.updateProfile(user, profileRequestDto);
@@ -109,7 +114,7 @@ class UserServiceTest {
         UserRepository userRepository = Mockito.mock(UserRepository.class);
         Mockito.when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        UserService userService = new UserService(userRepository,postRepository,postCommentRepository,passwordEncoder);
+        UserService userService = new UserService(userRepository,postRepository,postCommentRepository,passwordEncoder,s3UploaderService);
 
         // when
         String result = userService.signOut(user);

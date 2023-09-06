@@ -24,7 +24,7 @@
     <!-- 로고 -->
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"/>
 
-    <link rel="stylesheet" type="text/css"  href="/css/backUsers.css">
+    <link rel="stylesheet" type="text/css" href="/css/backUsers.css">
 
     <style>
 
@@ -47,7 +47,8 @@
     </div>
     <div class="middle">
         <!-- 가운데 코끼리 글씨 및 로고  -->
-        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
+        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
+             style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
         <div style="text-align: center; cursor:pointer;" onclick="gotoMain()">
             코끼리
         </div>
@@ -99,7 +100,8 @@
                 <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
 
                 <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a> <!--채팅 페이지 테스트 중-->
-                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a> <!--서버에서 admin 여부 true/false로 가져오기-->
+                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a>
+                <!--서버에서 admin 여부 true/false로 가져오기-->
 
 
             </div>
@@ -242,7 +244,7 @@
 
             // "전체 읽음" 버튼에 이벤트 리스너 연결
             const button = document.getElementById('markAllReadButton');
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 Swal.fire({
                     icon: "waning",
                     title: "알림 전체 읽음처리 하시겠습니까?"
@@ -312,11 +314,11 @@
             const unreadCount = notificationsList.filter(notification => !notification.read).length;
             if (unreadCount > 0) {
                 notificationIcon.classList.add('new-notification');
-                notificationBadge.style.display="inline";
+                notificationBadge.style.display = "inline";
                 notificationBadge.innerText = unreadCount.toString();
             } else {
                 notificationIcon.classList.remove('new-notification');
-                notificationBadge.style.display="none";
+                notificationBadge.style.display = "none";
                 // notificationBadge.innerText = '';
             }
         };
@@ -347,16 +349,17 @@
                 updateNotificationIcon();
             };
         });
+
         // 알림 전체 읽음 처리 함수
         function markAllNotificationsAsRead() {
             $.post(`/api/mark-all-notifications-as-read/${userId}`)
-                .done(function(response) {
+                .done(function (response) {
                     Toast.fire({
                         icon: 'success',
                         title: "전체 읽음 처리 되었습니다!",
                     })
                 })
-                .fail(function(response) {
+                .fail(function (response) {
                     Toast.fire({
                         icon: 'error',
                         title: "전체 읽음 처리 실패!",
@@ -1007,7 +1010,7 @@
                                 throw new Error('Failed to delete post');
                             }
                             return response.text();
-                            })
+                        })
                             .then(responseText => {
                                 Toast.fire({
                                     icon: 'success',
