@@ -12,18 +12,22 @@ import com.sangbu3jo.elephant.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
 
     @Mock
@@ -68,8 +72,7 @@ class AdminServiceTest {
         userList.add(user2);
         userList.add(user3);
 
-        UserRepository userRepository = Mockito.mock(UserRepository.class);
-        Mockito.when(userRepository.findAll()).thenReturn(userList);
+        when(userRepository.findAll()).thenReturn(userList);
 
         // when
         List<User> resultList = userRepository.findAll();
@@ -102,8 +105,7 @@ class AdminServiceTest {
         postList.add(post2);
         postList.add(post3);
 
-        PostRepository postRepository = Mockito.mock(PostRepository.class);
-        Mockito.when(postRepository.findAll()).thenReturn(postList);
+        when(postRepository.findAll()).thenReturn(postList);
 
         // when
         List<Post> resultList = postRepository.findAll();
@@ -133,8 +135,7 @@ class AdminServiceTest {
         postCommentList.add(postComment2);
         postCommentList.add(postComment3);
 
-        PostCommentRepository postCommentRepository = Mockito.mock(PostCommentRepository.class);
-        Mockito.when(postCommentRepository.findAll()).thenReturn(postCommentList);
+        when(postCommentRepository.findAll()).thenReturn(postCommentList);
 
         // when
         List<PostComment> resultList = postCommentRepository.findAll();
@@ -157,8 +158,7 @@ class AdminServiceTest {
         userToUpdate.setId(1L);
         userToUpdate.setRole(UserRoleEnum.USER);
 
-        UserRepository userRepository = Mockito.mock(UserRepository.class);
-        Mockito.when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(userToUpdate));
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(userToUpdate));
 
         AdminService adminService = new AdminService(userRepository, postRepository, postCommentRepository);
 
@@ -179,8 +179,7 @@ class AdminServiceTest {
         User userToDelete = new User();
         userToDelete.setId(1L);
 
-        UserRepository userRepository = Mockito.mock(UserRepository.class);
-        Mockito.when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(userToDelete));
+        when(userRepository.findById(1L)).thenReturn(java.util.Optional.of(userToDelete));
 
         AdminService adminService = new AdminService(userRepository, postRepository, postCommentRepository);
 
@@ -198,8 +197,7 @@ class AdminServiceTest {
         User adminUser = new User();
         adminUser.setRole(UserRoleEnum.ADMIN);
 
-        PostRepository postRepository = Mockito.mock(PostRepository.class);
-        Mockito.when(postRepository.findById(1L)).thenReturn(java.util.Optional.of(new Post()));
+        when(postRepository.findById(1L)).thenReturn(Optional.of(new Post()));
 
         AdminService adminService = new AdminService(userRepository, postRepository, postCommentRepository);
 
@@ -217,8 +215,7 @@ class AdminServiceTest {
         User adminUser = new User();
         adminUser.setRole(UserRoleEnum.ADMIN);
 
-        PostRepository postRepository = Mockito.mock(PostRepository.class);
-        Mockito.when(postRepository.findById(1L)).thenReturn(java.util.Optional.of(new Post()));
+        when(postRepository.findById(1L)).thenReturn(java.util.Optional.of(new Post()));
 
         AdminService adminService = new AdminService(userRepository, postRepository, postCommentRepository);
 
@@ -236,8 +233,7 @@ class AdminServiceTest {
         User adminUser = new User();
         adminUser.setRole(UserRoleEnum.ADMIN);
 
-        PostCommentRepository postCommentRepository = Mockito.mock(PostCommentRepository.class);
-        Mockito.when(postCommentRepository.findById(1L)).thenReturn(java.util.Optional.of(new PostComment()));
+        when(postCommentRepository.findById(1L)).thenReturn(Optional.of(new PostComment()));
 
         AdminService adminService = new AdminService(userRepository, postRepository, postCommentRepository);
 
@@ -255,8 +251,7 @@ class AdminServiceTest {
         User adminUser = new User();
         adminUser.setRole(UserRoleEnum.ADMIN);
 
-        PostCommentRepository postCommentRepository = Mockito.mock(PostCommentRepository.class);
-        Mockito.when(postCommentRepository.findById(1L)).thenReturn(java.util.Optional.of(new PostComment()));
+        when(postCommentRepository.findById(1L)).thenReturn(Optional.of(new PostComment()));
 
         AdminService adminService = new AdminService(userRepository, postRepository, postCommentRepository);
 
