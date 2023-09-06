@@ -53,23 +53,22 @@
 
 <script>
     // console.log = function() {};
-    // 이걸 쓰면 콘솔에서 아무런 내역이 출력되지 않는다고 한다.. 진짜인가;
-
+    // 이걸 쓰면 콘솔에서 아무런 내역이 출력되지 않는다고 한다
     // https://m.blog.naver.com/qjawnswkd/222283176175
     'use strict';
 
     var username = '[[${username}]]';
     var nickname = '[[${nickname}]]';
 
-    let url = window.location.href;
-    let id = url.replace("http://localhost:8080/api/chat/", "");
+    let url = window.location.pathname;
+    let id = url.replace("/api/chat/", "");
     var chatRoomId = id;
 
+    // 채팅방 뒤로가기
     const goOutBtn = document.getElementById('goOutBtn');
     goOutBtn.addEventListener('click', () => {
       window.location.href = '/api/boards/' + id;
     })
-
 
     $(document).ready(function() {
         onMessages();

@@ -63,12 +63,10 @@
 <script>
   const goOutBtn = document.getElementById('goOutButton');
   goOutBtn.addEventListener('click', () => {
-      let url = window.location.href;
-      let id = url.replace("http://localhost:8080/api/minigame/", "");
-      window.location.href = `http://localhost:8080/api/boards/${id}`
+      let url = window.location.pathname;
+      let id = url.replace("/api/minigame/", "");
+      window.location.href = `/api/boards/${id}`
   })
-
-
 
   const canvas = document.getElementById("game-board");
   const ctx = canvas.getContext("2d");
