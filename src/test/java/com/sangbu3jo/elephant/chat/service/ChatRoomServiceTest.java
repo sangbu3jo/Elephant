@@ -8,9 +8,8 @@ import com.sangbu3jo.elephant.boarduser.entity.BoardUser;
 import com.sangbu3jo.elephant.boarduser.entity.BoardUserRoleEnum;
 import com.sangbu3jo.elephant.chat.dto.ChatMessageRequestDto;
 import com.sangbu3jo.elephant.chat.dto.MessageType;
-import com.sangbu3jo.elephant.chat.entity.ChatMessage;
-import com.sangbu3jo.elephant.chat.entity.ChatRoom;
-import com.sangbu3jo.elephant.chat.entity.ChatUser;
+import com.sangbu3jo.elephant.chat.dto.PrivateChatMessageRequestDto;
+import com.sangbu3jo.elephant.chat.entity.*;
 import com.sangbu3jo.elephant.chat.repository.*;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
@@ -27,7 +26,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -139,56 +141,154 @@ class ChatRoomServiceTest {
     }
 
     @Test
-    @DisplayName("개인 채팅방 URL 반환 (새로 생성)")
+    @DisplayName("개인 채팅방 URL 반환 (1:1 새로 생성)")
     void findFirstPrivateChatRoom() {
-//        // given
-//        String firstUser = "aa@naver.com";
-//        String secondUser = "bb@gmail.com";
-//        PrivateChatRoom chatRoom = new PrivateChatRoom(firstUser, secondUser);
-//
-//        // when
-//        when(mongoTemplate.findOne(any(Query.class), eq(PrivateChatRoom.class))).thenReturn(null);
-//        when(mongoTemplate.save(any(PrivateChatRoom.class))).thenReturn(chatRoom);
-//        chatRoomService.findPrivateChatRoom(firstUser, secondUser);
-//
-//        // then
-//        verify(mongoTemplate, times(1)).save(any(PrivateChatRoom.class));
+        // given
+        User user = user("su@naver.com", "password", "susu","Hi?");
+        User user2 = user("ye@gmail.com", "password", "yeye", "hello");
+        ArrayList arrayList = new ArrayList<>();
+        arrayList.add(user2.getUsername());
+
+        // when
+        when(privateChatRoomRepository.findByUser1AndUser2(any(String.class), any(String.class))).thenReturn(Optional.ofNullable(null));
+        String result = chatRoomService.findPrivateChatRoom(user, arrayList);
+
+        // then
+        verify(privateChatRoomRepository, times(1)).save(any(PrivateChatRoom.class));
+        assert result.contains("/api/chatRooms/");
     }
 
     @Test
-    @DisplayName("개인 채팅방 URL 반환 (기존에 존재)")
+    @DisplayName("개인 채팅방 URL 반환 (1:1 기존에 존재)")
     void findPrivateChatRoom() {
-//        // given
-//        String firstUser = "aa@naver.com";
-//        String secondUser = "bb@gmail.com";
-//        PrivateChatRoom chatRoom = new PrivateChatRoom(firstUser, secondUser);
-//
-//        // when
-//        when(mongoTemplate.findOne(any(Query.class), eq(PrivateChatRoom.class))).thenReturn(chatRoom);
-//        String url = chatRoomService.findPrivateChatRoom(firstUser, secondUser);
-//
-//        // then
-//        assert url.equals("/api/chatRooms/" + chatRoom.getTitle());
+        // given
+        User user = user("su@naver.com", "password", "susu","Hi?");
+        User user2 = user("ye@gmail.com", "password", "yeye", "hello");
+        ArrayList arrayList = new ArrayList<>();
+        arrayList.add(user2.getUsername());
+        PrivateChatRoom privateChatRoom = new PrivateChatRoom(user.getUsername(), user2.getUsername());
+
+        // when
+        when(privateChatRoomRepository.findByUser1AndUser2(any(String.class), any(String.class))).thenReturn(Optional.of(privateChatRoom));
+        String result = chatRoomService.findPrivateChatRoom(user, arrayList);
+
+        // then
+        verify(privateChatRoomRepository, times(0)).save(any(PrivateChatRoom.class));
+        assert result.equals("/api/chatRooms/" + privateChatRoom.getTitle());
+    }
+
+    @Test
+    @DisplayName("단체 채팅방 URL 반환 (단체 채팅방 생성)")
+    void findPrivateGroupChatRoom() {
+        // given
+        User user = user("su@naver.com", "password", "susu","Hi?");
+        User user2 = user("ye@gmail.com", "password", "yeye", "hello");
+        User user3 = user("on@gmail.com", "password", "onon", "HEHE");
+        ArrayList arrayList = new ArrayList<>();
+        arrayList.add(user2.getUsername());
+        arrayList.add(user3.getUsername());
+
+        // when
+        when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(user2.getUsername())).thenReturn(Optional.of(user2));
+        when(userRepository.findByUsername(user3.getUsername())).thenReturn(Optional.of(user3));
+
+        String result = chatRoomService.findPrivateChatRoom(user, arrayList);
+
+        // then
+        verify(groupChatRoomRepository, times(1)).save(any(GroupChatRoom.class));
+        verify(userRepository, times(arrayList.size())).findByUsername(any(String.class));
+        verify(groupChatUserRepository, times(arrayList.size())).save(any(GroupChatUser.class));
+        assert result.contains("/api/chatRooms/");
     }
 
     @Test
     @DisplayName("개인 채팅 메세지 저장 성공")
     void savePrivateChatMessage() {
-//        // given
-//        String firstUser = "aa@naver.com";
-//        User user = user("aa@naver.com", "password", "aaaa","Hi?");
-//
-//        String secondUser = "bb@gmail.com";
-//        PrivateChatRoom chatRoom = new PrivateChatRoom(firstUser, secondUser);
-//        var chatMessageRequestDto = PrivateChatMessageRequestDto.builder()
-//                .title(chatRoom.getTitle()).username(user.getUsername()).nickname(user.getNickname()).type(MessageType.TALK).build();
-//        chatMessageRequestDto.setMessage("안녕하세요?");
-//
-//        // when
-//        chatRoomService.savePrivateChatMessage(chatMessageRequestDto);
-//
-//        // then
-//        verify(mongoTemplate, times(1)).save(any(PrivateChatMessage.class), eq(chatRoom.getTitle().toString()));
+        // given
+        User user = user("aa@naver.com", "password", "aaaa","Hi?");
+        PrivateChatRoom privateChatRoom = new PrivateChatRoom(user.getUsername(), "bb@naver.com");
+        var privateChatMessageRequestDto = PrivateChatMessageRequestDto.builder()
+                .username(user.getUsername()).nickname(user.getNickname())
+                .title(privateChatRoom.getTitle()).type(MessageType.TALK).message("안녕하세요?").build();
+
+        // when
+        when(userRepository.findByUsername(user.getUsername())).thenReturn(Optional.of(user));
+        chatRoomService.savePrivateChatMessage(privateChatMessageRequestDto);
+
+        // then
+        verify(userRepository, times(1)).findByUsername(user.getUsername());
+        verify(mongoTemplate, times(1)).save(any(PrivateChatMessage.class), eq(privateChatMessageRequestDto.getTitle()));
+    }
+
+    @Test
+    @DisplayName("개인 채팅방 (1:1) 판별 성공")
+    void findOutGroupChatRoom() {
+        // given
+        PrivateChatRoom privateChatRoom = new PrivateChatRoom("aa@gmail.com", "bb@naver.com");
+
+        // when
+        when(privateChatRoomRepository.findByTitle(privateChatRoom.getTitle())).thenReturn(Optional.of(privateChatRoom));
+        Boolean findOut = chatRoomService.findGroupOrPrivate(privateChatRoom.getTitle());
+
+        // then
+        assert findOut == false;
+    }
+
+
+    @Test
+    @DisplayName("개인 채팅방 (단체) 판별 성공")
+    void findOutPrivateChatRoom() {
+        // given
+        GroupChatRoom groupChatRoom = new GroupChatRoom();
+
+        // when
+        when(privateChatRoomRepository.findByTitle(groupChatRoom.getTitle())).thenReturn(Optional.ofNullable(null));
+        Boolean findOut = chatRoomService.findGroupOrPrivate(groupChatRoom.getTitle());
+
+        // then
+        assert findOut == true;
+    }
+
+    @Test
+    @DisplayName("개인 채팅방 (단체) 떠나기 성공 (아직 사람들 존재)")
+    void leaveGroupChatRoom() {
+        // given
+        GroupChatRoom groupChatRoom = new GroupChatRoom();
+        User user = user("su@naver.com", "password", "susu","Hi?");
+        User user2 = user("ye@gmail.com", "password", "yeye", "hello");
+        GroupChatUser groupChatUser = new GroupChatUser(user, LocalDateTime.now(), groupChatRoom);
+        GroupChatUser groupChatUser2 = new GroupChatUser(user2, LocalDateTime.now(), groupChatRoom);
+        groupChatRoom.addGroupChatUser(groupChatUser);
+        groupChatRoom.addGroupChatUser(groupChatUser2);
+
+        // when
+        when(groupChatRoomRepository.findByTitle(groupChatRoom.getTitle())).thenReturn(groupChatRoom);
+        when(groupChatUserRepository.findByUserAndGroupChatRoom(user, groupChatRoom)).thenReturn(Optional.of(groupChatUser));
+        chatRoomService.leavePrivateChatRoom(user, groupChatRoom.getTitle());
+
+        // then
+        verify(groupChatUserRepository, times(1)).delete(groupChatUser);
+        verify(groupChatRoomRepository, times(0)).delete(groupChatRoom);
+    }
+
+    @Test
+    @DisplayName("개인 채팅방 (단체) 떠나기 성공 (채팅방도 삭제)")
+    void leaveGroupChatRoomAndDeleteGroupChatRoom() {
+        // given
+        GroupChatRoom groupChatRoom = new GroupChatRoom();
+        User user = user("su@naver.com", "password", "susu","Hi?");
+        GroupChatUser groupChatUser = new GroupChatUser(user, LocalDateTime.now(), groupChatRoom);
+        groupChatRoom.addGroupChatUser(groupChatUser);
+
+        // when
+        when(groupChatRoomRepository.findByTitle(groupChatRoom.getTitle())).thenReturn(groupChatRoom);
+        when(groupChatUserRepository.findByUserAndGroupChatRoom(user, groupChatRoom)).thenReturn(Optional.of(groupChatUser));
+        chatRoomService.leavePrivateChatRoom(user, groupChatRoom.getTitle());
+
+        // then
+        verify(groupChatUserRepository, times(1)).delete(groupChatUser);
+        verify(groupChatRoomRepository, times(1)).delete(groupChatRoom);
     }
 
 

@@ -49,7 +49,10 @@ public class GroupChatRoom {
         this.groupChatUsers.add(groupChatUser);
     }
 
-
+    public void removeGroupChatUser(GroupChatUser groupChatUser) {
+        this.groupChatUsers.remove(groupChatUser);
+        groupChatUser.updatePrivateChatRoom(null); // 사용자의 채팅방 참조를 제거
+    }
 
 
 }
