@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
+    <script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!--Sortable-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+
+    <link rel="stylesheet" type="text/css"  href="/css/board.css">
+
+    <title>코끼리</title>
+
+    <style>
+
+    </style>
+</head>
+<body>
+<div id="stars-container"></div>
+
+<div class="header">
+    <div class="title1">
+        <h1 class="board-title" id="board-title" th:text="${board.title}">보드 이름</h1>
+        <input class="board-edit" style="display: none;" th:id="${board.id}">
+    </div>
+    <div class="title2">
+
+        <!--프로젝트 떠나기 모달창 -->
+        <div class="modal fade" th:id="'leaveboard'+${board.id}" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel" th:text="|프로젝트 : ${board.title}|"></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        프로젝트를 떠나시겠습니까?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-leave" th:onclick="'leaveBoard(\'' + ${board.id} + '\')'" >떠나기</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--프로젝트 떠나기 모달창 종료-->
+
+        <!-- 참여자 목록 -->
+        <button class="btn btn-light dropdown-toggle" type="button" id="toggleListButton"
+                data-bs-toggle="dropdown" aria-expanded="false"> 사용자 목록 </button>
+
+        <ul class="dropdown-menu" aria-labelledby="toggleListButton">
+            <!-- Thymeleaf를 사용하여 동적으로 리스트 아이템을 생성 -->
+            <li th:each="user : ${boardUsers}" class="dropdown-item" th:text="${user.username}">username</li>
+        </ul>
+
+        <!-- 초대 모달 창 -->
+        <div class="modal fade" id="inviteModal" tabindex="-1" aria-labelledby="inviteModallabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">프로젝트에 초대</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- 검색어 입력 창 -->
+                        <input type="text" id="searchInput" class="form-control" placeholder="아이디 혹은 닉네임 검색...">
+
+                        <!-- 검색 결과 목록 -->
+                        <ul id="searchResults" class="list-group mt-2">
+                            <!-- 검색 결과는 여기에 동적으로 추가될 것입니다. -->
+                        </ul>
+
+                        <!-- 선택한 결과를 표시할 곳 -->
+                        <div id="selectedResultsModal"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="inviteUsers">초대</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+            <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png" style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+        </div>
+
+        <button class="closebtn" type="button" id="gotoBoards">
+            <img src="https://cdn-icons-png.flaticon.com/128/10728/10728089.png" style="width: 30px; height: 30px;">
+        </button>
+
+        <div class="offcanvas offcanvas-start w-25" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+            <div class="offcanvas-header" style = "align-items:center;">
+                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel" style="color: #1a1515">
+                    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+                    코끼리
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action" id="leaveButton" data-bs-toggle="modal" th:data-bs-target="'#leaveboard'+${board.id}" >프로젝트 떠나기</a>
+                <a class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#inviteModal" >프로젝트에 초대</a>
+                <a class="list-group-item list-group-item-action" id="gotoCalendar" >달력 보기</a>
+                <a class="list-group-item list-group-item-action" id="gotoChat" >단체 채팅 하기</a>
+                <a class="list-group-item list-group-item-action" id="gotoMiniGame" >미니 게임</a>
+
+                <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
+                <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+                <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a> <!--채팅 페이지 테스트 중-->
+                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a> <!--서버에서 admin 여부 true/false로 가져오기-->
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!--컬럼과 카드-->
+<div class="bottom">
+    <div class="body-container">
+        <div class="content-container">
+            <div class="column-list-wrapper" th:data-column-id="${column.columnid}" th:each="column : ${columns}">
+                <div class="card list-content">
+                    <div class="column-title-box">
+                        <h2 class="column-title" th:text="${column.title}">보드컬럼명1</h2>
+                        <input class="column-edit" style="display: none;" th:id="${column.columnid}">
+                        <button class="delete-column" data-bs-toggle="modal" th:data-bs-target="'#ColumnBack'+${column.columnid}" >X</button>
+
+                        <!--컬럼 삭제 모달창 -->
+                        <div class="modal fade" th:id="'ColumnBack'+${column.columnid}" aria-labelledby="exampleModalLabell" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabell" th:text="|컬럼: ${column.title}|">컬럼</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        컬럼을 삭제하시겠습니까? 복구할 수 없습니다.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" th:onclick="'deleteColumn(\'' + ${column.columnid} + '\')'" >삭제</button>
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">취소</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--컬럼 삭제 모달창 종료-->
+                    </div>
+                    <div class="list-cards" th:data-column-id="${column.columnid}">
+                        <a class="card list-card" draggable="true" th:data-card-id="${card.cardid}"
+                           th:each="card: ${column.getCardResponseDtos()}" th:href="@{/api/cards/{cardid}(cardid=${card.cardid})}">
+                            <div class="list-card-date">
+                                <span class="list-card-dday" th:id="${card.cardid}" th:text="${card.dday}">마감일</span>
+                            </div>
+                            <div class="list-card-detail">
+                                <span class="list-card-title" th:id="${card.cardid}" th:text="${card.title}">카드</span>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="card-components">
+                        <a class="create-card-composer">
+                            <span class="icon-add">+</span>
+                            <span class="add-card" th:id="${column.columnid}"
+                                  data-bs-toggle="modal" th:data-bs-target="'#CardBack'+${column.columnid}">카드 추가</span>
+
+                            <!--카드 추가 모달창 -->
+                            <div class="modal fade" th:id="'CardBack'+${column.columnid}" aria-labelledby="exampleModalLabell" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModal3">카드 생성</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="recipient-namee" class="col-form-label">카드 이름</label>
+                                                <input type="text" class="form-control recipient-namee" id="recipient-namee">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="message-textt" class="col-form-label">카드 설명</label>
+                                                <textarea class="form-control message-textt" id="message-textt"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light add-a-card" th:id="${column.columnid}">추가</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--카드 추가 모달창 종료-->
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card column-list-wrapper-column-add">
+                <div class="add-board-column-box">
+                    <div class="add-board-column-btn-box">
+                        + <span class="icon-add">컬럼 추가</span>
+                    </div>
+                    <input class="board-column-name-input" id="board_column_name" placeholder="컬럼 이름" type="text">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+
+    let url = window.location.pathname;
+    let id = url.replace("/api/boards/", "");
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-center',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+    $(document).ready(function () {
+        // 메뉴 버튼을 클릭하면 슬라이드 메뉴를 나타내거나 숨깁니다.
+        $("#menuButton").click(function () {
+            $("#menuContainer").toggleClass("menu-open");
+        });
+    });
+
+    const gotoChatButton = document.getElementById('gotoChat');
+    gotoChatButton.addEventListener('click', () => {
+        window.location.href = `/api/chat/${id}`
+    })
+
+    const gotoCalendarButton = document.getElementById('gotoCalendar');
+    gotoCalendarButton.addEventListener('click', () => {
+        window.location.href = `/api/boards/calendar/${id}`
+    })
+
+    const gotoBoardsButton = document.getElementById('gotoBoards');
+    gotoBoardsButton.addEventListener('click', () => {
+        window.location.href = `/api/boards`;
+    })
+
+    // 초대 하기
+    const inviteButton = document.getElementById('inviteUsers');
+    inviteButton.addEventListener('click', () => {
+        // 선택한 결과의 텍스트들을 가져옵니다.
+        var selectedTexts = [];
+        $("#selectedResultsModal button").each(function() {
+            selectedTexts.push($(this).text());
+        });
+
+        // 선택한 결과를 서버로 전송하고자 하는 코드 작성
+        // 예를 들어, JSON 형식으로 변환하여 서버로 전송하는 경우:
+        var selectedResultsJSON = JSON.stringify(selectedTexts);
+
+        console.log(selectedResultsJSON);
+
+        $.ajax({
+            method: "POST",
+            url: `/api/boards/${id}/invited`,
+            contentType: "application/json",
+            data: JSON.stringify({
+                inviteUsers : selectedTexts
+            }),
+            success: function (data) {
+                console.log("성공");
+                // 모달을 닫는 코드 추가
+                $("#inviteModal").modal("hide");
+
+                Toast.fire({
+                    icon: 'success',
+                    title: '사용자 초대 완료 !'
+                }).then(() => {
+                    window.location.href = `/api/boards/${id}`;
+                });
+            },
+            error: function (data) {
+            }
+        })
+
+    });
+
+    // 프로젝트 떠나기
+    function leaveBoard(boardId) {
+        // 모달을 숨기는 부분 추가
+        $('#leaveboard' + boardId).modal('hide');
+
+        $.ajax({
+            type: "DELETE",
+            url: `/api/boards/${boardId}/member`,
+            success: function () {
+                Toast.fire({
+                    icon: 'success',
+                    title: '프로젝트 떠나기! 안녕히 가세요 ~'
+                }).then(() => {
+                    window.location.href = `/api/boards`;
+                });
+            }, error: function () {
+                Toast.fire({
+                    icon: 'error',
+                    title: '매니저는 프로젝트를 떠날 수 없습니다'
+                }).then(() => {
+                    window.location.href = `/api/boards/${boardId}`;
+                });
+            }
+        })
+    }
+
+    // 버튼과 리스트 요소를 선택합니다.
+    const toggleButton = document.getElementById('toggleListButton');
+    const myList = document.getElementById('myList');
+
+    // 버튼을 클릭할 때 이벤트 처리
+    toggleButton.addEventListener('click', () => {
+        // 리스트 요소의 가시성을 토글합니다.
+        if (myList.style.display === 'none') {
+            myList.style.display = 'block';
+        } else {
+            myList.style.display = 'none';
+        }
+    });
+
+    // 카드 이동 - 콘솔에 제대로 찍히는 것 확인
+    const listCardContainers = document.querySelectorAll('.list-cards');
+    listCardContainers.forEach(cardContainer => {
+        new Sortable(cardContainer, {
+            group: 'list-card',
+            animation: 150,
+            onEnd: async (evt) => {
+                var cardId = evt.item.dataset.cardId;
+                var cardcolumnId = evt.item.parentElement.dataset.columnId;
+                var cardnewIndex = evt.newIndex;
+
+                $.ajax({
+                    type: "PUT",
+                    url: `/api/cards/${cardId}/orders`,
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        columnId: cardcolumnId,
+                        cardOrder: cardnewIndex
+                    }),
+                    success: function () {
+                        window.location.reload();
+                    }, error: function () {
+                        Toast.fire({
+                            icon: 'error',
+                            title: '카드 이동 오류'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }
+                })
+            }
+        });
+    });
+
+    // 컬럼 이동
+    const columnList = document.querySelector(".content-container");
+    columnSortable = new Sortable(columnList, {
+        group: 'shared',
+        animation: 150,
+        ghostClass: 'ghost',
+        onStart: function (event) {
+            fromColumnId = event.from.querySelector(".ghost").getAttribute("data-column-id");
+        },
+        onEnd: function (event) {
+            const newIndex = Array.from(event.to.children).indexOf(event.item);
+            $.ajax({
+                type: "PATCH",
+                url: `/api/boards/${id}/columns/${fromColumnId}`,
+                contentType: "application/json",
+                data: JSON.stringify({
+                    order: newIndex
+                }),
+                success: function () {
+                    console.log("컬럼 이동");
+                    window.location.reload();
+                },
+                error: function () {
+                    Toast.fire({
+                        icon: 'error',
+                        title: '컬럼 이동 오류'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+
+                }
+            })
+        },
+    });
+
+    // 각 컬럼을 삭제하는 함수
+    function deleteColumn(columnId) {
+        $.ajax({
+            type:"DELETE",
+            url:`/api/boards/${id}/columns/${columnId}`,
+            contentType:"application/json",
+            success: function () {
+                window.location.href = `/api/boards/${id}`;
+            },
+            error: function () {
+                window.location.href = `/api/boards/${id}`;
+            }
+        })
+    }
+
+    // 보드 제목과 편집 입력란 엘리먼트 선택
+    const boardTitle = document.querySelector('.board-title');
+    const boardEditInput = document.querySelector('.board-edit');
+
+    // 보드 제목 클릭 이벤트 리스너 추가
+    boardTitle.addEventListener('click', () => {
+        boardTitle.style.display = 'none';
+        boardEditInput.style.display = 'block';
+        boardEditInput.value = boardTitle.textContent.trim();
+        boardEditInput.focus();
+    });
+
+    // 편집 입력란 blur 이벤트 리스너 추가
+    boardEditInput.addEventListener('blur', () => {
+        boardTitle.style.display = 'block';
+        boardEditInput.style.display = 'none';
+        boardTitle.textContent = boardEditInput.value;
+        const title = boardEditInput.value;
+
+        // 서버쪽으로 수정 내용 전달할 코드 추가하기
+        $.ajax({
+            type: "PUT",
+            url: `/api/boards/${id}`,
+            contentType: "application/json",
+            data: JSON.stringify({title: title}),
+            success: function () {
+                window.location.href = `/api/boards/${id}`
+            },
+            error: function () {
+                Toast.fire({
+                    icon: 'error',
+                    title: '수정 실패'
+                }).then(() => {
+                    window.location.href = `/api/boards/${id}`
+                });
+            }
+        })
+    });
+
+    // 각 column-title 클래스 선택 (컬럼 제목을 수정하기 위함)
+    const columnTitles = document.querySelectorAll('.column-title');
+
+    // 각 column-title을 클릭할 때 이벤트 처리 (컬럼 제목 수정)
+    columnTitles.forEach(columnTitle => {
+        const inputElement = columnTitle.nextElementSibling;
+        const buttonElement = inputElement.nextElementSibling;
+
+        columnTitle.addEventListener('click', () => {
+            columnTitle.style.display = 'none';
+            buttonElement.style.display = 'none';
+            inputElement.style.display = 'block';
+            inputElement.value = columnTitle.textContent.trim();
+            inputElement.focus();
+        });
+
+        inputElement.addEventListener('blur', () => {
+            buttonElement.style.display = 'block';
+            columnTitle.style.display = 'block';
+            inputElement.style.display = 'none';
+            columnTitle.textContent = inputElement.value;
+            // 반영된 내용을 서버쪽으로 보내는 코드 필요
+            const inputId = inputElement.getAttribute('id'); // id 속성에 columnId를 담아줄 것 (그 id를 서버쪽으로 보내야 함)
+
+            $.ajax({
+                type: "PUT",
+                url: `/api/boards/${id}/columns/${inputId}`,
+                contentType: "application/json",
+                data: JSON.stringify({
+                    title: inputElement.value
+                }),
+                success: function () {
+                    window.location.href = `/api/boards/${id}`
+                },
+                error: function () {
+                    Toast.fire({
+                        icon: 'error',
+                        title: '수정 실패'
+                    }).then(() => {
+                        window.location.href = `/api/boards/${id}`
+                    });
+                }
+            })
+        });
+    });
+
+    // HTML 요소를 선택합니다.
+    const addColumnBtn = document.querySelector('.add-board-column-btn-box');
+    const columnNameInput = document.querySelector('.board-column-name-input');
+
+    // "컬럼 추가" 버튼 클릭 시 이벤트 처리
+    addColumnBtn.addEventListener('click', () => {
+        // "컬럼 추가" 버튼을 숨기고 input 요소를 표시합니다.
+        addColumnBtn.style.display = 'none';
+        columnNameInput.style.display = 'block';
+
+        // input 요소가 보이는 상태일 때 포커스를 설정합니다.
+        if (columnNameInput.style.display === 'block') {
+            columnNameInput.focus();
+        }
+    });
+
+    // 컬럼 input이 포커스를 잃었을 때 (컬럼을 추가하는 내용을 서버로 전송)
+    columnNameInput.addEventListener('blur', () => {
+        // input 요소의 내용을 저장합니다.
+        const inputValue = columnNameInput.value;
+
+        // "컬럼 추가" 버튼을 다시 표시하고 input 요소를 숨깁니다.
+        addColumnBtn.style.display = 'block';
+        columnNameInput.style.display = 'none';
+
+        // 보드 id만 담아서 넘겨주면 될듯 ?
+        $.ajax({
+            type: "POST",
+            url: `/api/boards/${id}/columns`,
+            contentType: "application/json",
+            data: JSON.stringify({
+                title: inputValue
+            }),
+            success: function () {
+                window.location.href = `/api/boards/${id}`;
+            },
+            error: function () {
+                Toast.fire({
+                    icon: 'error',
+                    title: '추가 실패'
+                }).then(() => {
+                    window.location.href = `/api/boards/${id}`
+                });
+            }
+        })
+    });
+
+    // 새로운 카드 추가하기
+    const addCardButtons = document.querySelectorAll('.add-a-card');
+
+    // 새로운 카드 추가하는 리스너
+    addCardButtons.forEach(addCardButton => {
+        addCardButton.addEventListener('click', () => {
+            // 컬럼의 id 값을 가져오기 위해 컬럼 엘리먼트를 찾음
+            const column = addCardButton.closest('.list-content');
+
+            // 새로운 카드 엘리먼트 생성
+            const newCard = document.createElement('a');
+            newCard.classList.add('list-card');
+            newCard.draggable = true;
+
+            // 카드 내용 엘리먼트 생성 및 추가
+            const cardDetail = document.createElement('div');
+            cardDetail.classList.add('list-card-detail');
+
+            // 카드 제목 엘리먼트 생성 및 추가
+            const cardTitleSpan = document.createElement('span');
+            cardTitleSpan.classList.add('list-card-title');
+            cardTitleSpan.textContent = "새 카드"; // 기본 카드 제목 설정
+            cardDetail.appendChild(cardTitleSpan);
+
+            newCard.appendChild(cardDetail);
+
+            const modal = addCardButton.closest('.modal-content'); // 클릭한 버튼이 속한 모달을 선택
+
+            const title = modal.querySelector(".recipient-namee").value;
+            const content = modal.querySelector(".message-textt").value;
+            // 컬럼의 카드 목록 컨테이너에 새로운 카드 추가
+            const columnCardsContainer = column.querySelector('.list-cards');
+            columnCardsContainer.appendChild(newCard);
+
+            const columnId = addCardButton.closest('.add-a-card').id;
+
+            // 카드 생성을 알리는 서버쪽 코드 추가
+            $.ajax({
+                type: "POST",
+                url: `/api/columns/${columnId}/cards`,
+                contentType: "application/json",
+                data: JSON.stringify({
+                    title : title,
+                    content : content
+                }),
+                success: function () {
+                    window.location.href = `/api/boards/${id}`;
+                }, error: function () {
+                    window.location.href = `/api/boards/${id}`;
+                }
+            })
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.getElementById("stars-container");
+
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            container.appendChild(star);
+        }
+    });
+
+
+    // 유저 검색하는 부분
+    // 선택한 결과를 저장하는 배열
+    var selectedResults = [];
+
+    // 검색 결과를 동적으로 추가하는 함수
+    function addResultToSearchResults(user) {
+        var resultItem = $("<li>")
+            .addClass("list-group-item")
+            .html(user.username + " | " + user.nickname);
+
+        // 클릭 이벤트를 추가하여 선택/해제 토글
+        resultItem.on("click", function() {
+            var index = selectedResults.indexOf(user);
+
+            if (index === -1) {
+                // 선택한 결과가 배열에 없으면 선택 추가
+                selectedResults.push(user);
+
+                // 선택한 결과를 버튼으로 만들어서 #selectedResultsModal에 추가
+                var selectedButton = $("<button>")
+                    .addClass("btn btn-dark")
+                    .html(user.username);
+
+                selectedButton.on("click", function() {
+                    // 선택한 결과를 배열에서 제거
+                    var selectedIndex = selectedResults.indexOf(user);
+                    if (selectedIndex !== -1) {
+                        selectedResults.splice(selectedIndex, 1);
+                    }
+
+                    // 버튼을 제거
+                    selectedButton.remove();
+                });
+
+                // #selectedResultsModal에 버튼 추가
+                $("#selectedResultsModal").append(selectedButton);
+            } else {
+                // 선택한 결과가 배열에 있으면 선택 해제
+                selectedResults.splice(index, 1);
+
+                // 선택한 결과를 버튼으로 만든 것을 제거
+                var selectedButton = $("#selectedResultsModal").find("button:contains('" + user.username + "')");
+                selectedButton.remove();
+            }
+        });
+
+        // 검색 결과를 #searchResults에 추가
+        $("#searchResults").append(resultItem);
+    }
+
+    $(document).ready(function() {
+        $("#searchInput").on("input", function() {
+            var searchText = $(this).val();
+
+            // 검색어가 일정 길이 이상일 때만 서버에 요청
+            if (searchText.length >= 3) {
+
+                // 서버에 검색어 전달
+                $.ajax({
+                    type: "GET",
+                    url: `/api/boards/search/`+searchText,
+                    dataType: "json",
+                    success: function(data) {
+                        $("#searchResults").empty();
+                        // console.log("성공");
+                        // console.log("서버 응답 데이터:", data);
+                        // console.log("서버 응답 필요한 데이터:", data.content);
+                        var users = data.content;
+
+                        for (var i = 0; i < users.length; i++) {
+                            var user = users[i];
+                            addResultToSearchResults(user);
+                            // var resultItem = $("<li>")
+                            //     .addClass("list-group-item")
+                            //     .html(user.username + " | " + user.nickname);
+                            //
+                            // $("#searchResults").append(resultItem);
+                        }
+                    },
+                    error: function(error) {
+                        console.log("실패");
+                        console.error("검색 오류:", error);
+                    }
+                });
+            }
+        });
+    });
+
+    const gotoGameButton = document.getElementById('gotoMiniGame');
+    gotoGameButton.addEventListener('click', () => {
+        window.location.href = `/api/minigame/${id}`
+    })
+
+</script>
+</html>

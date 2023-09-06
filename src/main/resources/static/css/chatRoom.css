@@ -1,0 +1,324 @@
+@font-face {
+    font-family: 'GangwonState';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/GangwonState.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    font-family: 'GangwonState', cursive;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    color: #101014;
+    background-color: #f5f5fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 가로 가운데 정렬 추가 */
+    align-items: center; /* 세로 가운데 정렬 추가 */
+}
+
+/* 상단 메뉴 */
+.top {
+    height: 15vh;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+}
+
+.right {
+    height: 100%;
+    width: 35%;
+    padding-left: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.middle {
+    height: 100%;
+    width: 30%;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.middle img {
+    margin-right: 5px;
+}
+
+.left {
+    height: 100%;
+    width: 35%;
+    padding-right: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+}
+
+
+
+
+/* 알림 */
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 30px;
+    cursor: pointer;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+.notification-icon div {
+    width: 40px;
+    height: 40px;
+    position: relative;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-3px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(3px);
+    }
+}
+
+.new-notification {
+    color: red;
+    animation: shake 1.5s infinite; /* 흔들기 애니메이션 적용 */
+}
+
+.nobadge {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 4px 8px;
+    font-size: 12px;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.notification-list {
+    position: absolute;
+    top: 100px; /* Adjust the top position to your preference */
+    right: 70px;
+    width: 295px;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: 550px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+    margin-top: 45px; /* 헤더의 높이만큼 여백 추가 */
+}
+.notification-list-header {
+    background-color: #ccc;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    position: fixed;
+    top: 100px;
+    width: 13%; /* 가로 너비를 꽉 채우도록 설정 */
+    z-index: 9998; /* 헤더 위에 배치 */
+}
+.notification-list-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    background-color: white;
+}
+.notification-list-item.read {
+    background-color: #f0f0f0;
+}
+
+/* 하단 게시판 */
+.bottom {
+    height: 85vh;
+    width: 100%;
+}
+
+.bottom-container {
+    height: 100%;
+    padding: 0 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.bottom-top {
+    padding-top: 20px;
+    height: 10%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: end;
+}
+
+.bottom-top-button{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
+}
+
+.chatuser-btn{
+    display: block;
+    width: 130px;
+    cursor: pointer;
+    padding: 10px 20px;
+    text-align: center;
+    transition: 0.5s;
+    background-size: 200% auto;
+    color: #101014;
+    /* text-shadow: 0px 0px 10px rgba(0,0,0,0.2);*/
+    box-shadow: 0 0 20px #eee;
+    border-radius: 10px;
+    background-image: linear-gradient(to right, #f6d365 0%, #fda085 51%, #f6d365 100%);
+}
+
+.chatuser-btn:hover {
+    background-position: right center;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.category-title {
+    font-size: 18px;
+}
+
+.list-group-item {
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#selectedResultsModal{
+    margin-top: 10px;
+}
+
+#selectedResultsModal > button {
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+#searchResults {
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.offcanvas{
+    background-color: #f5f5fa;
+}
+
+.mini-list{
+    font-size: 14px;
+    color: #a9a9a9;
+}
+
+
+
+/* 채팅 리스트 출력 */
+.bottom-bottom {
+    padding-bottom: 20px;
+    height: 85%;
+    margin-top: 5%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.chatlists{
+    height: 100%;
+    width: 100%;
+}
+
+ol {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+ol::-webkit-scrollbar {
+    margin-left: 5px;
+    width: 7px;
+}
+
+ol::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+ol::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background-color: #919191;
+}
+
+ol::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+}
+
+li {
+    width: 100%;
+}
+
+.list-number-image {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+}
+
+.ms-2{
+    margin-left: 0 !important;
+}
+
+.chatitems{
+    display: flex;
+    justify-content: center;
+}
+
+.mark-all-read-button {
+    background-color: #dcdcdc;
+    border: none;
+    border-radius: 5px;
+    position: absolute;
+    top: 11px; /* 버튼 위치 조정 */
+    right: 10px; /* 버튼 위치 조정 */
+    padding: 1px 4px;
+    font-size: 13px;
+    z-index: 9999; /* 다른 요소보다 앞에 표시되도록 설정 */
+}

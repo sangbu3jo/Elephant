@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+          integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
+    <script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+
+    <!--상단 아이콘-->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+
+    <link rel="stylesheet" type="text/css"  href="/css/boards.css">
+
+    <style>
+
+
+    </style>
+</head>
+<body>
+<div id="stars-container"></div>
+
+<div class="header">
+    <div class="right">
+        <a id="login" onclick="redirectToLoginPage()">
+            <button>로그인</button>
+        </a>
+        <a id="logout" onclick="logout()">
+            <button>로그아웃</button>
+        </a>
+        <a id="keeplogin" onclick="refreshAccessToken()">
+            <button>로그인 연장</button>
+        </a>
+    </div>
+    <div class="middle">
+        <!-- 가운데 코끼리 글씨 및 로고  -->
+        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
+        <div style="text-align: center; cursor:pointer;" onclick="gotoMain()">
+            코끼리
+        </div>
+    </div>
+    <div class="left">
+        <!-- 알림, 우측 메뉴 슬라이드 -->
+        <div class="notification-icon">
+            <div style="position: relative;">
+                <i class="far fa-bell" style="color: #cfcfcf;"></i>
+                <span id="notificationBadge" class="nobadge"></span>
+            </div>
+        </div>
+
+        <div style="text-align: center;" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+            <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png" style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+        </div>
+
+        <div class="offcanvas offcanvas-start w-25" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+            <div class="offcanvas-header" style = "text-align: center; align-items:center;">
+                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+                    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+                    코끼리
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+
+            <div class="list-group list-group-flush">
+                <button class="list-group-item list-group-item-action" data-bs-toggle="collapse"
+                        data-bs-target="#categoryMenu">게시판 카테고리
+                </button>
+                <div id="categoryMenu" class="collapse">
+                    <a href="/api/posts/categories/1"
+                       class="list-group-item list-group-item-action mini-list">협업 인원 모집</a>
+                    <a href="/api/posts/categories/2"
+                       class="list-group-item list-group-item-action mini-list">스티디원 모집</a>
+                    <a href="/api/posts/categories/3"
+                       class="list-group-item list-group-item-action mini-list">문제은행</a>
+                    <a href="/api/posts/categories/4"
+                       class="list-group-item list-group-item-action mini-list">자유게시판</a>
+                </div>
+
+
+                <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
+                <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+                <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a> <!--채팅 페이지 테스트 중-->
+                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a> <!--서버에서 admin 여부 true/false로 가져오기-->
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 나머지 내용 -->
+<div class="notification-list" id="notificationList">
+    <div class="notification-list-header">알림</div>
+</div>
+
+
+
+<div class="bottom">
+    <div class="bottomone">
+        <div class="bottomonewrapper">
+            <div class="text-center">
+                <text>내 프로젝트</text>
+            </div>
+            <div class="button-center">
+                <button type="button" class="btn btn-primary" style="background-color: #e6e6e6; color: #1a1313; border:none;" data-bs-toggle="modal" data-bs-target="#exampleModal">새 프로젝트 추가</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="bottomtwo">
+        <div class="bottomwindows">
+            <div class="floating-window" th:each="board : ${boards}" th:id="${board.boardid}">
+                <div class="window-header">
+                    <div class="window-title" th:text="${board.dday}">D-0</div>
+                    <div class="window-controls">
+                        <div class="window-minimize"></div>
+                        <a th:href="@{|/api/boards/${board.boardid}|}">
+                            <div class="window-maximize" th:id="${board.boardid}"></div>
+                        </a>
+                        <!--                        <div class="window-maximize" th:id="${board.boardid}" th:href="@{|/${board.boardid}|}"></div>-->
+                        <div class="window-close" data-bs-toggle="modal" th:data-bs-target="'#staticBackdrop'+${board.boardid}" th:id="${board.boardid}"></div>
+
+                    </div>
+                </div>
+                <div class="window-content">
+                    <p th:text="${board.title}">Project Title</p>
+                    <p th:text="${board.expiredAt}">Project Deadline</p>
+                </div>
+                <div class="window-bottom">
+                    <button data-bs-toggle="modal" th:data-bs-target="'#staticBack'+${board.boardid}">수정</button>
+                </div>
+                <!--수정 모달창 -->
+                <div class="modal fade" th:id="'staticBack'+${board.boardid}" aria-labelledby="exampleModalLabell" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModal3">프로젝트 수정</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="recipient-name" class="col-form-label">프로젝트 이름</label>
+                                    <input type="text" class="form-control recipient-namee" id="recipient-namee" th:value="${board.title}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message-text" class="col-form-label">프로젝트 설명</label>
+                                    <textarea class="form-control message-textt" id="message-textt" th:text="${board.content}"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="datepickerr" class="col-form-label">프로젝트 마감일</label>
+                                    <input type="text" class="form-control datepickerr" id="datepickerr" th:placeholder="${board.expiredAt}"
+                                           data-date-settings='{"format": "yyyy-mm-dd"}'>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light btn-update" th:id="${board.boardid}">수정</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--수정 모달창 종료-->
+
+
+                <!--삭제 모달창 -->
+                <div class="modal fade" th:id="'staticBackdrop'+${board.boardid}" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel" th:text="|프로젝트명 : ${board.title}|"></h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                삭제하시겠습니까? 되돌릴 수 없습니다
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger btn-delete" th:id="${board.boardid}">삭제</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--삭제 모달창 종료-->
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="bottomthree">
+        <!-- 페이징처리 시작 -->
+        <div th:if="${!boards.isEmpty()}">
+            <ul class="pagination justify-content-center custom-pagination">
+                <li class="page-item" th:classappend="${!boards.hasPrevious()} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{|?page=${boards.getPageable().getPageNumber() - 1}|}">
+                        <span>이전</span>
+                    </a>
+                </li>
+                <li th:each="page: ${#numbers.sequence(0, boards.getTotalPages() -1)}"
+                    th:if="${page >= page - 5 and page <= page + 5}"
+                    class="page-item">
+                    <a th:text="${page + 1}" class="page-link"
+                       th:href="@{|?page=${page + 1}|}"
+                       th:style="${page == boards.getPageable().getPageNumber()} ? 'background-color: #e6e6e6;' : ''">1</a>
+                </li>
+
+
+
+                <li class="page-item" th:classappend="${!boards.hasNext()} ? 'disabled'">
+                    <a class="page-link" th:href="@{|?page=${boards.getPageable().getPageNumber() + 2}|}">
+                        <span>다음</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- 페이징처리 끝 -->
+    </div>
+
+    <!--보드 생성 모달창-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModal2">새 프로젝트</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">프로젝트 이름</label>
+                        <input type="text" class="form-control" id="recipient-name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">프로젝트 설명</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="datepicker" class="col-form-label">프로젝트 마감일</label>
+                        <input type="text" class="form-control" id="datepicker" data-date-settings='{"format": "yyyy-mm-dd"}'>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light btn-create">프로젝트 생성</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--삭제 확인 모달창-->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalLabel">삭제 확인</h5>
+                </div>
+                <div class="modal-body">
+                    프로젝트 삭제가 완료되었습니다
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+<script>
+
+    function gotoMain() {
+        window.location.href = "/main";
+    }
+
+    $("#datepicker").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.getElementById("stars-container");
+
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            container.appendChild(star);
+        }
+
+        const updateProject = document.querySelectorAll(".btn-update");
+
+        updateProject.forEach(updatebtn => {
+            updatebtn.addEventListener('click', () => {
+                const id = updatebtn.id;
+                console.log(id); // 가져온 board의 id 값 확인
+
+                $(`#staticBack${id}`).modal('hide');
+
+                const modal = updatebtn.closest('.modal-content'); // 클릭한 버튼이 속한 모달을 선택
+
+                const title = modal.querySelector(".recipient-namee").value;
+                const content = modal.querySelector(".message-textt").value;
+                const expiredAt = modal.querySelector(".datepickerr").value;
+
+                console.log("수정된 프로젝트 이름:", title);
+                console.log("수정된 프로젝트 설명:", content);
+                console.log("수정된 프로젝트 마감일:", expiredAt);
+                console.log("수정될 프로젝트 아이디: ", id);
+
+
+                $.ajax({
+                    method: "PUT",
+                    url: `/api/boards/${id}`,
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        title : title,
+                        content : content,
+                        expiredAt : expiredAt
+                    }),
+                    success: function (data) {
+                        window.location.reload();
+                    },
+                    error: function (data) {
+
+                    }
+                })
+
+            })
+        })
+
+        const deleteProject = document.querySelectorAll(".btn-delete");
+
+        deleteProject.forEach(deletebtn =>{
+            deletebtn.addEventListener('click', () => {
+                const id = deletebtn.id;
+                console.log(id); // 가져온 ID 값 확인
+
+                $(`#staticBackdrop${id}`).modal('hide');
+
+                $.ajax({
+                    method: "DELETE",
+                    url: `/api/boards/${id}`,
+                    contentType: "application/json",
+                    success: function (data) {
+                        // 새로운 모달 열기
+                        $('#confirmationModal').modal('show');
+
+                        // 3초 후에 새로운 모달 닫기
+                        setTimeout(function() {
+                            $('#confirmationModal').modal('hide');
+                        }, 1000);
+
+                        window.location.href="/api/boards";
+                    },
+                    error: function (data) {
+                        Toast.fire({
+                            icon: 'error',
+                            title: "매니저만 삭제 가능합니다!",
+                        })
+                    }
+                })
+            });
+        });
+
+        const createProject = document.querySelector('.btn-create');
+        createProject.addEventListener('click', () => {
+            const title = document.getElementById("recipient-name").value;
+            const content = document.getElementById("message-text").value;
+            const expiredAt = document.getElementById("datepicker").value;
+
+            console.log("프로젝트 이름:", title);
+            console.log("프로젝트 설명:", content);
+            console.log("프로젝트 마감일:", expiredAt);
+
+            if (title.trim() === "") {
+                document.getElementById("recipient-name").style.backgroundColor = "#ffcbc2";
+                document.getElementById("recipient-name").placeholder = "프로젝트 제목을 입력해주세요";
+                return;
+            } else {
+                document.getElementById("recipient-name").style.backgroundColor = "";
+                document.getElementById("recipient-name").placeholder = "";
+            }
+
+            if (content.trim() === "") {
+                document.getElementById("message-text").style.backgroundColor = "#ffcbc2";
+                document.getElementById("message-text").placeholder = "프로젝트 내용을 입력해주세요";
+                return;
+            } else {
+                document.getElementById("message-text").style.backgroundColor = "";
+                document.getElementById("message-text").placeholder = "";
+            }
+
+            if (expiredAt.trim() === "") {
+                document.getElementById("datepicker").style.backgroundColor = "#ffcbc2";
+                document.getElementById("datepicker").placeholder = "프로젝트 마감일을 입력해주세요";
+            } else {
+                document.getElementById("datepicker").style.backgroundColor = "";
+            }
+
+            $.ajax({
+                method: "POST",
+                url: `/api/boards`,
+                contentType: "application/json",
+                data: JSON.stringify({
+                    title : title,
+                    content : content,
+                    expiredAt : expiredAt
+                }),
+                success: function (data) {
+                    window.location.reload();
+                },
+                error: function (data) {
+
+                }
+            })
+        })
+    }); // document 종료
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'center-center',
+        showConfirmButton: false,
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    })
+
+    $(document).ready(function() {
+        pageSetting();
+
+        const notificationIcon = document.querySelector('.notification-icon');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const notificationList = document.getElementById('notificationList');
+        let isNotificationListOpen = false;
+        let notificationsList = []; // 알림 데이터를 저장할 리스트
+        let userId = null; // 사용자 아이디 변수 추가
+
+        // 알림 데이터를 서버에서 불러와서 목록에 추가하는 함수
+        const fetchNotifications = async (userId) => {
+            try {
+                const response = await fetch(`/api/notifications/list/${userId}`);
+                if (response.ok) {
+                    const notifications = await response.json();
+                    notificationsList = notifications;
+                    updateNotificationList();
+                    updateNotificationIcon();
+                } else {
+                    console.error('Error fetching notifications:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+
+        // 사용자 정보를 불러오는 함수
+        const fetchUserInfo = async () => {
+            try {
+                const response = await fetch('/api/get-user-info');
+                if (response.ok) {
+                    const userData = await response.json();
+                    if (userData && userData.id) {
+                        userId = userData.id;
+                        loadNotificationsFromServer(userId);
+                    }
+                } else {
+                    console.error('Error fetching user info:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+            }
+        };
+
+        // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
+        const token = Cookies.get('Authorization');
+        if (token) { // 토큰 있을 경우
+            fetchUserInfo();
+        }
+
+        // 알림 목록 업데이트 함수
+        const updateNotificationList = () => {
+            notificationList.innerHTML = ''; // 목록 초기화
+            notificationsList.forEach(notification => {
+                addNotificationToList(notification);
+            });
+            const listHeader = document.createElement('div');
+            listHeader.className = 'notification-list-header';
+
+            // Create the "전체 읽음" button
+            const markAllReadButton = `
+        <button id="markAllReadButton" class="mark-all-read-button">전체 읽음</button>
+    `;
+            listHeader.innerHTML = markAllReadButton; // innerHTML로 버튼 추가
+            listHeader.innerHTML += '알림';
+
+            notificationList.insertBefore(listHeader, notificationList.firstChild);
+
+            // "전체 읽음" 버튼에 이벤트 리스너 연결
+            const button = document.getElementById('markAllReadButton');
+            button.addEventListener('click', function() {
+                Swal.fire({
+                    icon: "waning",
+                    title: "알림 전체 읽음처리 하시겠습니까?"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        markAllNotificationsAsRead();
+                        window.location.reload();
+                    }
+                })
+            });
+
+
+        };
+
+        // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
+        const formatTimeAgo = (notificationTime) => {
+            const currentTime = new Date();
+            const timeDifference = currentTime - new Date(notificationTime);
+
+            if (timeDifference < 60000) { // 1분 미만
+                return "방금 전";
+            } else if (timeDifference < 3600000) { // 1시간 미만
+                const minutes = Math.floor(timeDifference / 60000);
+                return `${minutes}분 전`;
+            } else if (timeDifference < 86400000) { // 24시간 미만
+                const hours = Math.floor(timeDifference / 3600000);
+                return `${hours}시간 전`;
+            } else {
+                const days = Math.floor(timeDifference / 86400000);
+                return `${days}일 전`;
+            }
+        };
+
+        // 알림 아이템 추가 함수
+        const addNotificationToList = (notification) => {
+            const listItem = document.createElement('div');
+            listItem.className = notification.read ? 'notification-list-item read' : 'notification-list-item unread';
+            const timeAgo = formatTimeAgo(notification.createdAt);
+            listItem.innerHTML = `${notification.content}<br><span class="notification-time">${timeAgo}</span>`;
+            listItem.onclick = () => {
+                handleNotificationItemClick(notification, listItem);
+            };
+            notificationList.insertBefore(listItem, notificationList.firstChild);
+        };
+
+        // 알림 읽음 처리 함수
+        const markNotificationAsRead = (notification, listItem) => {
+            if (!notification.read) {
+                notification.read = true;
+                listItem.classList.remove('unread');
+                listItem.classList.add('read');
+                updateNotificationIcon();
+
+                // AJAX 요청으로 서버에 알림 읽음 처리 요청 보내기
+                $.post(`/api/mark-notification-as-read/${notification.id}`)
+            }
+        };
+
+        // 알림 아이템 클릭 처리 함수
+        const handleNotificationItemClick = (notification, listItem) => {
+            markNotificationAsRead(notification, listItem);
+            window.location.href = notification.url;
+        };
+
+        // 알림 아이콘 업데이트 함수
+        const updateNotificationIcon = () => {
+            const unreadCount = notificationsList.filter(notification => !notification.read).length;
+            if (unreadCount > 0) {
+                notificationIcon.classList.add('new-notification');
+                notificationBadge.style.display="inline";
+                notificationBadge.innerText = unreadCount.toString();
+            } else {
+                notificationIcon.classList.remove('new-notification');
+                notificationBadge.style.display="none";
+                // notificationBadge.innerText = '';
+            }
+        };
+
+        // 종모양 아이콘 클릭 시 알림 목록 표시/숨기기
+        notificationIcon.addEventListener('click', () => {
+            updateNotificationList();
+            if (!isNotificationListOpen) {
+                notificationList.style.display = 'block';
+                isNotificationListOpen = true;
+            } else {
+                notificationList.style.display = 'none';
+                isNotificationListOpen = false;
+            }
+        });
+
+        // 페이지 로드 시 알림 데이터를 가져와서 표시
+        const loadNotificationsFromServer = (userId) => {
+            fetchNotifications(userId);
+        };
+
+        fetchUserInfo().then(() => {
+            const sse = new EventSource(`/api/notifications/${userId}`);
+            sse.onmessage = (event) => {
+                const notification = JSON.parse(event.data);
+                notificationsList.push(notification);
+                addNotificationToList(notification);
+                updateNotificationIcon();
+            };
+        });
+
+        // 알림 전체 읽음 처리 함수
+        function markAllNotificationsAsRead() {
+            $.post(`/api/mark-all-notifications-as-read/${userId}`)
+                .done(function(response) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: "전체 읽음 처리 되었습니다!",
+                    })
+                })
+                .fail(function(response) {
+                    Toast.fire({
+                        icon: 'error',
+                        title: "전체 읽음 처리 실패!",
+                    })
+                });
+        }
+
+    });
+
+
+
+    function removeToken() { // 토큰 삭제
+        Cookies.remove('Authorization', {path: '/'});
+    }
+
+    /* 서버 통신 메서드 */
+    function refreshAccessToken() { // 엑세스 토큰 갱신
+        $.ajax({
+            type: "GET",
+            url: `/api/auth/refresh/access-token`,
+            contentType: "application/json",
+            success: function (data) {
+                console.log(data);
+                Toast.fire({
+                    icon: 'success',
+                    title: "로그인 연장 성공",
+                })
+            },
+            error: function (data) {
+                console.log(data);
+                Toast.fire({
+                    icon: 'error',
+                    title: "로그인 연장 실패. 재로그인 부탁드립니다.",
+                })
+                redirectToLoginPage();
+            }
+        });
+    }
+
+
+    /* 페이지 첫 로드 메서드 */
+    function pageSetting() {  // main page 세팅
+        const token = Cookies.get('Authorization');
+        const rtoken = Cookies.get('RefreshToken');
+        console.log(token);
+        console.log(rtoken);
+
+        const loginBtn = document.getElementById('login');
+        const logoutBtn = document.getElementById('logout');
+        const keeploginBtn = document.getElementById('keeplogin');
+
+        if(!token) {
+            loginBtn.style.display = "inline-block";
+            logoutBtn.style.display = "none";
+            keeploginBtn.style.display = "none";
+        } else {
+            loginBtn.style.display = "none";
+        }
+
+    }
+
+    function logout() { // 로그아웃
+        $.ajax({
+            type: "DELETE",
+            url: `/api/auth/logout`,
+            contentType: "application/json",
+            success: function (data) {
+                removeToken();
+                Toast.fire({
+                    icon: 'success',
+                    title: "로그아웃 성공",
+                }).then(function () {
+                    window.location.href = "/main";
+                })
+
+            },
+            error: function () {
+                Toast.fire({
+                    icon: 'error',
+                    title: "로그아웃 실패",
+                }).then(function () {
+                    window.location.reload();
+                })
+            }
+        });
+    }
+
+    function redirectToLoginPage() {
+        window.location.href = "/api/auth/login-page";
+    }
+
+</script>
+
+</html>

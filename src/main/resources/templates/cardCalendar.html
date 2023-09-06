@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar</title>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.js'></script>
+
+    <!--상단 아이콘-->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+
+    <link rel="stylesheet" type="text/css"  href="/css/cardCalendar.css">
+
+    <style>
+
+    </style>
+</head>
+<body>
+
+<div id="stars-container"></div>
+<div class="header">
+    <div class="title1">
+        <text class="board-title" id="board-title" th:text="${board.title}">보드 이름</text>
+    </div>
+    <div class="title2">
+        <button id="leaveButton" class="leave" >프로젝트로</button>
+    </div>
+</div>
+<div class="bottom">
+    <div id='calendar'></div>
+</div>
+</body>
+
+<script>
+
+    let url = window.location.pathname;
+    let id = url.replace("/api/boards/calendar/", "");
+
+    document.addEventListener("DOMContentLoaded", () => {
+        $.ajax({
+            type: "GET",
+            url: `/api/boards/${id}/cards`,
+            success: function(data) {
+                initializeCalendar(data); // 데이터를 전달하여 달력 초기화 함수를 호출
+            },
+            error: function(error) {
+
+            }
+        });
+
+        const container = document.getElementById("stars-container");
+
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement("div");
+            star.className = "star";
+            star.style.left = `${Math.random() * 100}vw`;
+            star.style.top = `${Math.random() * 100}vh`;
+            container.appendChild(star);
+        }
+    });
+
+    const leaveBtn = document.getElementById('leaveButton');
+    leaveBtn.addEventListener('click' , () => {
+        window.location.href = `/api/boards/${id}`
+    })
+
+    // 카드 클릭 시 상세 페이지로 이동
+    function cardClick(cardId) {
+        window.location.href = `/api/cards/${cardId}`;
+    }
+
+    function initializeCalendar(eventData) {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            // FullCalendar 설정 옵션들
+            initialView: 'dayGridMonth', // 달력 초기 뷰 설정
+            events: eventData,
+
+            eventContent: function(info) {
+                var event = info.event;
+
+                // 이벤트에 대한 커스텀 스타일 적용
+                var element = document.createElement('div');
+                element.classList.add('custom-event'); // 예시: custom-event 클래스 추가
+
+                // 클릭 이벤트 핸들러 추가
+                element.addEventListener('click', function() {
+                    cardClick(event.id); // 이벤트의 ID를 클릭 이벤트 핸들러에 전달
+                });
+
+                element.textContent = event.title; // 이벤트 제목을 추가
+
+                return { domNodes: [element] };
+            }
+        });
+
+        calendar.render(); // 달력 렌더링
+    }
+</script>
+</html>

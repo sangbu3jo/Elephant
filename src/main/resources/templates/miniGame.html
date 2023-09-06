@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game</title>
+
+  <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" rel="stylesheet">
+  <script crossorigin="anonymous" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js">
+  </script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!--상단 아이콘-->
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" />
+
+  <link rel="stylesheet" type="text/css"  href="/css/miniGame.css">
+
+  <style>
+
+  </style>
+
+
+</head>
+<body>
+
+<div id="stars-container"></div>
+
+<div class="game-container">
+  <div class="title-bar">
+    <h1>뱀 놀이</h1>
+    <button class="right-button" id="goOutButton">나가기</button>
+  </div>
+  <canvas id="game-board" width="400" height="450"></canvas>
+  <div class="buttons">
+    <button id="start-btn">시작</button>
+    <button id="stop-btn">정지</button>
+  </div>
+  <p class="score">현재 점수: <span id="score">0</span></p>
+</div>
+
+<!-- 커스텀 모달 창 -->
+<div class="modal fade" id="customAlert" tabindex="-1" role="dialog" aria-labelledby="customAlertTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="customAlertTitle">게임 오버!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p id="scoreMessage">점수: </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+
+<script>
+  const goOutBtn = document.getElementById('goOutButton');
+  goOutBtn.addEventListener('click', () => {
+      let url = window.location.pathname;
+      let id = url.replace("/api/minigame/", "");
+      window.location.href = `/api/boards/${id}`
+  })
+
+  const canvas = document.getElementById("game-board");
+  const ctx = canvas.getContext("2d");
+  const scale = 20;
+  const rows = canvas.height / scale;
+  const columns = canvas.width / scale;
+  let score = 0;
+
+  let snake;
+  let fruit;
+  let gameInterval;
+
+  (function setup() {
+    snake = new Snake();
+    fruit = new Fruit();
+
+    fruit.pickLocation();
+  }());
+
+  function startGame() {
+    if (!gameInterval) {
+      gameInterval = setInterval(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        fruit.draw();
+        snake.update();
+        snake.draw();
+
+        if (snake.eat(fruit)) {
+          score++;
+          document.getElementById("score").textContent = score;
+          fruit.pickLocation();
+        }
+
+        snake.checkCollision();
+      }, 250);
+    }
+  }
+
+  function stopGame() {
+    clearInterval(gameInterval);
+    gameInterval = null;
+  }
+
+  function gameOver() {
+    document.getElementById("scoreMessage").textContent += score;
+
+    // 모달 표시
+    $("#customAlert").modal("show");
+
+    // alert("게임 오버! 점수: " + score);
+    snake.reset();
+    stopGame();
+  }
+
+  function Snake() {
+    this.x = 0;
+    this.y = 0;
+    this.xSpeed = scale;
+    this.ySpeed = 0;
+    this.tail = [];
+
+    this.draw = function () {
+      ctx.fillStyle = "#A8DF8E";
+
+      for (let i = 0; i < this.tail.length; i++) {
+        ctx.fillRect(this.tail[i].x, this.tail[i].y, scale, scale);
+      }
+
+      ctx.fillRect(this.x, this.y, scale, scale);
+    };
+
+    this.update = function () {
+      for (let i = 0; i < this.tail.length - 1; i++) {
+        this.tail[i] = this.tail[i + 1];
+      }
+
+      this.tail[this.tail.length - 1] = { x: this.x, y: this.y };
+
+      this.x += this.xSpeed;
+      this.y += this.ySpeed;
+
+      if (this.x < 0 || this.y < 0 || this.x >= canvas.width || this.y >= canvas.height) {
+        gameOver();
+      }
+    };
+
+    this.changeDirection = function (direction) {
+      switch (direction) {
+        case "Up":
+          this.xSpeed = 0;
+          this.ySpeed = -scale;
+          break;
+        case "Down":
+          this.xSpeed = 0;
+          this.ySpeed = scale;
+          break;
+        case "Left":
+          this.xSpeed = -scale;
+          this.ySpeed = 0;
+          break;
+        case "Right":
+          this.xSpeed = scale;
+          this.ySpeed = 0;
+          break;
+      }
+    };
+
+    this.eat = function (fruit) {
+      if (this.x === fruit.x && this.y === fruit.y) {
+        this.tail.push({ x: this.x - this.xSpeed, y: this.y - this.ySpeed });
+        return true;
+      }
+      return false;
+    };
+
+    this.checkCollision = function () {
+      for (let i = 0; i < this.tail.length; i++) {
+        if (this.x === this.tail[i].x && this.y === this.tail[i].y) {
+          gameOver();
+        }
+      }
+    };
+
+    this.reset = function () {
+      this.x = 0;
+      this.y = 0;
+      this.tail = [];
+      this.xSpeed = scale;
+      this.ySpeed = 0;
+      score = 0;
+      document.getElementById("score").textContent = score;
+    };
+  }
+
+  function Fruit() {
+    this.x = 0;
+    this.y = 0;
+
+    this.pickLocation = function () {
+      this.x = Math.floor(Math.random() * columns) * scale;
+      this.y = Math.floor(Math.random() * rows) * scale;
+    };
+
+    this.draw = function () {
+      ctx.fillStyle = "#FF6969";
+      ctx.fillRect(this.x, this.y, scale, scale);
+    };
+  }
+
+  window.addEventListener("keydown", (event) => {
+    const direction = event.key.replace("Arrow", "");
+    snake.changeDirection(direction);
+  });
+
+  document.getElementById("start-btn").addEventListener("click", startGame);
+  document.getElementById("stop-btn").addEventListener("click", stopGame);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("stars-container");
+
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.left = `${Math.random() * 100}vw`;
+      star.style.top = `${Math.random() * 100}vh`;
+      container.appendChild(star);
+    }
+  });
+
+</script>
+</html>

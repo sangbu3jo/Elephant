@@ -22,6 +22,14 @@ repositories {
 }
 
 dependencies {
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // 스프링 로컬 캐싱 활용
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    // Swagger 활용하기 위한 springdoc-openapi 라이브러리
+    //implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
     // JWT
     compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
@@ -51,6 +59,37 @@ dependencies {
 
     // MySQL
     implementation 'mysql:mysql-connector-java:8.0.28'
+
+    // SMTP
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+
+    // QueryDSL
+    // QueryDSL JPA 라이브러리를 프로젝트에 추가합니다. 이 라이브러리는 JPA 엔터티와 관련된 동적 쿼리를 생성하는 데 사용
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    // QueryDSL APT(Annotation Processing Tool): QueryDSL이 JPA 엔터티를 기반으로 동적 쿼리 클래스를 생성할 때 필요한 프로세스
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    // Jakarta EE 애노테이션 API: Jakarta EE 애노테이션을 사용하여 JPA 엔터티를 정의할 때 필요한 라이브러리입니다.
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    // Jakarta EE Persistence API: 이 라이브러리는 Jakarta EE와 관련된 JPA 엔터티를 정의할 때 필요한 라이브러리입니다.
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // WebSocket 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+    implementation 'org.springframework:spring-messaging:6.0.3'
+//    implementation 'org.springframework.security:spring-security-messaging:6.0.2'
+
+
+    //aws3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
+
+    // MongoDB 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
