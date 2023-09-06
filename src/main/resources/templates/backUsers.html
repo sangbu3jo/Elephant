@@ -145,6 +145,7 @@
         <div class="edit-delete-buttons">
             <button id="editButton">권한 수정</button>
             <button id="deleteButton">회원 삭제</button>
+
         </div>
         <!-- 페이지 네비게이션 -->
         <div class="pagination">
@@ -456,6 +457,7 @@
     const editButton = document.getElementById('editButton');
     const deleteButton = document.getElementById('deleteButton'); // 추가한 부분
 
+
     let currentPage = 1;
     let posts = [];
     let comments = [];
@@ -463,6 +465,7 @@
     // 새로 추가한 내용
     editButton.style.display = 'none';
     deleteButton.style.display = 'none';
+
 
     profileButton.addEventListener('click', () => {
         currentPage = 1;
@@ -472,11 +475,14 @@
         // 권한 수정, 회원 삭제 버튼 표시
         editButton.style.display = 'block';
         deleteButton.style.display = 'block';
+
         // 다른 기능 버튼의 활성화 클래스 제거
         myCommentsButton.classList.remove('active');
         myPostsButton.classList.remove('active');
+
         // 현재 기능 버튼에 활성화 클래스 추가
         profileButton.classList.add('active');
+
     });
 
     myPostsButton.addEventListener('click', () => {
@@ -1144,6 +1150,7 @@
 
     });
 
+
     // 작성한 댓글 조회 API와 연결
     function fetchAndRenderComments() {
         fetch('/api/user/comments', {
@@ -1223,33 +1230,90 @@
         const password = usersToShow.password;
         const nickname = usersToShow.nickname;
         const introduction = usersToShow.introduction;
+        const profileUrl = usersToShow.profileUrl;
+
 
         // 비밀번호를 최대 8자리까지 '*' 문자로 표시
         const maskedPassword = usersToShow.password.length > 8 ? '*'.repeat(8) : '*'.repeat(
             usersToShow.password.length);
 
         userDiv.innerHTML = `
-        <table>
-      <tr>
-        <td>유저 아이디 : </td>
-        <td>${usersToShow.username}</td>
-    </tr>
-    <tr>
-        <td>비밀번호 : </td>
-        <td>${maskedPassword}</td>
-    </tr>
-    <tr>
-        <td>닉네임 : </td>
-        <td>${usersToShow.nickname}</td>
-    </tr>
-    <tr>
-        <td>자기소개 : </td>
-        <td>${usersToShow.introduction}</td>
-    </tr>
-        </table>
-    `;
+
+
+            <table>
+                <tr>
+                    <td>유저 아이디 : </td>
+                    <td>${usersToShow.username}</td>
+                </tr>
+                <tr>
+                    <td>비밀번호 : </td>
+                    <td>${maskedPassword}</td>
+                </tr>
+                <tr>
+                    <td>닉네임 : </td>
+                    <td>${usersToShow.nickname}</td>
+                </tr>
+                <tr>
+                    <td>자기소개 : </td>
+                    <td>${usersToShow.introduction}</td>
+                </tr>
+                 <tr>
+                    <td>프로필 이미지 : </td>
+                    <td><img src="${usersToShow.profileUrl}" alt="프로필 이미지"  style="width: 100px; height: 100px;" ></td>
+
+                  </tr>
+
+                  <tr>
+                  <td><input type="file" id="image-input" accept="image/*"></td>
+                  </tr>
+                  <tr>
+                  <td><button id="upload-image-button">이미지 변경 Go</button></td>
+                  </tr>
+            </table>
+
+         `;
+
+            const uploadImageButton = userDiv.querySelector('#upload-image-button');
+            const profileImage = userDiv.querySelector('#profile-image');
+            const imageInput = userDiv.querySelector('#image-input');
+
+            // 프로필 이미지 업로드 버튼에 클릭 이벤트를 추가하고 이미지를 선택하면 AJAX를 통해 서버로 업로드
+            uploadImageButton.addEventListener('click', () => {
+                const file = imageInput.files[0];
+
+
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('image', file);
+
+                    // AJAX 요청을 보내고 이미지 URL을 서버로 업로드
+                    $.ajax({
+                        url: '/api/users/profile/image', // 서버 업로드 URL로 변경
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            // 서버에서 응답을 받은 후 처리할 로직을 여기에 추가
+                            // data는 서버에서 받은 응답 데이터입니다.
+
+                            location.reload();
+
+                        },
+                        error: function (error) {
+                            console.error('업로드 실패:', error);
+                        }
+                    });
+                }
+
+
+
+        });
+
+
         userInfoList.appendChild(userDiv);
     }
+
 
     function renderPostsForPage(page) {
         const startIndex = (page - 1) * userPerPage;
@@ -1318,6 +1382,7 @@
             userInfoList.appendChild(commentDiv);
         });
     }
+
 
     // 최초 로딩 시에는 아무런 정보도 표시하지 않습니다.
 
