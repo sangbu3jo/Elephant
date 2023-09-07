@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,14 +39,15 @@ public class GoogleServiceImpl implements SocialService{
   private final RestTemplate restTemplate;
   private final JwtUtil jwtUtil;
 
-  /*  @Value("${google.client.id}")
-  private String CLIENT_ID;
-  @Value("${google.client.secret}")
-  private String CLIENT_SECRET;*/
 
-  private final String CLIENT_ID = "110938612036-nfoui26m7j4isaeph5mp8g62up173d5c.apps.googleusercontent.com";
-  private final String SECRET_KEY = "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";
-  private final String GOOGLE_REDIRECT_URL = "http://localhost:8080/api/auth/google/callback";
+  @Value("${google.client.id}")
+  private String CLIENT_ID;
+
+  @Value("${google.client.secret}")
+  private String SECRET_KEY;
+
+  @Value("${google.redirect.url}")
+  private String REDIRECT_URL;
 
 
   @Override
@@ -90,7 +92,7 @@ public class GoogleServiceImpl implements SocialService{
     body.add("grant_type", "authorization_code");
     body.add("client_id", CLIENT_ID);
     body.add("client_secret", SECRET_KEY);
-    body.add("redirect_uri",GOOGLE_REDIRECT_URL); // 애플리케이션 등록시 설정한 redirect_uri
+    body.add("redirect_uri",REDIRECT_URL); // 애플리케이션 등록시 설정한 redirect_uri
     body.add("code", code);
 
     // 방법 1

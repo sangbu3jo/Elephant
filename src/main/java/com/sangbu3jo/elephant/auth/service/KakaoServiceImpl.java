@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
@@ -37,11 +38,11 @@ public class KakaoServiceImpl implements SocialService{
   private final RestTemplate restTemplate;
   private final JwtUtil jwtUtil;
 
-  /*  @Value("${kakao.client.id}")
-  private String CLIENT_ID;*/
+  @Value("${kakao.client.id}")
+  private String CLIENT_ID;
 
-  private final String CLIENT_ID = "d7da621a3b256dc1ef5cc2ee72d98307";
-  private final String KAKAO_REDIRECT_URL = "http://localhost:8080/api/auth/kakao/callback";
+  @Value("${kakao.redirect.url}")
+  private String REDIRECT_URL;
 
 
   @Override
@@ -84,7 +85,7 @@ public class KakaoServiceImpl implements SocialService{
     MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
     body.add("grant_type", "authorization_code");
     body.add("client_id", CLIENT_ID); // 자신의 REST API 키
-    body.add("redirect_uri", KAKAO_REDIRECT_URL);
+    body.add("redirect_uri", REDIRECT_URL);
     body.add("code",code); // 인가 코드
 
     // 방법 1
