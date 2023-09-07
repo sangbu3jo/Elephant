@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -30,7 +31,11 @@ public class EmailCheckServiceImpl implements EmailCheckService {
   @Override
   @Async
   public ResponseEntity<String> sendEmail(String userEmail) throws Exception {
-    isExistUsername(userEmail);
+    try {
+      isExistUsername(userEmail);
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
+    }
 
     String password = UUID.randomUUID().toString();
     saveEmailPassword(userEmail, password);
@@ -40,7 +45,6 @@ public class EmailCheckServiceImpl implements EmailCheckService {
       return ResponseEntity.ok("이메일 전송 성공");
     } catch (MailException e) {
       e.printStackTrace();
-//      throw new Exception("메일 보내는 도중 오류 발생");
       return ResponseEntity.badRequest().body("메일 보내는 도중 오류 발생");
     }
   }
