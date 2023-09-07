@@ -170,28 +170,69 @@ function signup() {
   });
 }
 
+var modal = document.getElementById('emailModal');
+var timerValue = document.getElementById('timerValue');
+var timerIntervalId;
 
 
 // 인증메일 전송 버튼 클릭 시
 function sendEmail() {
   // 서버로 인증번호 전송 요청하기.
   let userEmail = $('#username').val();
-  console.log('email: ' + userEmail);
+  var modal = $('.modal');
+  modal.css('display', 'block');
 
   $.ajax({
     type: "GET",
     url: `/api/auth/email/${userEmail}/invited`,
     success: function (data) {
-      console.log(data);
+      startTimer(5 * 60); // 5분 타이머 시작 (5분 = 5 * 60초)
+      console.log('email: ' + userEmail);
     },
-    error: function (error) {
+    error: function (error, response, xhr) {
       console.error("이메일 전송 실패");
+      console.log(response);
+      modal.css('display', 'none');
+      if (xhr.responseText == "메일 보내는 도중 오류 발생") {
+        Toast.fire({
+          icon: 'error',
+          title: '이메일 전송 오류'
+        })
+      } else {
+        Toast.fire({
+          icon: 'error',
+          title: '이미 가입된 이메일입니다'
+        })
+      }
     }
   });
 }
 
+function startTimer(duration) {
+  var timer = duration;
+  var minutes, seconds;
+
+  timerIntervalId = setInterval(function () {
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+    timerValue.textContent = minutes + ":" + seconds;
+
+    if (--timer < 0) {
+      clearInterval(timerIntervalId);
+      timerValue.textContent = "시간 초과!";
+      // 타이머 종료 후 원하는 작업을 수행하세요.
+    }
+  }, 1000);
+}
+
 
 function checkEmail() {
+  clearInterval(timerIntervalId); // 타이머 종료
+
   // 인증 여부 저장할 hidden
   var checkBox = document.getElementById("email-check");
   // 사용자가 입력한 인증 번호

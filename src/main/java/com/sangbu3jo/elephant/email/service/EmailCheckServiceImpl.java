@@ -40,7 +40,8 @@ public class EmailCheckServiceImpl implements EmailCheckService {
       return ResponseEntity.ok("이메일 전송 성공");
     } catch (MailException e) {
       e.printStackTrace();
-      throw new Exception("메일 보내는 도중 오류 발생");
+//      throw new Exception("메일 보내는 도중 오류 발생");
+      return ResponseEntity.badRequest().body("메일 보내는 도중 오류 발생");
     }
   }
 
