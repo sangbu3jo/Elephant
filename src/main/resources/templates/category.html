@@ -205,7 +205,7 @@
 
 
         <li class="page-item" th:classappend="${!posts.hasNext()} ? 'disabled'">
-          <a class="page-link" th:href="@{|/page=${posts.getPageable().getPageNumber() + 2}|}">
+          <a class="page-link" th:href="@{|/api/posts/categories/${category}?page=${posts.getPageable().getPageNumber() + 2}|}">
             <span>다음</span>
           </a>
         </li>
@@ -401,7 +401,11 @@
         return `${hours}시간 전`;
       } else {
         const days = Math.floor(timeDifference / 86400000);
-        return `${days}일 전`;
+        if(isNaN(days)){
+          return "방금 전";
+        } else {
+          return `${days}일 전`;
+        }
       }
     };
 

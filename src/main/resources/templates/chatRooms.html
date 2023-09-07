@@ -402,24 +402,28 @@
         notificationList.insertBefore(listHeader, notificationList.firstChild);
     };
 
-    // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
-    const formatTimeAgo = (notificationTime) => {
-        const currentTime = new Date();
-        const timeDifference = currentTime - new Date(notificationTime);
+        // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
+        const formatTimeAgo = (notificationTime) => {
+            const currentTime = new Date();
+            const timeDifference = currentTime - new Date(notificationTime);
 
-        if (timeDifference < 60000) { // 1분 미만
-            return "방금 전";
-        } else if (timeDifference < 3600000) { // 1시간 미만
-            const minutes = Math.floor(timeDifference / 60000);
-            return `${minutes}분 전`;
-        } else if (timeDifference < 86400000) { // 24시간 미만
-            const hours = Math.floor(timeDifference / 3600000);
-            return `${hours}시간 전`;
-        } else {
-            const days = Math.floor(timeDifference / 86400000);
-            return `${days}일 전`;
-        }
-    };
+            if (timeDifference < 60000) { // 1분 미만
+                return "방금 전";
+            } else if (timeDifference < 3600000) { // 1시간 미만
+                const minutes = Math.floor(timeDifference / 60000);
+                return `${minutes}분 전`;
+            } else if (timeDifference < 86400000) { // 24시간 미만
+                const hours = Math.floor(timeDifference / 3600000);
+                return `${hours}시간 전`;
+            } else {
+                const days = Math.floor(timeDifference / 86400000);
+                if(isNaN(days)){
+                    return "방금 전";
+                } else {
+                    return `${days}일 전`;
+                }
+            }
+        };
 
     // 알림 아이템 추가 함수
     const addNotificationToList = (notification) => {
