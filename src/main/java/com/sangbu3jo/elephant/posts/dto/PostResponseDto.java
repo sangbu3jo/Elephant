@@ -24,6 +24,7 @@ public class PostResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<PostCommentResponseDto> postCommentList;
+    private String profileUrl;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -44,6 +45,7 @@ public class PostResponseDto {
                 .sorted(Comparator.comparing(PostCommentResponseDto::getCreatedAt))
                 .toList();
         this.userId = post.getUser().getId();
+        this.profileUrl = post.getUser().getProfileUrl();
     }
 
 
