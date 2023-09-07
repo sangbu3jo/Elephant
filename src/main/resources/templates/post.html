@@ -25,9 +25,27 @@
     <!-- 로고 -->
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"/>
 
-    <link rel="stylesheet" type="text/css"  href="/css/post.css">
+    <link rel="stylesheet" type="text/css" href="/css/post.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <style>
+        .profile-image {
+            width: 50px; /* 이미지의 너비를 조절할 수 있습니다. */
+            height: 50px; /* 이미지의 높이를 조절할 수 있습니다. */
+            border-radius: 30%; /* 원형 프로필 사진을 만들기 위해 */
+            margin-right: 10px;
+            margin-outside: 10px;
+
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group.text-center {
+            text-align: center; /* 내용을 수평으로 가운데 정렬 */
+        }
+
 
     </style>
 
@@ -37,84 +55,88 @@
 
 <body>
 <div id="wrap">
-<div class="top">
-    <div class="right">
-        <a id="login" onclick="redirectToLoginPage()">
-            <button>로그인</button>
-        </a>
-        <a id="logout" onclick="logout()">
-            <button>로그아웃</button>
-        </a>
-        <a id="keeplogin" onclick="refreshAccessToken()">
-            <button>로그인 연장</button>
-        </a>
-    </div>
-    <div class="middle">
-        <!-- 가운데 코끼리 글씨 및 로고  -->
-        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
-             style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
-        <div style="text-align: center; cursor:pointer;" onclick="gotoMain()">
-            코끼리
+    <div class="top">
+        <div class="right">
+            <a id="login" onclick="redirectToLoginPage()">
+                <button>로그인</button>
+            </a>
+            <a id="logout" onclick="logout()">
+                <button>로그아웃</button>
+            </a>
+            <a id="keeplogin" onclick="refreshAccessToken()">
+                <button>로그인 연장</button>
+            </a>
         </div>
-    </div>
-    <div class="left">
-        <!-- 알림, 우측 메뉴 슬라이드 -->
-        <div class="notification-icon">
-            <div style="position: relative;">
-                <i class="far fa-bell" style="color: #cfcfcf;"></i>
-                <span id="notificationBadge" class="nobadge" style="display:none;"></span>
+        <div class="middle">
+            <!-- 가운데 코끼리 글씨 및 로고  -->
+            <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
+                 style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
+            <div style="text-align: center; cursor:pointer;" onclick="gotoMain()">
+                코끼리
             </div>
         </div>
-
-        <div style="text-align: center;" type="button" data-bs-toggle="offcanvas"
-             data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
-            <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png" style="width: 40px; height: 40px;">
-            <!-- 로고 이미지 추가 -->
-        </div>
-
-        <div class="offcanvas offcanvas-start w-25" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
-             aria-labelledby="offcanvasWithBothOptionsLabel">
-            <div class="offcanvas-header" style="text-align: center; align-items:center;">
-                <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
-                    <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
-                         style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
-                    코끼리
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <div class="left">
+            <!-- 알림, 우측 메뉴 슬라이드 -->
+            <div class="notification-icon">
+                <div style="position: relative;">
+                    <i class="far fa-bell" style="color: #cfcfcf;"></i>
+                    <span id="notificationBadge" class="nobadge" style="display:none;"></span>
+                </div>
             </div>
 
-            <div class="list-group list-group-flush">
-                <!-- 카테고리 버튼과 하위 메뉴 -->
-                <button class="list-group-item list-group-item-action" data-bs-toggle="collapse"
-                        data-bs-target="#categoryMenu">게시판 카테고리
-                </button>
-                <div id="categoryMenu" class="collapse">
-                    <a href="/api/posts/categories/1" class="list-group-item list-group-item-action mini-list">협업 인원
-                        모집</a>
-                    <a href="/api/posts/categories/2" class="list-group-item list-group-item-action mini-list">스티디원
-                        모집</a>
-                    <a href="/api/posts/categories/3" class="list-group-item list-group-item-action mini-list">문제은행</a>
-                    <a href="/api/posts/categories/4" class="list-group-item list-group-item-action mini-list">자유게시판</a>
+            <div style="text-align: center;" type="button" data-bs-toggle="offcanvas"
+                 data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png" style="width: 40px; height: 40px;">
+                <!-- 로고 이미지 추가 -->
+            </div>
+
+            <div class="offcanvas offcanvas-start w-25" data-bs-scroll="true" tabindex="-1"
+                 id="offcanvasWithBothOptions"
+                 aria-labelledby="offcanvasWithBothOptionsLabel">
+                <div class="offcanvas-header" style="text-align: center; align-items:center;">
+                    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+                        <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png"
+                             style="width: 40px; height: 40px;"> <!-- 로고 이미지 추가 -->
+                        코끼리
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
 
-                <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
-                <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
-                <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a>
-                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a>
-                <!--서버에서 admin 여부 true/false로 가져오기-->
+                <div class="list-group list-group-flush">
+                    <!-- 카테고리 버튼과 하위 메뉴 -->
+                    <button class="list-group-item list-group-item-action" data-bs-toggle="collapse"
+                            data-bs-target="#categoryMenu">게시판 카테고리
+                    </button>
+                    <div id="categoryMenu" class="collapse">
+                        <a href="/api/posts/categories/1" class="list-group-item list-group-item-action mini-list">협업 인원
+                            모집</a>
+                        <a href="/api/posts/categories/2" class="list-group-item list-group-item-action mini-list">스티디원
+                            모집</a>
+                        <a href="/api/posts/categories/3"
+                           class="list-group-item list-group-item-action mini-list">문제은행</a>
+                        <a href="/api/posts/categories/4"
+                           class="list-group-item list-group-item-action mini-list">자유게시판</a>
+                    </div>
 
+                    <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
+                    <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
+                    <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a>
+                    <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자
+                        페이지</a>
+                    <!--서버에서 admin 여부 true/false로 가져오기-->
+
+
+                </div>
 
             </div>
-
         </div>
-    </div>
 
-    <!-- 나머지 내용 -->
-    <div class="notification-list" id="notificationList">
-        <div class="notification-list-header">알림</div>
-    </div>
+        <!-- 나머지 내용 -->
+        <div class="notification-list" id="notificationList">
+            <div class="notification-list-header">알림</div>
+        </div>
 
-</div>
+    </div>
 
     <div class="bottom">
         <div class="buttons">
@@ -124,112 +146,164 @@
             </div>
         </div>
 
-        <div id="post-content">
-            <div class="post-content-top">
-                <h4 th:text="${post.title}">Title</h4>
-                <div class="post-top-top">
-                    <h5 th:text="${#strings.substring(post.username, 0, 5) + '*****'}">Nickname</h5>
-                    <h5 th:text="${post.category}">Category</h5>
-                </div>
-                <div class="post-top-bottom">
-                    <h6 th:text="'작성날짜 ' + ${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">생성 날짜</h6>
-                    <h6 th:text="'조회수 ' + ${post.view_cnt}">조회수: 00회</h6>
-                    <h6 th:unless="${post.category == '문제 은행' || post.category == '자유 게시판'}">
-                        <span th:if="${post.completed == false}">모집중</span>
-                        <span th:if="${post.completed == true}">모집완료</span>
-                    </h6>
-                </div>
 
-            </div>
-            <div class="post-content-bottom">
-                <p th:utext="${post.content}">Contents</p>
-                <div th:if="${post.files != null}">
-                    <img th:src="${post.files}" alt="이미지 대체 텍스트"  style="max-width: 100%; height: auto;">
+        <div class="post-content-top">
+            <h4 th:text="${post.title}">Title</h4>
+            <div class="post-top-top">
+                <div class="profile-info">
+                    <img class="profile-image" th:src="${post.profileUrl}" alt="프로필 이미지">
+                    <h7 th:text="${#strings.substring(post.username, 0, 5) + '*****'}">Nickname</h7>
                 </div>
+                <h5 th:text="${post.category}">Category</h5>
+            </div>
+            <div class="post-top-bottom">
+                <h8 th:text="'작성날짜 ' + ${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">생성 날짜</h8>
+                <h8 th:text="'조회수 ' + ${post.view_cnt}">조회수: 00회</h8>
+                <h8 th:unless="${post.category == '문제 은행' || post.category == '자유 게시판'}">
+                    <span th:if="${post.completed == false}">모집중</span>
+                    <span th:if="${post.completed == true}">모집완료</span>
+                </h8>
+            </div>
+
+            <div class="line"></div>
+
+        </div>
+
+
+        <div class="post-content-bottom">
+            <p th:utext="${post.content}">Contents</p>
+            <div th:if="${post.files != null}">
+                <img th:src="${post.files}" alt="이미지 대체 텍스트" style="max-width: 100%; height: auto;">
             </div>
         </div>
 
-        <!-- 모달 창 -->
-        <div id="reportModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeReportModal()">&times;</span>
-                <h2>게시물 신고</h2>
-                <form id="reportForm">
-                    <label for="reason">신고 사유:</label>
-                    <textarea id="reason" name="reason" rows="4" required></textarea>
-                    <div class="modal-buttons">
-                        <button type="button" onclick="reportPost()">확인</button>
-                        <button type="button" onclick="closeReportModal()">취소</button>
+
+        <a href="#" class="report-button" data-bs-toggle="modal" data-bs-target="#reportPost">
+
+            <img src="https://img.icons8.com/plasticine/72/000000/siren.png" alt="신고 아이콘">
+        </a>
+
+        <!--신고 모달창 -->
+        <div class="modal fade" th:id="reportPost" aria-labelledby="exampleModalLabell" aria-hidden="true"
+             style="z-index: 10000;">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModal3">게시글 신고</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </form>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="reason" class="col-form-label">신고 사유</label>
+                            <input type="text" class="form-control datepickerr" id="reason">
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light btn-report" th:id="${post.id}"
+                                onclick="reportPost()">신고
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </div>
             </div>
         </div>
+        <!--신고 모달창 종료-->
+    </div>
 
-        <div class="comment-content">
-            <div class="comment">
-                <h4>댓글</h4>
+
+    <div class="comment-content">
+
+        <div class="comment">
+
+            <h5>댓글</h5>
+            <div class="form-group text-center">
                 <form id="comment-form">
                     <div class="form-group">
                         <label for="comment-content">댓글 내용</label>
                         <input type="text" id="comment-content" name="comment-content" class="input-field"
                                placeholder="댓글을 입력하세요">
+
+                        <button type="submit" class="submit-button">댓글 작성</button>
+                        <!-- 신고 아이콘 추가 -->
+
                     </div>
-                    <button type="submit" class="submit-button">댓글 작성</button>
-                    <!-- 신고 아이콘 추가 -->
-                    <a href="#" class="report-button" onclick="openReportModal()">
-                        <img src="https://img.icons8.com/plasticine/72/000000/siren.png" alt="신고 아이콘">
-                    </a>
+
+
                 </form>
-                <div class="line"></div>
-                <!-- 댓글 목록 출력 -->
-                <div class="comment-container">
-                    <ul>
-                        <li th:each="comment : ${post.postCommentList}">
-                            <div class="comment-one">
-                                <div class="comment-content-user">
-                                    <!-- 댓글 작성자 (앞 5글자만 표시) -->
-                                    <p th:text="${#strings.substring(comment.username, 0, 5) + '*****'}">username</p>
+            </div>
 
-                                    <!-- 댓글 내용 -->
-                                    <h5 th:text="${comment.content}">content</h5>
+            <div class="line">
 
-                                    <!-- 댓글 작성 날짜 -->
-                                    <p th:text="'작성날짜 ' + ${#temporals.format(comment.createdAt,'MM/dd HH:mm:ss')}">댓글
-                                        작성
-                                        날짜</p>
+            </div>
+
+            <!-- 댓글 목록 출력 -->
+            <div class="comment-container">
+                <ul>
+                    <li th:each="comment : ${post.postCommentList}">
+                        <div class="comment-one">
+                            <div class="comment-content-user">
+                                <img class="profile-image" th:src="${comment.profileUrl}" alt="프로필 이미지">
+                                <!-- 댓글 작성자 (앞 5글자만 표시) -->
+                                <p th:text="${#strings.substring(comment.username, 0, 5) + '*****'}">username</p>
+
+                                <!-- 댓글 내용 -->
+                                <h5 th:text="${comment.content}">content</h5>
+
+                                <!-- 댓글 작성 날짜 -->
+                                <p th:text="'작성날짜 ' + ${#temporals.format(comment.createdAt,'MM/dd HH:mm:ss')}">댓글
+                                    작성
+                                    날짜</p>
+                            </div>
+
+                            <div class="comment-button">
+                                <div th:if="${comment.userId == loginUser}">
+                                    <button class="update-comment" data-bs-toggle="modal"
+                                            th:data-bs-target="'#data-comment-id'+${comment.id}">댓글수정
+                                    </button>
+                                    <button class="delete-comment"
+                                            th:attr="onclick='deleteComment(' + ${comment.id} + ')'">
+                                        댓글삭제
+                                    </button>
                                 </div>
-
-                                <div class="comment-button">
-                                    <div th:if="${comment.userId == loginUser}">
-                                        <button class="update-comment" th:attr="data-comment-id=${comment.id}">댓글수정
-                                        </button>
-                                        <button class="delete-comment"
-                                                th:attr="onclick='deleteComment(' + ${comment.id} + ')'">
-                                            댓글삭제
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="modal">
+                            </div>
+                            <!--수정 모달창 -->
+                            <div class="modal fade" th:id="'data-comment-id'+${comment.id}"
+                                 aria-labelledby="exampleModalLabell" aria-hidden="true" style="z-index: 10000;">
+                                <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
-                                        <!-- 모달 내용 -->
-                                        <span class="close">&times;</span>
-                                        <h2>댓글 수정</h2>
-                                        <input type="hidden" id="commentId" name="commentId" th:value="${comment.id}">
-                                        <textarea id="commentTextarea" th:text="${comment.content}"></textarea>
-                                        <button id="saveComment">저장</button>
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="example">댓글 수정</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="comment" class="col-form-label">수정 내용</label>
+                                                <input type="text" class="form-control comment" id="comment"
+                                                       th:placeholder="${comment.content}">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-light btn-report"
+                                                    th:id="${comment.id}">수정
+                                            </button>
+                                            <!--                                            <input type="hidden" id="commentId" name="commentId" th:value="${comment.id}">-->
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
 
+                        </div>
+                    </li>
+                </ul>
+            </div>
         </div>
+
     </div>
 </div>
-
 
 
 <script>
@@ -256,39 +330,78 @@
         const postId = window.location.href.split('/').pop();
 
         if (reason.trim() === "") {
-            alert("신고 사유를 입력하세요.");
-            return;
-        }
-
-        // API 호출 코드 추가
-        fetch(`/api/posts/report/${postId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ reason: reason }),
-        })
-            .then(response => {
-                if (response.status === 200) {
-                    response.text().then(data => {
-                        alert(data); // 서버에서 반환한 메시지를 알림으로 표시
-                        if (data === "게시글이 신고되었습니다.") {
-                            // closeReportModal(); // 모달 창 닫기
-                        }
-                    });
-                } else {
-                    response.text().then(data => {
-                        alert(data); // 서버에서 반환한 오류 메시지를 알림으로 표시
-                    });
+            $('#reportPost').modal('hide');
+            Swal.fire({
+                icon: "waning",
+                title: "신고 사유를 입력해주세요"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    return;
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('신고 중 오류가 발생했습니다.');
+        } else {
+            $('#reportPost').modal('hide');
+
+            // API 호출 코드 추가
+            fetch(`/api/posts/report/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({reason: reason}),
             })
-            .finally(() => {
-            closeReportModal(); // 모달 창 닫기
-        });
+                .then(response => {
+                    if (response.status === 200) {
+                        response.text().then(data => {
+                            if (data === "게시글이 신고되었습니다.") {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: data
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        return;
+                                    }
+                                })
+                            } else {
+                                Swal.fire({
+                                    icon: "warning",
+                                    title: data
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        return;
+                                    }
+                                })
+                            }
+
+                        });
+                    } else {
+                        response.text().then(data => {
+                            Swal.fire({
+                                icon: "error",
+                                title: data
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    return;
+                                }
+                            })
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: "error",
+                        title: '신고 중 오류가 발생했습니다.'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            return;
+                        }
+                    })
+                })
+                .finally(() => {
+                    closeReportModal(); // 모달 창 닫기
+                });
+        }
+
     }
 
 
@@ -413,77 +526,68 @@
     }
 
 
-    // 수정 버튼 클릭 시
-    document.querySelectorAll('.update-comment').forEach(button => {
+
+
+    document.querySelectorAll(".btn-report").forEach(button => {
         button.addEventListener('click', function () {
+            // 현재 클릭된 버튼과 가장 가까운 .modal 클래스를 찾음
+            const closestModal = this.closest('.modal');
+            const commentId = this.id;
+            // 가장 가까운 .modal 클래스 내부의 .comment 클래스를 가진 input 태그를 찾음
+            const commentInput = closestModal.querySelector('.comment');
 
+            // input 태그의 값을 가져와서 콘솔에 출력
+            if (commentInput) {
+                closestModal.style.display = 'none';
+                const commentText = commentInput.value;
+                console.log(commentText);
 
-            const modal = document.querySelector('.modal');
-            modal.style.display = 'block';
+                var postData = {
+                    content: commentText // 수정된 내용
+                };
+                console.log(commentId);
 
-        });
-    });
+                Swal.fire({
+                    title: "댓글을 수정하시겠습니까?",
+                    text: '댓글을 수정합니다.',
+                    icon: 'warning',
 
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: '수정',
+                    cancelButtonText: '취소',
 
-    // 모달 저장 버튼 클릭 시
-    document.getElementById('saveComment').addEventListener('click', function () {
+                    reverseButtons: false, // 버튼 순서 거꾸로
+                }).then(result => {
+                    if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+                        console.log(commentId);
+                        $.ajax({
+                            type: "PUT",
+                            url: "/api/posts/comments/" + commentId, // 수정할 댓글의 URL
+                            data: JSON.stringify(postData),
+                            contentType: "application/json",
+                            success: function (response) {
+                                // 성공 시 서버의 응답을 처리합니다.
+                                $("#result").text(response); // 성공 메시지를 표시합니다.
 
-        var commentContent = $("#commentTextarea").val();
-        var commentId = $("#commentId").val();
+                                window.location.reload();
 
-
-        var postData = {
-            content: commentContent // 수정된 내용
-        };
-
-        console.log(commentId);
-        console.log(commentContent)
-
-        Swal.fire({
-            title: "댓글을 수정하시겠습니까?",
-            text: '댓글을 수정합니다.',
-            icon: 'warning',
-
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: '수정',
-            cancelButtonText: '취소',
-
-            reverseButtons: false, // 버튼 순서 거꾸로
-        }).then(result => {
-            if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
-                $.ajax({
-                    type: "PUT",
-                    url: "/api/posts/comments/" + commentId, // 수정할 댓글의 URL
-                    data: JSON.stringify(postData),
-                    contentType: "application/json",
-                    success: function (response) {
-                        // 성공 시 서버의 응답을 처리합니다.
-                        $("#result").text(response); // 성공 메시지를 표시합니다.
-
-                        // 수정이 성공하면 모달을 닫을 수 있습니다.
-                        // const modal = document.getElementById('commentModal');
-                        // modal.style.display = 'none';
-                        window.location.reload();
-
-                    },
-                    error: function (error) {
-                        // 에러 시 에러 메시지를 처리합니다.
-                        $("#result").text("에러 발생: " + error.responseText);
+                            },
+                            error: function (error) {
+                                // 에러 시 에러 메시지를 처리합니다.
+                                $("#result").text("에러 발생: " + error.responseText);
+                            }
+                        });
                     }
                 });
+
+
             }
         });
     });
 
 
-    // 모달 닫기 버튼 클릭 시
-    const closeBtn = document.querySelector('.close');
-    closeBtn.addEventListener('click', function () {
-        const modal = document.querySelector('.modal');
-        modal.style.display = 'none';
-    });
 
 </script>
 
@@ -683,13 +787,13 @@
         // 알림 전체 읽음 처리 함수
         function markAllNotificationsAsRead() {
             $.post(`/api/mark-all-notifications-as-read/${userId}`)
-                .done(function(response) {
+                .done(function (response) {
                     Toast.fire({
                         icon: 'success',
                         title: "전체 읽음 처리 되었습니다!",
                     })
                 })
-                .fail(function(response) {
+                .fail(function (response) {
                     Toast.fire({
                         icon: 'error',
                         title: "전체 읽음 처리 실패!",
@@ -774,6 +878,7 @@
             }
         });
     }
+
     function redirectToLoginPage() {
         window.location.href = "/api/auth/login-page";
     }

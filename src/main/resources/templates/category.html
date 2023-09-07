@@ -224,6 +224,7 @@
 
   function gotoPost(postId){
     const token = Cookies.get('Authorization');
+
     if(token){ // 토큰 있을 경우
       window.location.href = `/api/posts/${postId}`;
     } else {
@@ -256,8 +257,11 @@
   // 로그인 여부 확인 후 게시글 생성 페이지로 이동
   function goToCreatePost(){
     const token = Cookies.get('Authorization');
+    const category = window.location.href.split('/').pop();
+    const url = `/api/post-page?category=${category}`;
     if(token){ // 토큰 있을 경우
-      window.location.href = "/api/post-page";
+      window.location.href = url;
+      console.log(url);
     } else {
       Swal.fire({
         title: '로그인한 사용자만 작성할 수 있습니다.',

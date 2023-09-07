@@ -119,18 +119,19 @@
     <div class="container">
         <h5>게시글 수정</h5>
 
-        <input type="hidden" id="postId" name="postId" value="${updatePost.id}">
+        <input type="hidden" id="postId" name="postId" th:value="${updatePost.id}">
         <div id="postForm" class="post-form">
 
             <div class="form-group">
                 <label for="category">카테고리</label>
                 <select id="category" name="category" class="input-field">
-                    <option value="COOPERATION_PROJECT">협업 프로젝트</option>
-                    <option value="DEVELOPMENT_STUDY">개발 스터디</option>
-                    <option value="PREVIOUS_EXAM">문제 은행</option>
-                    <option value="FORUM_BOARD">자유게시판</option>
+                    <option value="COOPERATION_PROJECT" th:selected="${updatePost.category == '협업 프로젝트'}">협업 프로젝트</option>
+                    <option value="DEVELOPMENT_STUDY" th:selected="${updatePost.category == '개발 스터디'}">개발 스터디</option>
+                    <option value="PREVIOUS_EXAM" th:selected="${updatePost.category == '문제 은행'}">문제 은행</option>
+                    <option value="FORUM_BOARD" th:selected="${updatePost.category == '자유 게시판'}">자유 게시판</option>
                 </select>
             </div>
+
 
             <div class="form-group">
                 <label for="title">제목</label>

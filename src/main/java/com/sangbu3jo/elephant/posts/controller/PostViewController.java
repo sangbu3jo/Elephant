@@ -103,7 +103,9 @@ public class PostViewController {
 
   //게시글 생성 페이지로 이동
   @GetMapping("/post-page")
-  public String createPost() {
+  public String createPost(@RequestParam("category") int category,
+                           Model model) {
+    model.addAttribute("choice", category);
     return "createPost";
   }
 
