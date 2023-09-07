@@ -42,7 +42,7 @@ public class AuthController {
    * 로그아웃 메서드 구현
    * @param request 요청 Servlet
    * @param response 응답 Servlet
-   * @param userDetails
+   * @param userDetails 로그아웃할 사용자 정보
    * @return http status code 와 로그아웃 성공 여부
    */
   @DeleteMapping("/auth/logout")
@@ -59,11 +59,10 @@ public class AuthController {
    * @param request 요청 Servlet
    * @param response 응답 Servlet
    * @return http status code 와 토큰 재발급 성공 여부
-   * @throws IOException
    */
   @GetMapping("/auth/refresh/access-token")
   public ResponseEntity<String> generateRefreshToken(
-      HttpServletRequest request, HttpServletResponse response) throws IOException {
+      HttpServletRequest request, HttpServletResponse response){
     boolean result = authService.generateAccessToken(request, response);
     if(result) {
       return ResponseEntity.ok("Access Token 생성 성공");
