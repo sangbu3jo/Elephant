@@ -26,10 +26,11 @@ public class PrivateChatRoomResponseDto {
         this.title = privateChatRoom.getTitle();
         // username과 동일하면 다른 사람을 showUser에 담아서 반환하도록 함
         this.showUser = setPrivateChatTitle(username, privateChatRoom);
-        this.time = privateChatMessage.getSendTime();
 
         // 최근 메세지 내역이 있으면 그 내용을 보여줌
         if (privateChatMessage != null) {
+            this.time = privateChatMessage.getSendTime();
+
             String message = privateChatMessage.getMessage();
             if (message.length() > 20) {
                 this.message = message.substring(0, 20) + "...";

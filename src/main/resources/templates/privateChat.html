@@ -159,14 +159,22 @@
                 var chatting = data;
 
                 chatting.forEach(function (chatItem) {
+                    console.log(chatItem.url);
                     var messageElement = document.createElement('li');
                     var avatarElement = document.createElement('i');
                     var usernameElement = document.createElement('span');
                     var textElement = document.createElement('p');
 
                     messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
-                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
-                    avatarElement.appendChild(document.createTextNode(chatItem.nickname[0]));
+
+                    if (chatItem.url != null) {
+                        avatarElement.style['background-image'] = 'url(' + chatItem.url + ')';
+                        avatarElement.style['background-size'] = 'cover';
+                    } else {
+                        avatarElement.style['background-image'] = 'url(https://cdn-icons-png.flaticon.com/128/1864/1864497.png)';
+                        avatarElement.style['background-size'] = 'cover';
+                    }
+
                     usernameElement.appendChild(document.createTextNode(chatItem.nickname));
                     textElement.appendChild(document.createTextNode(chatItem.message));
 
@@ -202,8 +210,13 @@
                 var textElement = document.createElement('p');
 
                 messageElement.classList.add(chat.username === username ? 'chat-message2' : 'chat-message');
-                avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-                avatarElement.appendChild(document.createTextNode(chat.nickname[0]));
+                if (chat.url != null) {
+                    avatarElement.style['background-image'] = 'url(' + chat.url + ')';
+                    avatarElement.style['background-size'] = 'cover';
+                } else {
+                    avatarElement.style['background-image'] = 'url(https://cdn-icons-png.flaticon.com/128/1864/1864497.png)';
+                    avatarElement.style['background-size'] = 'cover';
+                }
                 usernameElement.appendChild(document.createTextNode(chat.nickname));
                 textElement.appendChild(document.createTextNode(chat.message));
 

@@ -230,6 +230,26 @@ body {
     width: 100%;
 }
 
+#timer , #timerValue {
+    font-size: 14px;
+}
+
+.inputs{
+    background-color: #fff;
+    border: none;
+    padding: 0.9rem 0.9rem;
+    margin: 0.5rem 0;
+    width: 90%;
+}
+
+.modal {
+    width: 100%;
+}
+
+#check-email-btn{
+    
+}
+
 @keyframes show {
     0%,
     49.99% {
@@ -260,6 +280,16 @@ a.list-group-item .vs-title {
 }
 .social a {
     text-decoration: none;
+}
+
+a {
+    color: black;
+    text-underline: none;
+    text-decoration: none;
+}
+
+a:hover{
+    color: #002cc4;
 }
 
 #login-kakao-btn {

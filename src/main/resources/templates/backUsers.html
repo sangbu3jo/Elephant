@@ -176,6 +176,7 @@
     // header js 코드 추가
     $(document).ready(function () {
         pageSetting();
+        fetchAndRenderUsers();
 
         const notificationIcon = document.querySelector('.notification-icon');
         const notificationBadge = document.getElementById('notificationBadge');
@@ -1224,94 +1225,69 @@
         userInfoList.innerHTML = '';
 
         const userDiv = document.createElement('div');
-        userDiv.classList.add('user-info');
+        userDiv.classList.add('user-info2');
 
         const username = usersToShow.username;
-        const password = usersToShow.password;
         const nickname = usersToShow.nickname;
         const introduction = usersToShow.introduction;
         const profileUrl = usersToShow.profileUrl;
 
-
-        // 비밀번호를 최대 8자리까지 '*' 문자로 표시
-        const maskedPassword = usersToShow.password.length > 8 ? '*'.repeat(8) : '*'.repeat(
-            usersToShow.password.length);
-
         userDiv.innerHTML = `
-
-
             <table>
-                <tr>
-                    <td>유저 아이디 : </td>
-                    <td>${usersToShow.username}</td>
-                </tr>
-                <tr>
-                    <td>비밀번호 : </td>
-                    <td>${maskedPassword}</td>
-                </tr>
-                <tr>
-                    <td>닉네임 : </td>
-                    <td>${usersToShow.nickname}</td>
-                </tr>
-                <tr>
-                    <td>자기소개 : </td>
-                    <td>${usersToShow.introduction}</td>
-                </tr>
-                 <tr>
-                    <td>프로필 이미지 : </td>
-                    <td><img src="${usersToShow.profileUrl}" alt="프로필 이미지"  style="width: 100px; height: 100px;" ></td>
-
-                  </tr>
-
-                  <tr>
-                  <td><input type="file" id="image-input" accept="image/*"></td>
-                  </tr>
-                  <tr>
-                  <td><button id="upload-image-button">이미지 변경 Go</button></td>
-                  </tr>
+                <tbody>
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="${profileUrl}" class="img-fluid rounded-start" alt="Profile Image">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h4 class="card-title">${username}</h4>
+                                    <h5 class="card-text">Nickname: ${nickname}</h5>
+                                    <h5 class="card-text">Introduction: ${introduction}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <input type="file" id="image-input" accept="image/*">
+                                    <button id="upload-image-button">프로필 사진 변경</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tbody>
             </table>
-
-         `;
-
-            const uploadImageButton = userDiv.querySelector('#upload-image-button');
-            const profileImage = userDiv.querySelector('#profile-image');
-            const imageInput = userDiv.querySelector('#image-input');
-
-            // 프로필 이미지 업로드 버튼에 클릭 이벤트를 추가하고 이미지를 선택하면 AJAX를 통해 서버로 업로드
-            uploadImageButton.addEventListener('click', () => {
-                const file = imageInput.files[0];
-
-
-                if (file) {
-                    const formData = new FormData();
-                    formData.append('image', file);
-
-                    // AJAX 요청을 보내고 이미지 URL을 서버로 업로드
-                    $.ajax({
-                        url: '/api/users/profile/image', // 서버 업로드 URL로 변경
-                        type: 'POST',
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        success: function (data) {
-                            // 서버에서 응답을 받은 후 처리할 로직을 여기에 추가
-                            // data는 서버에서 받은 응답 데이터입니다.
-
-                            location.reload();
-
-                        },
-                        error: function (error) {
-                            console.error('업로드 실패:', error);
-                        }
-                    });
-                }
-
-
-
-        });
-
+        `;
 
         userInfoList.appendChild(userDiv);
+        const uploadImageButton = userDiv.querySelector('#upload-image-button');
+        const profileImage = userDiv.querySelector('#profile-image');
+        const imageInput = userDiv.querySelector('#image-input');
+
+        // 프로필 이미지 업로드 버튼에 클릭 이벤트를 추가하고 이미지를 선택하면 AJAX를 통해 서버로 업로드
+        uploadImageButton.addEventListener('click', () => {
+            const file = imageInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // AJAX 요청을 보내고 이미지 URL을 서버로 업로드
+                $.ajax({
+                    url: '/api/users/profile/image', // 서버 업로드 URL로 변경
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        // 서버에서 응답을 받은 후 처리할 로직을 여기에 추가
+                        // data는 서버에서 받은 응답 데이터입니다.
+                        location.reload();
+                    },
+                    error: function (error) {
+                        console.error('업로드 실패:', error);
+                    }
+                });
+            }
+        });
     }
 
 
