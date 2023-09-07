@@ -10,12 +10,11 @@ import com.sangbu3jo.elephant.users.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 
 @Slf4j(topic = "Auth Service")
@@ -63,8 +62,7 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public Boolean generateAccessToken(HttpServletRequest request, HttpServletResponse response)
-      throws IOException {
+  public Boolean generateAccessToken(HttpServletRequest request, HttpServletResponse response) {
     // 클라이언트 쿠키에서 refresh token 추출
     String InputRefreshToken = jwtUtil.getRefreshTokenFromRequest(request);
     String InputRefreshTokenValue = jwtUtil.substringToken(InputRefreshToken);
@@ -77,9 +75,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // refresh token 유효성 검사 불일치
-    if(!jwtUtil.validateToken(InputRefreshTokenValue)){
+    if (!jwtUtil.validateToken(InputRefreshTokenValue)) {
       log.error("Refresh Token does not valid.");
-      jwtUtil.deleteCookie(request,response);
+      jwtUtil.deleteCookie(request, response);
       return false;
     }
 
@@ -99,13 +97,14 @@ public class AuthServiceImpl implements AuthService {
   }
 
 
-
   @Override
   public String logout(HttpServletRequest request, HttpServletResponse response, User user) {
     // redis refresh token 삭제
     Boolean result = refreshTokenRepository.delete(user.getUsername());
-    if(!result) { throw new IllegalArgumentException("RefreshToken couldn't deleted."); }
-    jwtUtil.deleteCookie(request,response);
+    if (!result) {
+      throw new IllegalArgumentException("RefreshToken couldn't deleted.");
+    }
+    jwtUtil.deleteCookie(request, response);
     return "Logout 성공";
   }
 
