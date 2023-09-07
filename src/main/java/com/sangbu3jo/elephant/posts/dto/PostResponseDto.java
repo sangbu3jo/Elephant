@@ -42,7 +42,7 @@ public class PostResponseDto {
         this.modifiedAt = post.getModifiedAt();
         this.postCommentList = post.getCommentList().stream()
                 .map(PostCommentResponseDto::new)
-                .sorted(Comparator.comparing(PostCommentResponseDto::getCreatedAt))
+                .sorted(Comparator.comparing(PostCommentResponseDto::getCreatedAt).reversed())
                 .toList();
         this.userId = post.getUser().getId();
         this.profileUrl = post.getUser().getProfileUrl();
