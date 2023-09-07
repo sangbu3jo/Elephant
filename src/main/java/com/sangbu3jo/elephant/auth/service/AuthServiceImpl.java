@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,8 @@ public class AuthServiceImpl implements AuthService {
   private final RefreshTokenRepository refreshTokenRepository;
   private final JwtUtil jwtUtil;
 
-  private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+  @Value("${signup.admin.key}")
+  private String ADMIN_TOKEN;
 
   @Override
   public String signup(SignupRequestDto signupRequestDto) {
