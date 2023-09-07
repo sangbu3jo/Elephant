@@ -72,8 +72,12 @@ public class ChatController {
     public List<ChatMessageResponseDto> getChatMessages(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("메세지 리스트 요청 넘어옴");
         // 이 사람이 채팅방에 존재하는 지 여부를 파악하고 나서, 채팅방에 들어온 시간을 기준으로 그 이후의 데이터만 갖고와서 보여주어야 함
-        List<ChatMessageResponseDto> messages = chatRoomService.getMessages(board_id, userDetails.getUser().getUsername());
-        return messages;
+        try {
+            List<ChatMessageResponseDto> messages = chatRoomService.getMessages(board_id, userDetails.getUser().getUsername());
+            return messages;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     /**
@@ -106,9 +110,10 @@ public class ChatController {
         // 채팅방에 처음 들어온 사용자인지 구분
         Boolean user = chatRoomService.findUsersInChatRoom(chatMessageRequestDto.getUsername(), chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto.getSendTime());
         if (user) {
+            log.info("처음 들어온 유저");
             chatMessageRequestDto.setMessage(chatMessageRequestDto.getNickname() + "님이 입장하셨습니다 :D");
-            chatRoomService.saveChatMessage(chatMessageRequestDto);
-            messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto);
+            ChatMessageResponseDto chatMessage = chatRoomService.saveChatMessage(chatMessageRequestDto);
+            messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessage);
         }
     }
 
@@ -121,8 +126,9 @@ public class ChatController {
     public void sendMessage(@Payload ChatMessageRequestDto chatMessageRequestDto, SimpMessageHeaderAccessor headerAccessor) {
         log.info("메시지 전송 요청이 넘어온 것을 확인");
         headerAccessor.getSessionAttributes().put("chatRoomId", chatMessageRequestDto.getChatRoomId());
-        chatRoomService.saveChatMessage(chatMessageRequestDto);
-        messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto);
+        ChatMessageResponseDto message = chatRoomService.saveChatMessage(chatMessageRequestDto);
+        log.info(message.getType());
+        messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), message);
     }
 
     /**
@@ -230,8 +236,8 @@ public class ChatController {
         log.info("메시지 전송 요청이 넘어온 것을 확인");
         headerAccessor.getSessionAttributes().put("chatRoomTitle", chatMessageRequestDto.getTitle());
         chatMessageRequestDto.setSendTime(LocalDateTime.now());
-        chatRoomService.savePrivateChatMessage(chatMessageRequestDto);
-        messagingTemplate.convertAndSend("/queue/" + chatMessageRequestDto.getTitle(), chatMessageRequestDto);
+        PrivateChatMessageResponseDto message = chatRoomService.savePrivateChatMessage(chatMessageRequestDto);
+        messagingTemplate.convertAndSend("/queue/" + chatMessageRequestDto.getTitle(), message);
     }
 
     /**

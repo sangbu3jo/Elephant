@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,11 +58,15 @@ public class ChatRoomService {
     /**
      * 프로젝트(보드) 단체 채팅 메세지 저장
      * @param chatMessageRequestDto: 메세지 타입과, 보내는 채팅방의 ID, 유저 정보, 메세지 내용, 보내는 시간을 받아옴
+     * @return: 메세지 내용을 dto에 담아 반환
      */
-    public void saveChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
+    public ChatMessageResponseDto saveChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
         User user = userRepository.findByUsername(chatMessageRequestDto.getUsername()).orElseThrow();
         ChatMessage chatMessage = new ChatMessage(chatMessageRequestDto, user);
         mongoTemplate.save(chatMessage, chatMessageRequestDto.getChatRoomId().toString());
+        ChatMessageResponseDto message = new ChatMessageResponseDto(chatMessage);
+        message.updateUrl(user.getProfileUrl());
+        return message;
     }
 
     /**
@@ -80,8 +83,14 @@ public class ChatRoomService {
                     );*/
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow();
-        ChatUser chatUser = chatUserRepository.findByUsernameAndChatroom(username, chatRoom).orElseThrow(); // chatuser가 있으면 찾아주는 걸로 하자
-        LocalDateTime time = chatUser.getEnterTime();
+
+        Optional<ChatUser> chatUserOptional = chatUserRepository.findByUsernameAndChatroom(username, chatRoom); // chatuser가 있으면 찾아주는 걸로 하자
+
+        if (!chatUserOptional.isPresent()) {
+            throw new IllegalArgumentException("존재하지 않습니다.");
+        }
+
+        LocalDateTime time = chatUserOptional.get().getEnterTime();
         log.info(time.toString());
 
         Query query = new Query();
@@ -95,7 +104,21 @@ public class ChatRoomService {
                 chatRoomId.toString()
         );
 
-        return chatMessages.stream().map(ChatMessageResponseDto::new).toList();
+        List<ChatMessageResponseDto> messages = new ArrayList<>();
+
+        for (ChatMessage chatMessage : chatMessages) {
+            // userRepository를 사용하여 user 정보 가져오기
+            User user = userRepository.findById(chatMessage.getUser().getId()).orElse(null);
+
+            if (user != null) {
+                // user 정보를 PrivateChatMessageResponseDto에 추가
+                ChatMessageResponseDto responseDto = new ChatMessageResponseDto(chatMessage);
+                responseDto.updateUrl(user.getProfileUrl());
+                messages.add(responseDto);
+            }
+        }
+
+        return messages;
     }
 
     /**
@@ -110,11 +133,13 @@ public class ChatRoomService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow();
         Optional<ChatUser> chatUser = chatUserRepository.findByUsernameAndChatroom(username, chatRoom);
         if (!chatUser.isPresent()) {
+            log.info("유저 존재 X");
             ChatUser newChatUser = new ChatUser(username, time);
             chatRoom.addUser(newChatUser);
             chatUserRepository.save(newChatUser);
             return true;
         }
+        log.info("유저 존재");
         return false;
     }
 
@@ -198,11 +223,15 @@ public class ChatRoomService {
     /**
      * 개인 채팅방 메세지 저장
      * @param chatMessageRequestDto: 메세지 타입과, 보내는 채팅방의 ID, 유저 정보, 메세지 내용, 보내는 시간을 받아옴
+     * @return: ResponseDto에 담아서 반환
      */
-    public void savePrivateChatMessage(PrivateChatMessageRequestDto chatMessageRequestDto) {
+    public PrivateChatMessageResponseDto savePrivateChatMessage(PrivateChatMessageRequestDto chatMessageRequestDto) {
         User user = userRepository.findByUsername(chatMessageRequestDto.getUsername()).orElseThrow();
         PrivateChatMessage chatMessage = new PrivateChatMessage(chatMessageRequestDto, user);
         mongoTemplate.save(chatMessage, chatMessageRequestDto.getTitle().toString());
+        PrivateChatMessageResponseDto message = new PrivateChatMessageResponseDto(chatMessage);
+        message.updateUrl(user.getProfileUrl());
+        return message;
     }
 
     /**
@@ -217,7 +246,21 @@ public class ChatRoomService {
                 chatRoomId
         );
 
-        return chatMessages.stream().map(PrivateChatMessageResponseDto::new).toList();
+        List<PrivateChatMessageResponseDto> messages = new ArrayList<>();
+
+        for (PrivateChatMessage chatMessage : chatMessages) {
+            // userRepository를 사용하여 user 정보 가져오기
+            User user = userRepository.findById(chatMessage.getUser().getId()).orElse(null);
+
+            if (user != null) {
+                // user 정보를 PrivateChatMessageResponseDto에 추가
+                PrivateChatMessageResponseDto responseDto = new PrivateChatMessageResponseDto(chatMessage);
+                responseDto.updateUrl(user.getProfileUrl());
+                messages.add(responseDto);
+            }
+        }
+
+        return messages;
     }
 
     /**

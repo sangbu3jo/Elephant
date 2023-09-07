@@ -117,160 +117,94 @@
             url : "/api/chat/messages/" + id,
             contentType : 'application/json',
             success: function (data) {
-                console.log(data);
-                var chatting = data;
+                if (data != null && data !== "") {
+                    var chatting = data;
 
-                chatting.forEach(function (chatItem) {
-                    var messageElement = document.createElement('li');
-                    if(chatItem.type === 'ENTER') {
-                        messageElement.classList.add('event-message');
-                        chatItem.content = chatItem.username + chatItem.message;
-                    } else if (chatItem.type === 'LEAVE') {
-                        messageElement.classList.add('event-message');
-                        chatItem.content = chatItem.username + chatItem.message;
-                    } else {
-                        var avatarElement = document.createElement('i');
-                        var usernameElement = document.createElement('span');
-                        messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
-                        avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
-                        avatarElement.appendChild(document.createTextNode(chatItem.nickname[0]));
-                        usernameElement.appendChild(document.createTextNode(chatItem.nickname));
-                        messageElement.appendChild(avatarElement);
-                        messageElement.appendChild(usernameElement);
-                    }
+                    chatting.forEach(function (chatItem) {
+                        var messageElement = document.createElement('li');
+                        if(chatItem.type === 'ENTER') {
+                            messageElement.classList.add('event-message');
+                            chatItem.content = chatItem.username + chatItem.message;
+                        } else if (chatItem.type === 'LEAVE') {
+                            messageElement.classList.add('event-message');
+                            chatItem.content = chatItem.username + chatItem.message;
+                        } else {
+                            var avatarElement = document.createElement('i');
+                            var usernameElement = document.createElement('span');
+                            messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
 
-                    var textElement = document.createElement('p');
-                    var messageText = document.createTextNode(chatItem.message);
-                    textElement.appendChild(messageText);
+                            if (chatItem.url != null) {
+                                avatarElement.style['background-image'] = 'url(' + chatItem.url + ')';
+                                avatarElement.style['background-size'] = 'cover';
+                            } else {
+                                avatarElement.style['background-image'] = 'url(https://cdn-icons-png.flaticon.com/128/1864/1864497.png)';
+                                avatarElement.style['background-size'] = 'cover';
+                            }
+                            usernameElement.appendChild(document.createTextNode(chatItem.nickname));
+                            messageElement.appendChild(avatarElement);
+                            messageElement.appendChild(usernameElement);
+                        }
 
-                    messageElement.appendChild(textElement);
+                        var textElement = document.createElement('p');
+                        var messageText = document.createTextNode(chatItem.message);
+                        textElement.appendChild(messageText);
 
-                    messageArea.appendChild(messageElement);
-                });
+                        messageElement.appendChild(textElement);
 
-                messageArea.scrollTop = messageArea.scrollHeight;
+                        messageArea.appendChild(messageElement);
+                    });
+
+                    messageArea.scrollTop = messageArea.scrollHeight;
+                }
+
             }
         })
     }
 
     function onMessageReceived(payload) {
         var chat = JSON.parse(payload.body);
+        console.log(chat);
 
-        console.log(chat.type); // 이 콘솔 찍히는거 확인함 (Enter의 경우)
+        var messageElement = document.createElement('li');
 
-        if (Array.isArray(chat)) {
-            chat.forEach(function (chatItem) {
-                var messageElement = document.createElement('li');
-                if (chatItem.username === username) {
-                    console.log(chatItem.nickname);
-                    messageElement.classList.add('chat-message2');
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(chatItem.nickname[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(chatItem.nickname[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
-
-                    messageElement.appendChild(avatarElement);
-
-                    var usernameElement = document.createElement('span');
-                    var usernameText = document.createTextNode(chatItem.nickname);
-                    usernameElement.appendChild(usernameText);
-                    messageElement.appendChild(usernameElement);
-                } else {
-                    console.log(chatItem.nickname);
-                    messageElement.classList.add('chat-message');
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(chatItem.nickname[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(chatItem.nickname[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
-
-                    messageElement.appendChild(avatarElement);
-
-                    var usernameElement = document.createElement('span');
-                    var usernameText = document.createTextNode(chatItem.nickname);
-                    usernameElement.appendChild(usernameText);
-                    messageElement.appendChild(usernameElement);
-                }
-                var textElement = document.createElement('p');
-                var messageText = document.createTextNode(chatItem.message);
-                textElement.appendChild(messageText);
-
-                messageElement.appendChild(textElement);
-
-                messageArea.appendChild(messageElement);
-                messageArea.scrollTop = messageArea.scrollHeight;
-            });
-        } else {
-            var messageElement = document.createElement('li');
-            if(chat.type === 'ENTER') {
-                messageElement.classList.add('event-message');
-                chat.content = chat.username + chat.message;
-            } else if (chat.type === 'LEAVE') {
-                messageElement.classList.add('event-message');
-                chat.content = chat.username + chat.message;
-            } else {
-                if (chat.username === username) {
-                    messageElement.classList.add('chat-message2');
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(chat.nickname[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(chat.nickname[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-
-                    messageElement.appendChild(avatarElement);
-
-                    var usernameElement = document.createElement('span');
-                    var usernameText = document.createTextNode(chat.nickname);
-                    usernameElement.appendChild(usernameText);
-                    messageElement.appendChild(usernameElement);
-                } else {
-                    messageElement.classList.add('chat-message');
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(chat.nickname[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-
-                    var avatarElement = document.createElement('i');
-                    var avatarText = document.createTextNode(chat.nickname[0]);
-                    avatarElement.appendChild(avatarText);
-                    avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-
-                    messageElement.appendChild(avatarElement);
-
-                    var usernameElement = document.createElement('span');
-                    var usernameText = document.createTextNode(chat.nickname);
-                    usernameElement.appendChild(usernameText);
-                    messageElement.appendChild(usernameElement);
-                }
-            }
-
+        if(chat.type === 'ENTER') {
+            console.log(chat.type);
+            messageElement.classList.add('event-message');
+            chat.content = chat.username + chat.message;
             var textElement = document.createElement('p');
             var messageText = document.createTextNode(chat.message);
             textElement.appendChild(messageText);
+            messageElement.appendChild(textElement);
+            messageArea.appendChild(messageElement);
+            messageArea.scrollTop = messageArea.scrollHeight;
+        } else if (chat.type === 'LEAVE') {
+            messageElement.classList.add('event-message');
+            chat.content = chat.username + chat.message;
+        } else {
+            var avatarElement = document.createElement('i');
+            var usernameElement = document.createElement('span');
+            var textElement = document.createElement('p');
 
+            messageElement.classList.add(chat.username === username ? 'chat-message2' : 'chat-message');
+            if (chat.url != null) {
+                avatarElement.style['background-image'] = 'url(' + chat.url + ')';
+                avatarElement.style['background-size'] = 'cover';
+            } else {
+                avatarElement.style['background-image'] = 'url(https://cdn-icons-png.flaticon.com/128/1864/1864497.png)';
+                avatarElement.style['background-size'] = 'cover';
+            }
+
+            console.log(chat.message);
+            usernameElement.appendChild(document.createTextNode(chat.nickname));
+            textElement.appendChild(document.createTextNode(chat.message));
+
+            messageElement.appendChild(avatarElement);
+            messageElement.appendChild(usernameElement);
             messageElement.appendChild(textElement);
 
             messageArea.appendChild(messageElement);
             messageArea.scrollTop = messageArea.scrollHeight;
         }
-
     }
 
     // usernameForm이 동작할 때 connect가 동작하도록 되어있으니
