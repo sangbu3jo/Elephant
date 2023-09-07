@@ -120,12 +120,13 @@
             <div class="form-group">
                 <label for="category">카테고리</label>
                 <select id="category" name="category" class="input-field">
-                    <option value="COOPERATION_PROJECT">협업 프로젝트</option>
-                    <option value="DEVELOPMENT_STUDY">개발 스터디</option>
-                    <option value="PREVIOUS_EXAM">문제 은행</option>
-                    <option value="FORUM_BOARD">자유게시판</option>
+                    <option value="COOPERATION_PROJECT" th:selected="${choice == 1}">협업 프로젝트</option>
+                    <option value="DEVELOPMENT_STUDY" th:selected="${choice == 2}">개발 스터디</option>
+                    <option value="PREVIOUS_EXAM" th:selected="${choice == 3}">문제 은행</option>
+                    <option value="FORUM_BOARD" th:selected="${choice == 4}">자유게시판</option>
                 </select>
             </div>
+
             <div class="form-group">
                 <label for="title">제목</label>
                 <input type="text" id="title" name="title" class="input-field" placeholder="제목을 입력하세요">
