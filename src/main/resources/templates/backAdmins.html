@@ -278,7 +278,11 @@
                 return `${hours}시간 전`;
             } else {
                 const days = Math.floor(timeDifference / 86400000);
-                return `${days}일 전`;
+                if(isNaN(days)){
+                    return "방금 전";
+                } else {
+                    return `${days}일 전`;
+                }
             }
         };
 
@@ -1224,7 +1228,7 @@
             <table>
                 <tr>
                     <td><input type="checkbox" class="user-checkbox" data-reportpostid="${reportPost.id}" data-oripostid="${reportPost.oripostId}"></td>
-                    <td>게시글 작성자 : </td>
+                    <td>게시글 신고자 : </td>
                     <td>${reportPost.username}(${reportPost.nickname})</td>
                 <tr>
                     <td></td>

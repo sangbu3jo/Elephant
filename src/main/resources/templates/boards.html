@@ -540,7 +540,11 @@
                 return `${hours}시간 전`;
             } else {
                 const days = Math.floor(timeDifference / 86400000);
-                return `${days}일 전`;
+                if(isNaN(days)){
+                    return "방금 전";
+                } else {
+                    return `${days}일 전`;
+                }
             }
         };
 
