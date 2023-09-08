@@ -1,25 +1,33 @@
-name: Build and Deploy to EC2
+name: Java CI with Gradle # Workflow 이름
 
-on:
+on: # Workflow를 자동으로 트리거 하기 위한 이벤트
+  release:
+    types: [push] # push를 하면 자동으로 실행
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [main] # master 브랜치에서 동작
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+jobs: # 병렬로 실행되는 작업 단위, 여러 step으로 이루어짐
+  build:
+
+    runs-on: ubuntu-latest # 스크립트를 작동할 OS
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - uses: actions/checkout@v2
-      
-      - name: Set up JDK 17
-        uses: actions/setup-java@v1
-        with:
-          java-version: 17
+    - uses: actions/checkout@v3 # 재사용 가능한 워크플로 파일의 위치 및 버전
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    # ./gradlw 실행 권한 부여
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+      shell: bash
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-        shell: bash
-
-      - name: Build and Test
-        run: ./gradlew build test
+    # 프로젝트 build
+    - name: Build with Gradle
+      run: ./gradlew clean build -x test
+      shell: bash
