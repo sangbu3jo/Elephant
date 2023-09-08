@@ -199,10 +199,10 @@
                     updateNotificationList();
                     updateNotificationIcon();
                 } else {
-                    console.error('Error fetching notifications:', response.status);
+                    // console.error('Error fetching notifications:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching notifications:', error);
+                // console.error('Error fetching notifications:', error);
             }
         };
 
@@ -217,10 +217,10 @@
                         loadNotificationsFromServer(userId);
                     }
                 } else {
-                    console.error('Error fetching user info:', response.status);
+                    // console.error('Error fetching user info:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching user info:', error);
+                // console.error('Error fetching user info:', error);
             }
         };
 
@@ -386,14 +386,14 @@
             url: `/api/auth/refresh/access-token`,
             contentType: "application/json",
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 Toast.fire({
                     icon: 'success',
                     title: "로그인 연장 성공!",
                 })
             },
             error: function (data) {
-                console.log(data);
+                // console.log(data);
                 Toast.fire({
                     icon: 'error',
                     title: "로그인 연장 실패. 재로그인 부탁드립니다.",
@@ -407,8 +407,8 @@
     function pageSetting() {  // main page 세팅
         const token = Cookies.get('Authorization');
         const rtoken = Cookies.get('RefreshToken');
-        console.log(token);
-        console.log(rtoken);
+        // console.log(token);
+        // console.log(rtoken);
 
         const loginBtn = document.getElementById('login');
         const logoutBtn = document.getElementById('logout');
@@ -626,7 +626,7 @@
                                 })
                                 fetchAndRenderUsers();
                             })
-                            .catch(error => console.error('Error updating user authorization:', error));
+                            // .catch(error => console.error('Error updating user authorization:', error));
                     }
                 });
             } else {
@@ -685,7 +685,7 @@
                                 })
                                 fetchAndRenderPosts();
                             })
-                            .catch(error => console.error('Error updating post:', error));
+                            // .catch(error => console.error('Error updating post:', error));
                     }
                 });
             } else {
@@ -744,7 +744,7 @@
                                 })
                                 fetchAndRenderReportPosts();
                             })
-                            .catch(error => console.error('Error updating post:', error));
+                            // .catch(error => console.error('Error updating post:', error));
                     }
                 });
             } else {
@@ -798,7 +798,7 @@
                                 })
                                 fetchAndRenderComments();
                             })
-                            .catch(error => console.error('Error hiding comment:', error));
+                            // .catch(error => console.error('Error hiding comment:', error));
                     }
                 });
 
@@ -853,7 +853,7 @@
                                 })
                                 fetchAndRenderUsers();
                             })
-                            .catch(error => console.error('Error deleting user:', error));
+                            // .catch(error => console.error('Error deleting user:', error));
                     }
                 });
             } else if (checkedCheckboxes.length === 0) {
@@ -907,7 +907,7 @@
                                 })
                                 fetchAndRenderPosts();
                             })
-                            .catch(error => console.error('Error deleting post:', error));
+                            // .catch(error => console.error('Error deleting post:', error));
                     }
                 });
             } else if (checkedCheckboxes.length === 0) {
@@ -961,7 +961,7 @@
                                 })
                                 fetchAndRenderReportPosts();
                             })
-                            .catch(error => console.error('Error deleting post:', error));
+                            // .catch(error => console.error('Error deleting post:', error));
                     }
                 });
             } else if (checkedCheckboxes.length === 0) {
@@ -1016,7 +1016,7 @@
                                 })
                                 fetchAndRenderComments(); // 삭제 후 댓글 목록을 다시 불러와서 렌더링
                             })
-                            .catch(error => console.error('Error deleting comment:', error));
+                            // .catch(error => console.error('Error deleting comment:', error));
                     }
                 });
             } else {
@@ -1050,7 +1050,7 @@
                 userInfoList.innerHTML = '';
                 renderUsersForPage(currentPage);
             })
-            .catch(error => console.error('Error fetching users:', error));
+            // .catch(error => console.error('Error fetching users:', error));
     }
 
     function fetchAndRenderPosts() {
@@ -1073,7 +1073,7 @@
                 userInfoList.innerHTML = '';
                 renderPostsForPage(currentPage);
             })
-            .catch(error => console.error('Error fetching posts:', error));
+            // .catch(error => console.error('Error fetching posts:', error));
     }
 
     function fetchAndRenderReportPosts() {
@@ -1096,7 +1096,7 @@
                 userInfoList.innerHTML = '';
                 renderReportPostsForPage(currentPage);
             })
-            .catch(error => console.error('Error fetching posts:', error));
+            // .catch(error => console.error('Error fetching posts:', error));
     }
 
 
@@ -1121,7 +1121,7 @@
                 userInfoList.innerHTML = '';
                 renderCommentsForPage(currentPage);
             })
-            .catch(error => console.error('Error fetching comments:', error));
+            // .catch(error => console.error('Error fetching comments:', error));
     }
 
     function renderPagination() {
