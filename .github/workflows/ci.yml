@@ -19,17 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-
-    # ./gradlw 실행 권한 부여
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
-      shell: bash
-
-    # 프로젝트 build
-    - name: Build with Gradle
-      run: ./gradlew clean build -x test
-      shell: bash
-      
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: checkout release
       uses: actions/checkout@v3
@@ -53,3 +42,13 @@ jobs:
         --deployment-config-name CodeDeployDefault.OneAtATime
         --deployment-group-name githubaction-elephant-group
         --s3-location bucket=elephantcodingclub,bundleType=tgz,key=archive/drcloud.tar.gz
+        
+    # ./gradlw 실행 권한 부여
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+      shell: bash
+
+    # 프로젝트 build
+    - name: Build with Gradle
+      run: ./gradlew clean build -x test
+      shell: bash
