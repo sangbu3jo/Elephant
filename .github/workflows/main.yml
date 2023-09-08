@@ -33,11 +33,13 @@ jobs: # 병렬로 실행되는 작업 단위, 여러 step으로 이루어짐
       shell: bash
 
     # application.properties 생성
-    - uses: actions/checkout@v3
-    - run: touch ./src/main/resources/application.properties
-    - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
-    - run: cat ./src/main/resources/application.properties
-
+    - name : make application properties
+      run : |
+        cd ./src/main/resources
+        touch ./application.properties
+        echo "${{ secrets.APPLICATION }}" > ./application.properties
+      shell: bash
+      
     # 프로젝트 build
     - name: Build with Gradle
       run: ./gradlew clean build -x test
