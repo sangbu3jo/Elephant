@@ -58,6 +58,7 @@ public class PostViewController {
       Model model) {
 
     checkAdmin(model,userDetails);
+    pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
     Page<PostResponseDto> postResponseDtoList = postService.getSearchTitle(category, pageable,
         pageNo, title);
     model.addAttribute("categoryName", Category.getCategory(category));
@@ -104,7 +105,7 @@ public class PostViewController {
   //게시글 생성 페이지로 이동
   @GetMapping("/post-page")
   public String createPost(@RequestParam("category") int category,
-                           Model model) {
+      Model model) {
     model.addAttribute("choice", category);
     return "createPost";
   }
@@ -131,6 +132,6 @@ public class PostViewController {
       model.addAttribute("admin", admin);
     }
   }
-   
+
 }
   
