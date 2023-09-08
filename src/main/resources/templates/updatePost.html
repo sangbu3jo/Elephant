@@ -245,7 +245,7 @@
                     url: `/api/posts/${postFileDelId}/file?fileUrl=${fileUrl}`,
                     type: "DELETE",
                     success: function (data) {
-                        console.log(data);
+
                         // 삭제에 성공한 경우
                         // 화면에서 해당 댓글을 제거하거나 업데이트
                         image.remove(); // 이미지를 DOM에서 제거
@@ -254,7 +254,7 @@
                         window.location.reload();
                     },
                     error: function (error) {
-                        console.error("댓글 삭제 실패");
+
                     }
                 });
             }
@@ -400,10 +400,10 @@
                     updateNotificationList();
                     updateNotificationIcon();
                 } else {
-                    console.error('Error fetching notifications:', response.status);
+                    // console.error('Error fetching notifications:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching notifications:', error);
+                // console.error('Error fetching notifications:', error);
             }
         };
 
@@ -418,10 +418,10 @@
                         loadNotificationsFromServer(userId);
                     }
                 } else {
-                    console.error('Error fetching user info:', response.status);
+                    // console.error('Error fetching user info:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching user info:', error);
+                // console.error('Error fetching user info:', error);
             }
         };
 
@@ -590,14 +590,14 @@
             url: `/api/auth/refresh/access-token`,
             contentType: "application/json",
             success: function (data) {
-                console.log(data);
+
                 Toast.fire({
                     icon: 'success',
                     title: "로그인 연장 성공",
                 })
             },
             error: function (data) {
-                console.log(data);
+
                 Toast.fire({
                     icon: 'error',
                     title: "로그인 연장 실패. 재로그인 부탁드립니다.",
@@ -611,9 +611,8 @@
     /* 페이지 첫 로드 메서드 */
     function pageSetting() {  // main page 세팅
         const token = Cookies.get('Authorization');
-        const rtoken = Cookies.get('RefreshToken');
-        console.log(token);
-        console.log(rtoken);
+
+
 
         const loginBtn = document.getElementById('login');
         const logoutBtn = document.getElementById('logout');

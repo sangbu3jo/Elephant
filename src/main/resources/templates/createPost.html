@@ -174,7 +174,7 @@
             var files = $("#files")[0].files[0];
 
 
-            console.log(files);
+            // console.log(files);
 
             if (files) {
                 // FormData 객체를 생성하여 데이터를 담습니다.
@@ -265,7 +265,7 @@
                     console.error('Error fetching notifications:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching notifications:', error);
+                // console.error('Error fetching notifications:', error);
             }
         };
 
@@ -280,10 +280,10 @@
                         loadNotificationsFromServer(userId);
                     }
                 } else {
-                    console.error('Error fetching user info:', response.status);
+                    // console.error('Error fetching user info:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching user info:', error);
+                // console.error('Error fetching user info:', error);
             }
         };
 
@@ -451,14 +451,14 @@
             url: `/api/auth/refresh/access-token`,
             contentType: "application/json",
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 Toast.fire({
                     icon: 'success',
                     title: "로그인 연장 성공",
                 })
             },
             error: function (data) {
-                console.log(data);
+                // console.log(data);
                 Toast.fire({
                     icon: 'error',
                     title: "로그인 연장 실패. 재로그인 부탁드립니다.",
@@ -472,9 +472,8 @@
     /* 페이지 첫 로드 메서드 */
     function pageSetting() {  // main page 세팅
         const token = Cookies.get('Authorization');
-        const rtoken = Cookies.get('RefreshToken');
-        console.log(token);
-        console.log(rtoken);
+
+
 
         const loginBtn = document.getElementById('login');
         const logoutBtn = document.getElementById('logout');

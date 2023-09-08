@@ -427,12 +427,12 @@
                     type: "DELETE",
                     url: "/api/posts/" + postId, // 삭제할 게시물의 URL
                     success: function (response) {
-                        console.log(response);
+                        // console.log(response);
                         // 삭제 성공 시 페이지 리로드 또는 다른 동작 수행
                         window.location.href = "/";
                     },
                     error: function (error) {
-                        console.error("게시물 삭제 실패:", error);
+                        // console.error("게시물 삭제 실패:", error);
                         // 오류 처리 (예: 오류 메시지 표시)
                     }
                 });
@@ -448,7 +448,7 @@
         const postTitle = $("h1").text();
         const postContent = $("p").text();
 
-        console.log(postTitle);
+        // console.log(postTitle);
         // 게시글 수정 페이지로 이동
         window.location.href = "/api/posts/update/" + postUpdateId;
 
@@ -475,12 +475,12 @@
             contentType: "application/json",
             success: function (response) {
 
-                console.log(response);
+                // console.log(response);
                 // 댓글 생성 성공 시 페이지 새로고침 또는 다른 동작 수행
                 window.location.reload();
             },
             error: function (error) {
-                console.error("댓글 생성 실패:", error);
+                // console.error("댓글 생성 실패:", error);
                 // 오류 처리 (예: 오류 메시지 표시)
             }
         });
@@ -506,7 +506,7 @@
                     url: `/api/posts/comments/${commentId}`,
                     type: "DELETE",
                     success: function (data) {
-                        console.log(data);
+                        // console.log(data);
                         // 삭제에 성공한 경우
                         // 화면에서 해당 댓글을 제거하거나 업데이트
                         const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
@@ -517,7 +517,7 @@
                         window.location.reload();
                     },
                     error: function (error) {
-                        console.error("댓글 삭제 실패");
+                        // console.error("댓글 삭제 실패");
                     }
                 });
             }
@@ -540,12 +540,12 @@
             if (commentInput) {
                 closestModal.style.display = 'none';
                 const commentText = commentInput.value;
-                console.log(commentText);
+                // console.log(commentText);
 
                 var postData = {
                     content: commentText // 수정된 내용
                 };
-                console.log(commentId);
+                // console.log(commentId);
 
                 Swal.fire({
                     title: "댓글을 수정하시겠습니까?",
@@ -561,7 +561,7 @@
                     reverseButtons: false, // 버튼 순서 거꾸로
                 }).then(result => {
                     if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
-                        console.log(commentId);
+                        // console.log(commentId);
                         $.ajax({
                             type: "PUT",
                             url: "/api/posts/comments/" + commentId, // 수정할 댓글의 URL
@@ -628,10 +628,10 @@
                     updateNotificationList();
                     updateNotificationIcon();
                 } else {
-                    console.error('Error fetching notifications:', response.status);
+                    // console.error('Error fetching notifications:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching notifications:', error);
+                // console.error('Error fetching notifications:', error);
             }
         };
 
@@ -646,10 +646,10 @@
                         loadNotificationsFromServer(userId);
                     }
                 } else {
-                    console.error('Error fetching user info:', response.status);
+                    // console.error('Error fetching user info:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching user info:', error);
+                // console.error('Error fetching user info:', error);
             }
         };
 
@@ -815,14 +815,14 @@
             url: `/api/auth/refresh/access-token`,
             contentType: "application/json",
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 Toast.fire({
                     icon: 'success',
                     title: "로그인 연장 성공",
                 })
             },
             error: function (data) {
-                console.log(data);
+                // console.log(data);
                 Toast.fire({
                     icon: 'error',
                     title: "로그인 연장 실패. 재로그인 부탁드립니다.",
@@ -836,9 +836,9 @@
     /* 페이지 첫 로드 메서드 */
     function pageSetting() {  // main page 세팅
         const token = Cookies.get('Authorization');
-        const rtoken = Cookies.get('RefreshToken');
-        console.log(token);
-        console.log(rtoken);
+
+        // console.log(token);
+        // console.log(rtoken);
 
         const loginBtn = document.getElementById('login');
         const logoutBtn = document.getElementById('logout');

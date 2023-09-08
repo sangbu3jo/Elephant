@@ -266,10 +266,10 @@
           updateNotificationList();
           updateNotificationIcon();
         } else {
-          console.error('Error fetching notifications:', response.status);
+          // console.error('Error fetching notifications:', response.status);
         }
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        // console.error('Error fetching notifications:', error);
       }
     };
 
@@ -284,10 +284,10 @@
             loadNotificationsFromServer(userId);
           }
         } else {
-          console.error('Error fetching user info:', response.status);
+          // console.error('Error fetching user info:', response.status);
         }
       } catch (error) {
-        console.error('Error fetching user info:', error);
+        // console.error('Error fetching user info:', error);
       }
     };
 
@@ -447,7 +447,7 @@
   });
 
   function gotoPost(postid) {
-    console.log(postid);
+    // console.log(postid);
     window.location.href = '/api/posts/' + postid; // 클릭된 리스트 아이템에 맞는 링크로 이동
   }
 
@@ -466,14 +466,14 @@
       url: `/api/auth/refresh/access-token`,
       contentType: "application/json",
       success: function (data) {
-        console.log(data);
+        // console.log(data);
         Toast.fire({
           icon: 'success',
           title: "로그인 연장 성공",
         })
       },
       error: function (data) {
-        console.log(data);
+        // console.log(data);
         Toast.fire({
           icon: 'error',
           title: "로그인 연장 실패. 재로그인 부탁드립니다.",
@@ -486,9 +486,9 @@
   /* 페이지 첫 로드 메서드 */
   function pageSetting() {  // main page 세팅
     const token = Cookies.get('Authorization');
-    const rtoken = Cookies.get('RefreshToken');
-    console.log(token);
-    console.log(rtoken);
+
+    // console.log(token);
+    // console.log(rtoken);
 
     const loginBtn = document.getElementById('login');
     const logoutBtn = document.getElementById('logout');
