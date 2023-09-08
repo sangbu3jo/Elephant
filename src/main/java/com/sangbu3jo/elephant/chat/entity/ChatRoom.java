@@ -17,7 +17,7 @@ public class ChatRoom {
     @Id
     private Long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "chatRoom")
     private Board board;
 
     @OneToMany(mappedBy = "chatroom", orphanRemoval = true, cascade = CascadeType.REMOVE)

@@ -53,7 +53,8 @@ public class Board {
     @OneToMany(mappedBy = "board", orphanRemoval = true)
     List<Columns> columnsList = new LinkedList<>();
 
-    @OneToOne(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "chat_room")
     private ChatRoom chatRoom;
 
     /**

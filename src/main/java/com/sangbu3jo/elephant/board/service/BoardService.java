@@ -136,11 +136,11 @@ public class BoardService {
             mongoTemplate.getCollection(boardId.toString()).drop();
         }
 
-        if (board.getChatRoom() != null) {
-            ChatRoom chatRoom = chatRoomRepository.findById(board.getChatRoom().getId()).orElseThrow();
-            chatUserRepository.deleteAll(chatUserRepository.findAllByChatroom(chatRoom));
-            chatRoomRepository.delete(chatRoom);
-        }
+//        if (board.getChatRoom() != null) {
+//            ChatRoom chatRoom = chatRoomRepository.findById(board.getChatRoom().getId()).orElseThrow();
+//            chatUserRepository.deleteAll(chatUserRepository.findAllByChatroom(chatRoom));
+//            chatRoomRepository.delete(chatRoom);
+//        }
 
         /* Board 엔티티 안에 Set<BoardUser>를 orphanremoval = true 속성을 주었기 때문에, 해당 레포지토리에서 따로 찾아서 삭제해줄 필요 없음 */
         boardRepository.delete(board);
