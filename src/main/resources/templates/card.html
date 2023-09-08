@@ -181,8 +181,6 @@
 
     // 카드 삭제
     function deleteCard(boardId) {
-        console.log("boardId", boardId);
-        console.log("cardId", id);
 
         Swal.fire({
             title: '정말 삭제하시겠습니까?',
@@ -250,7 +248,6 @@
             contentType: "application/json",
             data: JSON.stringify({expiredAt: date}),
             success: function(response, status, xhr) {
-                console.log("PATCH 요청이 성공했습니다.");
                 if (xhr.status === 200) {
                     window.location.href = `/api/cards/${id}`;
                 } else {
@@ -303,7 +300,6 @@
             contentType: "application/json",
             data: JSON.stringify({title: newTitle}),
             success: function(response, status, xhr) {
-                console.log("PATCH 요청이 성공했습니다.");
                 if (xhr.status === 200) {
                     window.location.href = `/api/cards/${id}`;
                 } else {
@@ -320,9 +316,6 @@
             },
 
             error: function(xhr, status, error) {
-                // 요청이 실패한 경우 처리할 로직을 작성합니다.
-                console.log("PATCH 요청이 실패했습니다.");
-                console.log(xhr.responseText);
                 Swal.fire({
                     icon: 'error',
                     title: '회원만 작성 가능합니다'
@@ -448,12 +441,9 @@
     function sendUser() {
         // 클래스 이름 가져오기
         const className = cardDescription.className;
-        console.log(className); // 클래스 이름 출력
 
         const selectedUsers = document.querySelectorAll('.selected-user');
         const selectedUserNames = Array.from(selectedUsers).map(user => user.textContent.trim());
-
-        console.log(selectedUserNames); // 선택된 사용자들의 username 값이 담긴 배열
 
         const existingSelectedUsers = document.querySelectorAll('.selected-users .selected-user');
         if (existingSelectedUsers.length === 0) {
@@ -493,7 +483,6 @@
     // 댓글 작성하기
     function comment() {
         let commentcontent = $('#createcomment').val();
-        console.log("commentcontent");
 
         $.ajax({
             type:"POST",
@@ -501,9 +490,6 @@
             contentType: "application/json",
             data: JSON.stringify({content: commentcontent}),
             success: function(response, status, xhr) {
-              // 요청이 성공한 경우 처리할 로직을 작성합니다.
-              console.log("POST 요청이 성공했습니다.");
-
               // 서버 응답이 성공적으로 왔을 때 처리
               if (xhr.status === 200) {
                 // 서버의 상태 코드가 200(성공)인 경우
@@ -521,9 +507,6 @@
               }
             },
             error: function(xhr, status, error) {
-                // 요청이 실패한 경우 처리할 로직
-                console.log("POST 요청이 실패했습니다.");
-                console.log(xhr.responseText);
                 Swal.fire({
                     icon: 'error',
                     title: '회원만 작성 가능합니다'
@@ -589,10 +572,7 @@
             const updatecomment = form.querySelector('#updatecomment');
             const value = updatecomment.value;
 
-            let commentId = button.id; // comment.id 값을 가져옴
-            console.log("commentid: ", commentId);
-
-            console.log("commentContent: ", value);
+            let commentId = button.id;
 
             $.ajax({
                 type: "PUT",
@@ -616,8 +596,6 @@
                     }
                 },
                 error: function(xhr, status, error) {
-                    console.log("POST 요청이 실패했습니다.");
-                    console.log(xhr.responseText);
                     Swal.fire({
                         icon: 'error',
                         title: '작성자만 수정 가능합니다'
@@ -636,8 +614,7 @@
     const deleteBtns = document.querySelectorAll('.deleteBtn');
     deleteBtns.forEach(button => {
         button.addEventListener('click', function () {
-            let commentId = button.id; // comment.id 값을 가져옴
-            console.log(commentId);
+            let commentId = button.id;
             $.ajax({
                 type: "DELETE",
                 url: `/api/cards/comments/${commentId}`,

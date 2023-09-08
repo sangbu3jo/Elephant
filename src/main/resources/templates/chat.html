@@ -52,9 +52,6 @@
 </body>
 
 <script>
-    // console.log = function() {};
-    // 이걸 쓰면 콘솔에서 아무런 내역이 출력되지 않는다고 한다
-    // https://m.blog.naver.com/qjawnswkd/222283176175
     'use strict';
 
     var username = '[[${username}]]';
@@ -97,7 +94,6 @@
         // stompClient.subscribe("/user/topic/" + chatRoomId, onMessages);
         stompClient.subscribe("/topic/" + chatRoomId, onMessageReceived);
 
-        console.log("구독");
         // Tell your username to the server
         stompClient.send("/app/chat/adduser",
                 {},
@@ -163,12 +159,10 @@
 
     function onMessageReceived(payload) {
         var chat = JSON.parse(payload.body);
-        console.log(chat);
 
         var messageElement = document.createElement('li');
 
         if(chat.type === 'ENTER') {
-            console.log(chat.type);
             messageElement.classList.add('event-message');
             chat.content = chat.username + chat.message;
             var textElement = document.createElement('p');
@@ -194,7 +188,6 @@
                 avatarElement.style['background-size'] = 'cover';
             }
 
-            console.log(chat.message);
             usernameElement.appendChild(document.createTextNode(chat.nickname));
             textElement.appendChild(document.createTextNode(chat.message));
 
@@ -219,7 +212,6 @@
 
         // 메세지가 존재하고 (공백이 아니고), 웹 소캣이 연결된 경우에만 메시지를 전송함
         if(messageContent && stompClient) {
-            console.log(messageInput.value);
 
             var chatMessage = {
                 chatRoomId: chatRoomId,
