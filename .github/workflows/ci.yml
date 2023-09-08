@@ -19,6 +19,17 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+
+    # ./gradlw 실행 권한 부여
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+      shell: bash
+
+    # 프로젝트 build
+    - name: Build with Gradle
+      run: ./gradlew clean build -x test
+      shell: bash
+      
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: checkout release
       uses: actions/checkout@v3
