@@ -131,10 +131,10 @@
           updateNotificationList();
           updateNotificationIcon();
         } else {
-          console.error('Error fetching notifications:', response.status);
+          // console.error('Error fetching notifications:', response.status);
         }
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        // console.error('Error fetching notifications:', error);
       }
     };
 
@@ -149,10 +149,10 @@
             loadNotificationsFromServer(userId);
           }
         } else {
-          console.error('Error fetching user info:', response.status);
+          // console.error('Error fetching user info:', response.status);
         }
       } catch (error) {
-        console.error('Error fetching user info:', error);
+        // console.error('Error fetching user info:', error);
       }
     };
 
