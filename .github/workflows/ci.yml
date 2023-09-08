@@ -42,6 +42,12 @@ jobs:
         --deployment-config-name CodeDeployDefault.OneAtATime
         --deployment-group-name githubaction-elephant-group
         --s3-location bucket=elephantcodingclub,bundleType=tgz,key=archive/drcloud.tar.gz
+
+    - name: JDK 17 설치
+      uses: actions/setup-java@v3
+      with:
+          java-version: '17'
+          distribution: 'corretto'
         
     # ./gradlw 실행 권한 부여
     - name: Grant execute permission for gradlew
