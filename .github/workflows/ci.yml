@@ -38,7 +38,7 @@ jobs:
       
     - name: deploy with AWS codeDeploy
       run: aws deploy create-deployment
-        --application-name githubaction-test
+        --application-name githubaction-elephant
         --deployment-config-name CodeDeployDefault.OneAtATime
-        --deployment-group-name githubaction-test-group
+        --deployment-group-name githubaction-elephant-group
         --s3-location bucket=elephantcodingclub,bundleType=tgz,key=archive/drcloud.tar.gz
