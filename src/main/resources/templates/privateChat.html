@@ -99,11 +99,9 @@
             type: "PUT",
             url: `/api/chatRooms/${chatRoomId}`,
             success: function () {
-                console.log("요청 성공");
                 window.location.href = "/api/chatRooms";
             },
             error: function () {
-                console.log("요청 실패");
             }
         })
     })
@@ -135,7 +133,6 @@
         // stompClient.subscribe("/user/topic/" + chatRoomId, onMessages);
         stompClient.subscribe("/queue/" + chatRoomId, onMessageReceived);
 
-        console.log("구독");
         // Tell your username to the server
         stompClient.send("/app/chat/enteruser",
             {},
@@ -155,11 +152,9 @@
             url : "/api/chat/privatemessages/" + id,
             contentType : 'application/json',
             success: function (data) {
-                console.log(data);
                 var chatting = data;
 
                 chatting.forEach(function (chatItem) {
-                    console.log(chatItem.url);
                     var messageElement = document.createElement('li');
                     var avatarElement = document.createElement('i');
                     var usernameElement = document.createElement('span');
@@ -192,8 +187,6 @@
 
     function onMessageReceived(payload) {
         var chat = JSON.parse(payload.body);
-
-        console.log(chat.type); // 이 콘솔 찍히는거 확인함 (Enter의 경우)
 
         var messageElement = document.createElement('li');
 
@@ -242,7 +235,6 @@
 
         // 메세지가 존재하고 (공백이 아니고), 웹 소캣이 연결된 경우에만 메시지를 전송함
         if(messageContent && stompClient) {
-            console.log(messageInput.value);
 
             //type: 'ENTER', username: username, nickname: nickname, title: chatRoomId
 
