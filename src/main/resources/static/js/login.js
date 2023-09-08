@@ -160,9 +160,6 @@ function signup() {
     })
   })
   .fail(function (jqXHR, textStatus, error) {
-    console.log(jqXHR);
-    console.log(textStatus);
-    console.log(error);
     Toast.fire({
       icon: 'error',
       title: '회원가입에 실패하였습니다.'
@@ -187,11 +184,9 @@ function sendEmail() {
     url: `/api/auth/email/${userEmail}/invited`,
     success: function (data) {
       startTimer(5 * 60); // 5분 타이머 시작 (5분 = 5 * 60초)
-      console.log('email: ' + userEmail);
     },
     error: function (error, response, xhr) {
       console.error("이메일 전송 실패");
-      console.log(response);
       modal.css('display', 'none');
       if (xhr.responseText == "메일 보내는 도중 오류 발생") {
         Toast.fire({
@@ -241,16 +236,13 @@ function checkEmail() {
 
   // ajax 통신을 통해 확인함.
   checkEmailPassword(inputPasswordValue).then(function (result) {
-    console.log(result);
     if (result) {
       // successful
       // 이메일 인증 성공했을 경우에 checked = true
-      console.log("email check successful");
       checkBox.value = "true";
       inputPassword.val("");
     } else {
       // fail
-      console.log("email check failed");
       checkBox.value = "false";
       inputPassword.val("");
     }
