@@ -15,6 +15,7 @@ public class PrivateChatMessageResponseDto {
     private String username; // 서버와 통신용
     private String message;
     private LocalDateTime sendTime;
+    private String url;
 
     public PrivateChatMessageResponseDto (PrivateChatMessage privateChatMessage) {
         this.type = privateChatMessage.getType();
@@ -23,6 +24,10 @@ public class PrivateChatMessageResponseDto {
         this.username = privateChatMessage.getUser().getUsername();
         this.message = privateChatMessage.getMessage();
         this.sendTime = privateChatMessage.getSendTime();
+    }
+
+    public void updateUrl(String url) {
+        this.url = url;
     }
 
 }

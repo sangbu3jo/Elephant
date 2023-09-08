@@ -15,6 +15,7 @@ public class PostCommentResponseDto {
     private String postTitle;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private String profileUrl;
 
     public PostCommentResponseDto(PostComment postComment) {
         this.username = postComment.getUser().getUsername();
@@ -25,5 +26,6 @@ public class PostCommentResponseDto {
         this.modifiedAt = postComment.getModifiedAt();
         this.id = postComment.getId();
         this.userId = postComment.getUser().getId();
+        this.profileUrl = postComment.getUser().getProfileUrl();
     }
 }

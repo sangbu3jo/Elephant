@@ -99,11 +99,9 @@
             type: "PUT",
             url: `/api/chatRooms/${chatRoomId}`,
             success: function () {
-                console.log("요청 성공");
                 window.location.href = "/api/chatRooms";
             },
             error: function () {
-                console.log("요청 실패");
             }
         })
     })
@@ -135,7 +133,6 @@
         // stompClient.subscribe("/user/topic/" + chatRoomId, onMessages);
         stompClient.subscribe("/queue/" + chatRoomId, onMessageReceived);
 
-        console.log("구독");
         // Tell your username to the server
         stompClient.send("/app/chat/enteruser",
             {},
@@ -155,7 +152,6 @@
             url : "/api/chat/privatemessages/" + id,
             contentType : 'application/json',
             success: function (data) {
-                console.log(data);
                 var chatting = data;
 
                 chatting.forEach(function (chatItem) {
@@ -165,8 +161,15 @@
                     var textElement = document.createElement('p');
 
                     messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
-                    avatarElement.style['background-color'] = getAvatarColor(chatItem.nickname);
-                    avatarElement.appendChild(document.createTextNode(chatItem.nickname[0]));
+
+                    if (chatItem.url != null) {
+                        avatarElement.style['background-image'] = 'url(' + chatItem.url + ')';
+                        avatarElement.style['background-size'] = 'cover';
+                    } else {
+                        avatarElement.style['background-image'] = 'url(https://cdn-icons-png.flaticon.com/128/1864/1864497.png)';
+                        avatarElement.style['background-size'] = 'cover';
+                    }
+
                     usernameElement.appendChild(document.createTextNode(chatItem.nickname));
                     textElement.appendChild(document.createTextNode(chatItem.message));
 
@@ -185,8 +188,6 @@
     function onMessageReceived(payload) {
         var chat = JSON.parse(payload.body);
 
-        console.log(chat.type); // 이 콘솔 찍히는거 확인함 (Enter의 경우)
-
         var messageElement = document.createElement('li');
 
         if (chat != null) {
@@ -202,8 +203,13 @@
                 var textElement = document.createElement('p');
 
                 messageElement.classList.add(chat.username === username ? 'chat-message2' : 'chat-message');
-                avatarElement.style['background-color'] = getAvatarColor(chat.nickname);
-                avatarElement.appendChild(document.createTextNode(chat.nickname[0]));
+                if (chat.url != null) {
+                    avatarElement.style['background-image'] = 'url(' + chat.url + ')';
+                    avatarElement.style['background-size'] = 'cover';
+                } else {
+                    avatarElement.style['background-image'] = 'url(https://cdn-icons-png.flaticon.com/128/1864/1864497.png)';
+                    avatarElement.style['background-size'] = 'cover';
+                }
                 usernameElement.appendChild(document.createTextNode(chat.nickname));
                 textElement.appendChild(document.createTextNode(chat.message));
 
@@ -229,7 +235,6 @@
 
         // 메세지가 존재하고 (공백이 아니고), 웹 소캣이 연결된 경우에만 메시지를 전송함
         if(messageContent && stompClient) {
-            console.log(messageInput.value);
 
             //type: 'ENTER', username: username, nickname: nickname, title: chatRoomId
 

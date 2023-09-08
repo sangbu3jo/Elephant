@@ -205,7 +205,7 @@
 
 
         <li class="page-item" th:classappend="${!posts.hasNext()} ? 'disabled'">
-          <a class="page-link" th:href="@{|/page=${posts.getPageable().getPageNumber() + 2}|}">
+          <a class="page-link" th:href="@{|/api/posts/categories/${category}?page=${posts.getPageable().getPageNumber() + 2}|}">
             <span>다음</span>
           </a>
         </li>
@@ -224,6 +224,7 @@
 
   function gotoPost(postId){
     const token = Cookies.get('Authorization');
+
     if(token){ // 토큰 있을 경우
       window.location.href = `/api/posts/${postId}`;
     } else {
@@ -256,8 +257,11 @@
   // 로그인 여부 확인 후 게시글 생성 페이지로 이동
   function goToCreatePost(){
     const token = Cookies.get('Authorization');
+    const category = window.location.href.split('/').pop();
+    const url = `/api/post-page?category=${category}`;
     if(token){ // 토큰 있을 경우
-      window.location.href = "/api/post-page";
+      window.location.href = url;
+      // console.log(url);
     } else {
       Swal.fire({
         title: '로그인한 사용자만 작성할 수 있습니다.',
@@ -320,10 +324,10 @@
           updateNotificationList();
           updateNotificationIcon();
         } else {
-          console.error('Error fetching notifications:', response.status);
+          // console.error('Error fetching notifications:', response.status);
         }
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        // console.error('Error fetching notifications:', error);
       }
     };
 
@@ -338,10 +342,10 @@
             loadNotificationsFromServer(userId);
           }
         } else {
-          console.error('Error fetching user info:', response.status);
+          // console.error('Error fetching user info:', response.status);
         }
       } catch (error) {
-        console.error('Error fetching user info:', error);
+        // console.error('Error fetching user info:', error);
       }
     };
 
@@ -401,7 +405,11 @@
         return `${hours}시간 전`;
       } else {
         const days = Math.floor(timeDifference / 86400000);
-        return `${days}일 전`;
+        if(isNaN(days)){
+          return "방금 전";
+        } else {
+          return `${days}일 전`;
+        }
       }
     };
 
@@ -507,14 +515,14 @@
       url: `/api/auth/refresh/access-token`,
       contentType: "application/json",
       success: function (data) {
-        console.log(data);
+        // console.log(data);
         Toast.fire({
           icon: 'success',
           title: "로그인 연장 성공",
         })
       },
       error: function (data) {
-        console.log(data);
+        // console.log(data);
         Toast.fire({
           icon: 'error',
           title: "로그인 연장 실패. 재로그인 부탁드립니다.",
@@ -527,9 +535,7 @@
   /* 페이지 첫 로드 메서드 */
   function pageSetting() {  // main page 세팅
     const token = Cookies.get('Authorization');
-    const rtoken = Cookies.get('RefreshToken');
-    console.log(token);
-    console.log(rtoken);
+
 
     const loginBtn = document.getElementById('login');
     const logoutBtn = document.getElementById('logout');

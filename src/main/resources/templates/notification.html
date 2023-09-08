@@ -131,10 +131,10 @@
           updateNotificationList();
           updateNotificationIcon();
         } else {
-          console.error('Error fetching notifications:', response.status);
+          // console.error('Error fetching notifications:', response.status);
         }
       } catch (error) {
-        console.error('Error fetching notifications:', error);
+        // console.error('Error fetching notifications:', error);
       }
     };
 
@@ -149,10 +149,10 @@
             loadNotificationsFromServer(userId);
           }
         } else {
-          console.error('Error fetching user info:', response.status);
+          // console.error('Error fetching user info:', response.status);
         }
       } catch (error) {
-        console.error('Error fetching user info:', error);
+        // console.error('Error fetching user info:', error);
       }
     };
 
@@ -190,7 +190,11 @@
         return `${hours}시간 전`;
       } else {
         const days = Math.floor(timeDifference / 86400000);
-        return `${days}일 전`;
+        if(isNaN(days)){
+          return "방금 전";
+        } else {
+          return `${days}일 전`;
+        }
       }
     };
 

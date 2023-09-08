@@ -176,6 +176,7 @@
     // header js 코드 추가
     $(document).ready(function () {
         pageSetting();
+        fetchAndRenderUsers();
 
         const notificationIcon = document.querySelector('.notification-icon');
         const notificationBadge = document.getElementById('notificationBadge');
@@ -194,10 +195,10 @@
                     updateNotificationList();
                     updateNotificationIcon();
                 } else {
-                    console.error('Error fetching notifications:', response.status);
+                    // console.error('Error fetching notifications:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching notifications:', error);
+                // console.error('Error fetching notifications:', error);
             }
         };
 
@@ -212,10 +213,10 @@
                         loadNotificationsFromServer(userId);
                     }
                 } else {
-                    console.error('Error fetching user info:', response.status);
+                    // console.error('Error fetching user info:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching user info:', error);
+                // console.error('Error fetching user info:', error);
             }
         };
 
@@ -275,7 +276,11 @@
                 return `${hours}시간 전`;
             } else {
                 const days = Math.floor(timeDifference / 86400000);
-                return `${days}일 전`;
+                if(isNaN(days)){
+                    return "방금 전";
+                } else {
+                    return `${days}일 전`;
+                }
             }
         };
 
@@ -381,14 +386,14 @@
             url: `/api/auth/refresh/access-token`,
             contentType: "application/json",
             success: function (data) {
-                console.log(data);
+                // console.log(data);
                 Toast.fire({
                     icon: 'success',
                     title: "로그인 연장 성공",
                 })
             },
             error: function (data) {
-                console.log(data);
+                // console.log(data);
                 Toast.fire({
                     icon: 'error',
                     title: "로그인 연장 실패. 재로그인 부탁드립니다.",
@@ -402,8 +407,8 @@
     function pageSetting() {  // main page 세팅
         const token = Cookies.get('Authorization');
         const rtoken = Cookies.get('RefreshToken');
-        console.log(token);
-        console.log(rtoken);
+        // console.log(token);
+        // console.log(rtoken);
 
         const loginBtn = document.getElementById('login');
         const logoutBtn = document.getElementById('logout');
@@ -548,7 +553,7 @@
                 userInfoList.innerHTML = '';
                 renderPostsForPage(currentPage);
             })
-            .catch(error => console.error('Error fetching posts:', error));
+            // .catch(error => console.error('Error fetching posts:', error));
     }
 
     // 수정 버튼 클릭 시 실행되는 함수 (수정한 부분만 포함)
@@ -683,7 +688,7 @@
                             })
                             fetchAndRenderPosts();
                         })
-                        .catch(error => console.error('Error updating post:', error));
+                        // .catch(error => console.error('Error updating post:', error));
 
                     popupWindow.close();
                 });
@@ -815,7 +820,7 @@
                             })
                             fetchAndRenderComments();
                         })
-                        .catch(error => console.error('Error updating comment:', error));
+                        // .catch(error => console.error('Error updating comment:', error));
 
                     popupWindow.close();
                 });
@@ -971,14 +976,14 @@
                                 fetchAndRenderUsers(); // 정보 업데이트 후 화면 갱신
                                 popupWindow.close();
                             })
-                            .catch(error => console.error('Error updating profile:', error));
+                            // .catch(error => console.error('Error updating profile:', error));
                     });
 
                     cancelProfileButton.addEventListener('click', () => {
                         popupWindow.close();
                     });
                 })
-                .catch(error => console.error('Error fetching profile data:', error));
+                // .catch(error => console.error('Error fetching profile data:', error));
         }
 
     });
@@ -1024,7 +1029,7 @@
                                 })
                                 fetchAndRenderPosts(); // 삭제 후 화면 갱신
                             })
-                            .catch(error => console.error('Error deleting post:', error));
+                            // .catch(error => console.error('Error deleting post:', error));
                     }
                 });
 
@@ -1081,7 +1086,7 @@
                                 })
                                 fetchAndRenderComments(); // 삭제 후 화면 갱신
                             })
-                            .catch(error => console.error('Error deleting comment:', error));
+                            // .catch(error => console.error('Error deleting comment:', error));
                     }
                 });
 
@@ -1135,7 +1140,7 @@
                             window.location.href = window.location.origin + "/api/auth/login-page";
 
                         })
-                        .catch(error => console.error('Error signing out:', error));
+                        // .catch(error => console.error('Error signing out:', error));
                 } else {
                     // 취소된 경우에 대한 처리
                     Swal.fire({
@@ -1172,7 +1177,7 @@
                 userInfoList.innerHTML = '';
                 renderCommentsForPage(currentPage);
             })
-            .catch(error => console.error('Error fetching comments:', error));
+            // .catch(error => console.error('Error fetching comments:', error));
     }
 
     function fetchAndRenderUsers() {
@@ -1195,7 +1200,7 @@
                 userInfoList.innerHTML = '';
                 renderUsersForPage(currentPage);
             })
-            .catch(error => console.error('Error fetching user information:', error));
+            // .catch(error => console.error('Error fetching user information:', error));
     }
 
     function renderPagination() {
@@ -1224,94 +1229,69 @@
         userInfoList.innerHTML = '';
 
         const userDiv = document.createElement('div');
-        userDiv.classList.add('user-info');
+        userDiv.classList.add('user-info2');
 
         const username = usersToShow.username;
-        const password = usersToShow.password;
         const nickname = usersToShow.nickname;
         const introduction = usersToShow.introduction;
         const profileUrl = usersToShow.profileUrl;
 
-
-        // 비밀번호를 최대 8자리까지 '*' 문자로 표시
-        const maskedPassword = usersToShow.password.length > 8 ? '*'.repeat(8) : '*'.repeat(
-            usersToShow.password.length);
-
         userDiv.innerHTML = `
-
-
             <table>
-                <tr>
-                    <td>유저 아이디 : </td>
-                    <td>${usersToShow.username}</td>
-                </tr>
-                <tr>
-                    <td>비밀번호 : </td>
-                    <td>${maskedPassword}</td>
-                </tr>
-                <tr>
-                    <td>닉네임 : </td>
-                    <td>${usersToShow.nickname}</td>
-                </tr>
-                <tr>
-                    <td>자기소개 : </td>
-                    <td>${usersToShow.introduction}</td>
-                </tr>
-                 <tr>
-                    <td>프로필 이미지 : </td>
-                    <td><img src="${usersToShow.profileUrl}" alt="프로필 이미지"  style="width: 100px; height: 100px;" ></td>
-
-                  </tr>
-
-                  <tr>
-                  <td><input type="file" id="image-input" accept="image/*"></td>
-                  </tr>
-                  <tr>
-                  <td><button id="upload-image-button">이미지 변경 Go</button></td>
-                  </tr>
+                <tbody>
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="${profileUrl}" class="img-fluid rounded-start" alt="Profile Image">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h4 class="card-title">${username}</h4>
+                                    <h5 class="card-text">Nickname: ${nickname}</h5>
+                                    <h5 class="card-text">Introduction: ${introduction}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <input type="file" id="image-input" accept="image/*">
+                                    <button id="upload-image-button">프로필 사진 변경</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tbody>
             </table>
-
-         `;
-
-            const uploadImageButton = userDiv.querySelector('#upload-image-button');
-            const profileImage = userDiv.querySelector('#profile-image');
-            const imageInput = userDiv.querySelector('#image-input');
-
-            // 프로필 이미지 업로드 버튼에 클릭 이벤트를 추가하고 이미지를 선택하면 AJAX를 통해 서버로 업로드
-            uploadImageButton.addEventListener('click', () => {
-                const file = imageInput.files[0];
-
-
-                if (file) {
-                    const formData = new FormData();
-                    formData.append('image', file);
-
-                    // AJAX 요청을 보내고 이미지 URL을 서버로 업로드
-                    $.ajax({
-                        url: '/api/users/profile/image', // 서버 업로드 URL로 변경
-                        type: 'POST',
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        success: function (data) {
-                            // 서버에서 응답을 받은 후 처리할 로직을 여기에 추가
-                            // data는 서버에서 받은 응답 데이터입니다.
-
-                            location.reload();
-
-                        },
-                        error: function (error) {
-                            console.error('업로드 실패:', error);
-                        }
-                    });
-                }
-
-
-
-        });
-
+        `;
 
         userInfoList.appendChild(userDiv);
+        const uploadImageButton = userDiv.querySelector('#upload-image-button');
+        const profileImage = userDiv.querySelector('#profile-image');
+        const imageInput = userDiv.querySelector('#image-input');
+
+        // 프로필 이미지 업로드 버튼에 클릭 이벤트를 추가하고 이미지를 선택하면 AJAX를 통해 서버로 업로드
+        uploadImageButton.addEventListener('click', () => {
+            const file = imageInput.files[0];
+
+            if (file) {
+                const formData = new FormData();
+                formData.append('image', file);
+
+                // AJAX 요청을 보내고 이미지 URL을 서버로 업로드
+                $.ajax({
+                    url: '/api/users/profile/image', // 서버 업로드 URL로 변경
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        // 서버에서 응답을 받은 후 처리할 로직을 여기에 추가
+                        // data는 서버에서 받은 응답 데이터입니다.
+                        location.reload();
+                    },
+                    error: function (error) {
+                        // console.error('업로드 실패:', error);
+                    }
+                });
+            }
+        });
     }
 
 

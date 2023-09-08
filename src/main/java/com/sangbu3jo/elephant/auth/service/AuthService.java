@@ -21,8 +21,7 @@ public interface AuthService {
    * @param response 응답 Servlet
    * @return 성공 여부 msg
    */
-  Boolean generateAccessToken(HttpServletRequest request, HttpServletResponse response)
-      throws IOException;
+  Boolean generateAccessToken(HttpServletRequest request, HttpServletResponse response);
 
 
   /**

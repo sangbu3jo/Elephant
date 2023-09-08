@@ -76,13 +76,13 @@ public class NotificationService {
 
 
     // 댓글 작성 시 알림 생성 및 전송
-    public void createAndSendNotification(Long userId, Long postId, String commentAuthor, String postTitle) {
+    public void createAndSendNotification(Long userId, Long postId, String commentAuthor, String url) {
         Notification notification = new Notification();
         LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
         notification.setCreatedAt(currentTime); // 생성 시간 설정
         notification.setUserId(userId);
         notification.setContent("\uD83D\uDD14댓글 알림\uD83D\uDD14<br>" + commentAuthor);
-        notification.setUrl("http://localhost:8080/api/posts/" + postId);
+        notification.setUrl("/api/posts/" + postId);
         notification.setRead(false);
         notification.setType("Comment");
 
@@ -114,7 +114,7 @@ public class NotificationService {
         notification.setCreatedAt(currentTime); // 생성 시간 설정
         notification.setUserId(userId);
         notification.setContent("\uD83E\uDD17프로젝트 알림\uD83E\uDD17<br>" + addUserAuthor);
-        notification.setUrl("http://localhost:8080/api/boards/" + boardId);
+        notification.setUrl("/api/boards/" + boardId);
         notification.setRead(false);
         notification.setType("AddUserBoard");
 
@@ -129,7 +129,7 @@ public class NotificationService {
         notification.setCreatedAt(currentTime); // 생성 시간 설정
         notification.setUserId(userId);
         notification.setContent("⏳프로젝트 마감알림⏳<br>" + addUserAuthor);
-        notification.setUrl("http://localhost:8080/api/boards/" + boardId);
+        notification.setUrl("/api/boards/" + boardId);
         notification.setRead(false);
         notification.setType("BoardDeadline");
 
@@ -144,7 +144,7 @@ public class NotificationService {
         notification.setCreatedAt(currentTime); // 생성 시간 설정
         notification.setUserId(userId);
         notification.setContent("\uD83D\uDCE7프로젝트 알림\uD83D\uDCE7<br>" + inviteAuthor);
-        notification.setUrl("http://localhost:8080/api/boards");
+        notification.setUrl("/api/boards");
         notification.setRead(false);
         notification.setType("Invited");
 

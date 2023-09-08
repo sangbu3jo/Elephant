@@ -58,6 +58,40 @@
         </div>
         <!--프로젝트 떠나기 모달창 종료-->
 
+        <button class="btn btn-light updateBtn" data-bs-toggle="modal" type="button" th:data-bs-target="'#boardBack'+${board.id}"> 프로젝트 수정 </button>
+
+        <!--수정 모달창 -->
+        <div class="modal fade" th:id="'boardBack'+${board.id}" aria-labelledby="exampleModalLabell" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleM">프로젝트 수정</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="recipient-name" class="col-form-label">프로젝트 이름</label>
+                            <input type="text" class="form-control recipient-namee" id="recipient-name" th:value="${board.title}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message-text" class="col-form-label">프로젝트 설명</label>
+                            <textarea class="form-control message-textt" id="message-text" th:text="${board.content}"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="datepickerr" class="col-form-label">프로젝트 마감일</label>
+                            <input type="text" class="form-control datepickerr" id="datepickerr" th:placeholder="${board.expiredAt}"
+                                   data-date-settings='{"format": "yyyy-mm-dd"}'>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light btn-update" th:id="${board.id}">수정</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--수정 모달창 종료-->
+
         <!-- 참여자 목록 -->
         <button class="btn btn-light dropdown-toggle" type="button" id="toggleListButton"
                 data-bs-toggle="dropdown" aria-expanded="false"> 사용자 목록 </button>
@@ -111,6 +145,9 @@
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
+
+            <div class="offcanvas-header" style = "align-items:center; color: #1a1515; font-size: 15px; padding-bottom: 0px;" th:text="|마감일: ${board.expiredAt}|"></div>
+            <div class="offcanvas-header" style = "align-items:center; color: #1a1515; font-size: 15px; padding-top: 0px;" th:text="${board.content}"></div>
 
             <div class="list-group list-group-flush">
                 <a class="list-group-item list-group-item-action" id="leaveButton" data-bs-toggle="modal" th:data-bs-target="'#leaveboard'+${board.id}" >프로젝트 떠나기</a>
@@ -240,6 +277,36 @@
         }
     })
 
+    const updateProject = document.querySelector(".btn-update");
+    updateProject.addEventListener('click', () => {
+        const id = updateProject.id;
+
+        $(`#boardBack${id}`).modal('hide');
+
+        const modal = updateProject.closest('.modal-content'); // 클릭한 버튼이 속한 모달을 선택
+
+        const title = modal.querySelector(".recipient-namee").value;
+        const content = modal.querySelector(".message-textt").value;
+        const expiredAt = modal.querySelector(".datepickerr").value;
+
+        $.ajax({
+            method: "PUT",
+            url: `/api/boards/${id}`,
+            contentType: "application/json",
+            data: JSON.stringify({
+                title : title,
+                content : content,
+                expiredAt : expiredAt
+            }),
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function (data) {
+
+            }
+        })
+    })
+
     $(document).ready(function () {
         // 메뉴 버튼을 클릭하면 슬라이드 메뉴를 나타내거나 숨깁니다.
         $("#menuButton").click(function () {
@@ -275,8 +342,6 @@
         // 예를 들어, JSON 형식으로 변환하여 서버로 전송하는 경우:
         var selectedResultsJSON = JSON.stringify(selectedTexts);
 
-        console.log(selectedResultsJSON);
-
         $.ajax({
             method: "POST",
             url: `/api/boards/${id}/invited`,
@@ -285,7 +350,6 @@
                 inviteUsers : selectedTexts
             }),
             success: function (data) {
-                console.log("성공");
                 // 모달을 닫는 코드 추가
                 $("#inviteModal").modal("hide");
 
@@ -395,7 +459,6 @@
                     order: newIndex
                 }),
                 success: function () {
-                    console.log("컬럼 이동");
                     window.location.reload();
                 },
                 error: function () {
@@ -689,24 +752,14 @@
                     dataType: "json",
                     success: function(data) {
                         $("#searchResults").empty();
-                        // console.log("성공");
-                        // console.log("서버 응답 데이터:", data);
-                        // console.log("서버 응답 필요한 데이터:", data.content);
                         var users = data.content;
 
                         for (var i = 0; i < users.length; i++) {
                             var user = users[i];
                             addResultToSearchResults(user);
-                            // var resultItem = $("<li>")
-                            //     .addClass("list-group-item")
-                            //     .html(user.username + " | " + user.nickname);
-                            //
-                            // $("#searchResults").append(resultItem);
                         }
                     },
                     error: function(error) {
-                        console.log("실패");
-                        console.error("검색 오류:", error);
                     }
                 });
             }

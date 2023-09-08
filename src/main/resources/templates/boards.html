@@ -303,7 +303,6 @@
         updateProject.forEach(updatebtn => {
             updatebtn.addEventListener('click', () => {
                 const id = updatebtn.id;
-                console.log(id); // 가져온 board의 id 값 확인
 
                 $(`#staticBack${id}`).modal('hide');
 
@@ -312,12 +311,6 @@
                 const title = modal.querySelector(".recipient-namee").value;
                 const content = modal.querySelector(".message-textt").value;
                 const expiredAt = modal.querySelector(".datepickerr").value;
-
-                console.log("수정된 프로젝트 이름:", title);
-                console.log("수정된 프로젝트 설명:", content);
-                console.log("수정된 프로젝트 마감일:", expiredAt);
-                console.log("수정될 프로젝트 아이디: ", id);
-
 
                 $.ajax({
                     method: "PUT",
@@ -344,7 +337,6 @@
         deleteProject.forEach(deletebtn =>{
             deletebtn.addEventListener('click', () => {
                 const id = deletebtn.id;
-                console.log(id); // 가져온 ID 값 확인
 
                 $(`#staticBackdrop${id}`).modal('hide');
 
@@ -378,10 +370,6 @@
             const title = document.getElementById("recipient-name").value;
             const content = document.getElementById("message-text").value;
             const expiredAt = document.getElementById("datepicker").value;
-
-            console.log("프로젝트 이름:", title);
-            console.log("프로젝트 설명:", content);
-            console.log("프로젝트 마감일:", expiredAt);
 
             if (title.trim() === "") {
                 document.getElementById("recipient-name").style.backgroundColor = "#ffcbc2";
@@ -459,10 +447,8 @@
                     updateNotificationList();
                     updateNotificationIcon();
                 } else {
-                    console.error('Error fetching notifications:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching notifications:', error);
             }
         };
 
@@ -477,10 +463,8 @@
                         loadNotificationsFromServer(userId);
                     }
                 } else {
-                    console.error('Error fetching user info:', response.status);
                 }
             } catch (error) {
-                console.error('Error fetching user info:', error);
             }
         };
 
@@ -540,7 +524,11 @@
                 return `${hours}시간 전`;
             } else {
                 const days = Math.floor(timeDifference / 86400000);
-                return `${days}일 전`;
+                if(isNaN(days)){
+                    return "방금 전";
+                } else {
+                    return `${days}일 전`;
+                }
             }
         };
 
@@ -648,14 +636,12 @@
             url: `/api/auth/refresh/access-token`,
             contentType: "application/json",
             success: function (data) {
-                console.log(data);
                 Toast.fire({
                     icon: 'success',
                     title: "로그인 연장 성공",
                 })
             },
             error: function (data) {
-                console.log(data);
                 Toast.fire({
                     icon: 'error',
                     title: "로그인 연장 실패. 재로그인 부탁드립니다.",
@@ -669,9 +655,7 @@
     /* 페이지 첫 로드 메서드 */
     function pageSetting() {  // main page 세팅
         const token = Cookies.get('Authorization');
-        const rtoken = Cookies.get('RefreshToken');
-        console.log(token);
-        console.log(rtoken);
+        // const rtoken = Cookies.get('RefreshToken');
 
         const loginBtn = document.getElementById('login');
         const logoutBtn = document.getElementById('logout');

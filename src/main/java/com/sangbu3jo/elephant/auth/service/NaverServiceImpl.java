@@ -41,16 +41,14 @@ public class NaverServiceImpl implements SocialService{
   private final UserRepository userRepository;
   private final JwtUtil jwtUtil;
 
-/*  @Value("${naver.client.id}")
+  @Value("${naver.client.id}")
   private String CLIENT_ID;
+
   @Value("${naver.client.secret}")
-  private String CLIENT_SECRET;*/
+  private String CLIENT_SECRET;
 
-  private final String CLIENT_ID = "tOZbI07C6ca6FvZufq1F";
-
-  private final String CLIENT_SECRET = "hl5iOUYJ0e";
-  private final String NAVER_REDIRECT_URL = "http://localhost:8080/api/auth/kakao/callback";
-
+  @Value("${naver.redirect.url}")
+  private String REDIRECT_URL;
 
   @Override
   public APITokenDto socialLogin(String code) throws JsonProcessingException, UnsupportedEncodingException {
