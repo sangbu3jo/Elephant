@@ -111,7 +111,7 @@ public class JwtUtil {
     Cookie cookie = new Cookie(AUTHORIZATION_HEADER, token); // 쿠키 생성
     cookie.setPath("/");
     cookie.setMaxAge(60*60); // 1시간
-//    cookie.setSecure(true);
+    cookie.setSecure(true);
     res.addCookie(cookie);
   }
 
@@ -128,7 +128,7 @@ public class JwtUtil {
     cookie.setPath("/");
     cookie.setMaxAge(60*60*24); // 24시간
     cookie.setHttpOnly(true);
-//    cookie.setSecure(true);
+    cookie.setSecure(true);
     res.addCookie(cookie);
   }
 
