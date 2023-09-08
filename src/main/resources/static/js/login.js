@@ -305,7 +305,7 @@ function onLogin() {
   .done(function () {
     Toast.fire({
       icon: 'success',
-      title: loginUsername + '님 환영합니다!'
+      title: loginUsername + '님 환영합니다!!'
     }).then(function () {
       window.location.href = "/"
     })
