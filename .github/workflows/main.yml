@@ -32,12 +32,18 @@ jobs: # 병렬로 실행되는 작업 단위, 여러 step으로 이루어짐
       run: chmod +x ./gradlew
       shell: bash
 
+    # application.properties 생성
+    - uses: actions/checkout@v3
+    - run: touch ./src/main/resources/application.properties
+    - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+    - run: cat ./src/main/resources/application.properties
+
     # 프로젝트 build
     - name: Build with Gradle
       run: ./gradlew clean build -x test
       shell: bash
 
-      # 프로젝트 압축
+    # 프로젝트 압축
     - name: Make zip file
       run: zip -r ./practice-deploy.zip .
       shell: bash
