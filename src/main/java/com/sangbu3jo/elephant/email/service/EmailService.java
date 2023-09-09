@@ -101,8 +101,8 @@ public class EmailService {
         msg += "<tr><td style='background-color: #f5f5f5; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);'>";
         msg += "<h1 style='color: #007bff; font-size: 30px;'>코끼리</h1>";
         msg += "<p style='font-size: 16px; margin-top: 20px;'>안녕하세요, " + sendTo + "님. 코끼리에서 초대장이 도착했습니다!</p>";
-        msg += "<p style='font-size: 16px; margin-top: 20px;'>" + sendFrom + "님으로부터 " + board.getTitle() + " 프로젝트에 초대되셨습니다.</p>";
-        msg += "<p style='margin-top: 20px;'><a href='http://43.200.91.2:8080/api/boards/" + board.getId() + "/member?member=" + URLEncoder.encode(sendTo, "UTF-8") + "' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>프로젝트에 참여하기</a></p>";
+        msg += "<p style='font-size: 16px; margin-top: 20px;'>" + sendFrom + "님으로부터 " + board.getTitle() + " 프로젝트에 초대되셨습니다.</p>"; // 43.200.91.2
+        msg += "<p style='margin-top: 20px;'><a href='https://www.elephantcodingclub.site/api/boards/" + board.getId() + "/member?member=" + URLEncoder.encode(sendTo, "UTF-8") + "' style='display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;'>프로젝트에 참여하기</a></p>";
         msg += "</td></tr></table></td></tr></table></body></html>";
 
         return msg;
