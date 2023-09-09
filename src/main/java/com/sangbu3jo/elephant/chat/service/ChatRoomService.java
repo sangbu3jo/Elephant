@@ -44,7 +44,7 @@ public class ChatRoomService {
      */
     @Transactional
     public void findChatRoom(Board board) {
-        Optional<ChatRoom> chatRoom = chatRoomRepository.findById(board.getId());
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findByRoomId(board.getId());
 
         // 단체 채팅방 정보가 없다면 해당 프로젝트의 단체 채팅방 정보를 새로 만들어 저장
         if(!chatRoom.isPresent()) {
@@ -82,7 +82,7 @@ public class ChatRoomService {
                             ChatMessage.class
                     );*/
 
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow();
+        ChatRoom chatRoom = chatRoomRepository.findByRoomId(chatRoomId).orElseThrow();
 
         Optional<ChatUser> chatUserOptional = chatUserRepository.findByUsernameAndChatroom(username, chatRoom); // chatuser가 있으면 찾아주는 걸로 하자
 
@@ -130,7 +130,7 @@ public class ChatRoomService {
      */
     @Transactional
     public Boolean findUsersInChatRoom(String username, Long chatRoomId, LocalDateTime time) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow();
+        ChatRoom chatRoom = chatRoomRepository.findByRoomId(chatRoomId).orElseThrow();
         Optional<ChatUser> chatUser = chatUserRepository.findByUsernameAndChatroom(username, chatRoom);
         if (!chatUser.isPresent()) {
             log.info("유저 존재 X");

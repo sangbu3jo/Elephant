@@ -142,6 +142,7 @@ public class ChatController {
                                       Model model) {
         // model에 List혹은 Slice 형태로 담아서 보내기 (프론트에서 list 받아서 출력해주기)
         if (userDetails == null ) {
+            log.info("로그인 페이지로");
             return "login-page";
         }
         log.info("채팅방 리스트 반환 (개인 & 단체)");
