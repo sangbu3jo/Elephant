@@ -59,13 +59,14 @@ public class UserController {
      */
     @PostMapping("/users/profile/image")
     public ResponseEntity<String> updateImg(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                            @RequestParam MultipartFile image) throws IOException {
+                                            @RequestParam MultipartFile image,
+                                            @RequestParam(name = "profileUrl") String profileUrl
+                                           ) throws IOException {
 
-        String result = userService.updateImg(userDetails.getUser(), image);
+        String result = userService.updateImg(userDetails.getUser(), image,profileUrl);
 
         return ResponseEntity.ok(result);
     }
-
 
     /**
      * 회원 탈퇴 API

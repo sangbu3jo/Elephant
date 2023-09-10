@@ -29,6 +29,7 @@
     <style>
 
     </style>
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 </head>
 <body>
 
@@ -1243,6 +1244,9 @@
                         <div class="row g-0">
                             <div class="col-md-4">
                                 <img src="${profileUrl}" class="img-fluid rounded-start" alt="Profile Image">
+                                 <input type="hidden" id="currentImageUrl" name="currentImageUrl" th:value="${profileUrl}"
+                           readonly>
+
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body">
@@ -1269,14 +1273,20 @@
         // 프로필 이미지 업로드 버튼에 클릭 이벤트를 추가하고 이미지를 선택하면 AJAX를 통해 서버로 업로드
         uploadImageButton.addEventListener('click', () => {
             const file = imageInput.files[0];
+            var profileUrl = `${profileUrl}`;
+
+            console.log(profileUrl);
+
 
             if (file) {
                 const formData = new FormData();
                 formData.append('image', file);
 
+
+
                 // AJAX 요청을 보내고 이미지 URL을 서버로 업로드
                 $.ajax({
-                    url: '/api/users/profile/image', // 서버 업로드 URL로 변경
+                    url: `/api/users/profile/image?profileUrl=${profileUrl}`, // 서버 업로드 URL로 변경
                     type: 'POST',
                     data: formData,
                     contentType: false,
