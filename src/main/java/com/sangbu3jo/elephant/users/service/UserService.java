@@ -21,9 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +54,7 @@ public class UserService {
         }
 
 
+
         // 프로필수정 요청한 user, 프로필수정 할 user 비교
         if (!requestuser.getId().equals(user.getId())) {
             return "본인의 프로필만 수정이 가능합니다.";
@@ -78,13 +76,13 @@ public class UserService {
      * 프로필 이미지 수정
      *
      * @param requestuser 로그인한 회원 정보
-     * @param image       이미지 url 데이터
+     * @param image 이미지 url 데이터
      * @return 프로필 수정 완료
      * @throws IOException 예외처리
      */
 
-
-    public String updateImg(User requestuser, MultipartFile image, String profileUrl) throws IOException {
+    @Transactional
+    public String updateImg(User requestuser, MultipartFile image) throws IOException {
 
         // 유저 조회
         User user = userRepository.findById(requestuser.getId()).orElse(null);
@@ -101,14 +99,7 @@ public class UserService {
         //이미지 변경
         if (!image.isEmpty()) {
             String storedFileName = s3UploaderService.upload(image, "image");
-
-            if (user.getOldProfile() != null && !user.getOldProfile().isEmpty()) {
-                String oldUrl = user.getOldProfile();
-                deleteImage(oldUrl);
-            }
-
             // 값을 받아오면 같은 값 넣어주기
-            user.setOldProfile(profileUrl);
             user.setProfileUrl(storedFileName);
 
         }
@@ -117,16 +108,20 @@ public class UserService {
         return "프로필 수정이 완료되었습니다.";
     }
 
-    public String deleteImage(String fileUrl) {
+
+
+
+    @Transactional
+    public void deleteImage(String fileUrl) {
 
 
         String s3Key = fileUrl.substring("https://sangbusamjoelephant.s3.ap-northeast-2.amazonaws.com/".length());
 
         s3UploaderService.fileDelete(s3Key);
-        return s3Key;
 
 
     }
+
 
 
     // 회원 탈퇴 메서드
