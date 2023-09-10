@@ -6,6 +6,7 @@ import com.sangbu3jo.elephant.posts.entity.Post;
 import com.sangbu3jo.elephant.posts.entity.PostComment;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -56,6 +57,10 @@ public class User {
 
   @Column(name = "profile_url")
   private String profileUrl =  "https://cdn-icons-png.flaticon.com/128/1864/1864497.png";
+
+  @Column(name = "old_profile_url")
+  private String oldProfile;
+
 
 
   @Builder
@@ -114,5 +119,9 @@ public class User {
 
   public void setProfileUrl(String profileUrl) {
     this.profileUrl = profileUrl;
+  }
+
+  public void setOldProfile(String oldProfile) {
+    this.oldProfile = oldProfile;
   }
 }
