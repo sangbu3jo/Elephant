@@ -22,8 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +83,7 @@ public class UserService {
      */
 
 
-    public String updateImg(User requestuser, MultipartFile image, String profileUrl) throws IOException {
+    public String updateImg(User requestuser, MultipartFile image) throws IOException {
 
         // 유저 조회
         User user = userRepository.findById(requestuser.getId()).orElse(null);
@@ -103,12 +102,17 @@ public class UserService {
             String storedFileName = s3UploaderService.upload(image, "image");
 
             if (user.getOldProfile() != null && !user.getOldProfile().isEmpty()) {
-                String oldUrl = user.getOldProfile();
-                deleteImage(oldUrl);
+                try {
+                    String oldUrl = URLDecoder.decode(user.getOldProfile(), "UTF-8");
+
+                    deleteImage(oldUrl);
+                }catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
 
             // 값을 받아오면 같은 값 넣어주기
-            user.setOldProfile(profileUrl);
+            user.setOldProfile(storedFileName);
             user.setProfileUrl(storedFileName);
 
         }
