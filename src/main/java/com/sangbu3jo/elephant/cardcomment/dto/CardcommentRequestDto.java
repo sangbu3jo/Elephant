@@ -1,12 +1,12 @@
 package com.sangbu3jo.elephant.cardcomment.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CardcommentRequestDto {
 
     private String content;

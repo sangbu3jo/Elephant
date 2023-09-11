@@ -341,7 +341,6 @@ h1 {
 }
 
 .comment_one > div > img {
-    border-radius: 100%;
     max-width: 100%;
     max-height: 100%;
     margin: auto;

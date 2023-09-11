@@ -115,11 +115,11 @@
                 <div th:each="comment : ${comments}" class="comment">
                     <div class="comment_one">
                         <div class="comment_head">
-                            <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png">
+                            <img th:src="${comment.url}">
                         </div>
                         <div class="comment_body">
                             <p class="comment-author" th:text="${comment.username}">작성자</p>
-                            <p class="comment-date" th:text="${comment.createdAt}">날짜</p>
+                            <p class="comment-date" th:text="${#temporals.format(comment.createdAt, 'MM월 dd일 HH:mm:ss')}">날짜</p>
                             <p class="comment-content" th:text="${comment.content}">댓글 내용</p>
                         </div>
                         <div class="comment_bottom">
@@ -181,7 +181,6 @@
 
     // 카드 삭제
     function deleteCard(boardId) {
-
         Swal.fire({
             title: '정말 삭제하시겠습니까?',
             text: '다시 되돌릴 수 없습니다.',
