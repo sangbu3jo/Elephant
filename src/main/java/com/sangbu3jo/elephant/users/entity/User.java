@@ -83,6 +83,12 @@ public class User {
     this.role = role;
   }
 
+  //받아온 이미지 url 저장
+  public void imageSave(String storedFileName){
+    this.profileUrl = storedFileName;
+    this.oldProfile = storedFileName;
+  }
+
   public User kakaoIdUpdate(String kakaoId){
     this.kakaoId = kakaoId;
     return this;
