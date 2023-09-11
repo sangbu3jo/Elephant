@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
     <title>Project</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -127,7 +129,7 @@
                     <div class="window-title" th:text="${board.dday}">D-0</div>
                     <div class="window-controls">
                         <div class="window-minimize"></div>
-                        <a th:href="@{|/api/boards/${board.boardid}|}">
+                        <a th:href="@{|/api/boards/${board.boardid}|}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="보러가기">
                             <div class="window-maximize" th:id="${board.boardid}"></div>
                         </a>
                         <!--                        <div class="window-maximize" th:id="${board.boardid}" th:href="@{|/${board.boardid}|}"></div>-->
@@ -278,6 +280,9 @@
 </body>
 
 <script>
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 
     function gotoMain() {
         window.location.href = "/main";
