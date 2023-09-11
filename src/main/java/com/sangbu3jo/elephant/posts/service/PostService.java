@@ -24,7 +24,7 @@ public class PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final S3UploaderService s3UploaderService;
+
 
     //카테고리
     private final Category project = Category.COOPERATION_PROJECT;
