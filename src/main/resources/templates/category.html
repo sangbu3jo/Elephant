@@ -348,201 +348,198 @@
   $(document).ready(function () {
     pageSetting();
 
-    const notificationIcon = document.querySelector('.notification-icon');
-    const notificationBadge = document.getElementById('notificationBadge');
-    const notificationList = document.getElementById('notificationList');
-    let isNotificationListOpen = false;
-    let notificationsList = []; // 알림 데이터를 저장할 리스트
-    let userId = null; // 사용자 아이디 변수 추가
-
-    // 알림 데이터를 서버에서 불러와서 목록에 추가하는 함수
-    const fetchNotifications = async (userId) => {
-      try {
-        const response = await fetch(`/api/notifications/list/${userId}`);
-        if (response.ok) {
-          const notifications = await response.json();
-          notificationsList = notifications;
-          updateNotificationList();
-          updateNotificationIcon();
-        } else {
-          // console.error('Error fetching notifications:', response.status);
-        }
-      } catch (error) {
-        // console.error('Error fetching notifications:', error);
-      }
-    };
-
-    // 사용자 정보를 불러오는 함수
-    const fetchUserInfo = async () => {
-      try {
-        const response = await fetch('/api/get-user-info');
-        if (response.ok) {
-          const userData = await response.json();
-          if (userData && userData.id) {
-            userId = userData.id;
-            loadNotificationsFromServer(userId);
-          }
-        } else {
-          // console.error('Error fetching user info:', response.status);
-        }
-      } catch (error) {
-        // console.error('Error fetching user info:', error);
-      }
-    };
-
     // 페이지 로드 시 사용자 정보를 가져와서 알림 데이터를 불러옴
     const token = Cookies.get('Authorization');
-    if (token) { // 토큰 있을 경우
-      fetchUserInfo();
-    }else {
+    if(token){ // 토큰 있을 경우
+      const notificationIcon = document.querySelector('.notification-icon');
+      const notificationBadge = document.getElementById('notificationBadge');
+      const notificationList = document.getElementById('notificationList');
+      let isNotificationListOpen = false;
+      let notificationsList = []; // 알림 데이터를 저장할 리스트
+      let userId = null; // 사용자 아이디 변수 추가
 
-    }
-
-    // 알림 목록 업데이트 함수
-    const updateNotificationList = () => {
-      notificationList.innerHTML = ''; // 목록 초기화
-      notificationsList.forEach(notification => {
-        addNotificationToList(notification);
-      });
-      const listHeader = document.createElement('div');
-      listHeader.className = 'notification-list-header';
-
-      // Create the "전체 읽음" button
-      const markAllReadButton = `
-        <button id="markAllReadButton" class="mark-all-read-button">전체 읽음</button>
-    `;
-      listHeader.innerHTML = markAllReadButton; // innerHTML로 버튼 추가
-      listHeader.innerHTML += '알림';
-
-      notificationList.insertBefore(listHeader, notificationList.firstChild);
-
-      // "전체 읽음" 버튼에 이벤트 리스너 연결
-      const button = document.getElementById('markAllReadButton');
-      button.addEventListener('click', function () {
-        Swal.fire({
-          icon: "waning",
-          title: "알림 전체 읽음처리 하시겠습니까?"
-        }).then((result) => {
-          if (result.isConfirmed) {
-            markAllNotificationsAsRead();
-            window.location.reload();
+      // 알림 데이터를 서버에서 불러와서 목록에 추가하는 함수
+      const fetchNotifications = async (userId) => {
+        try {
+          const response = await fetch(`/api/notifications/list/${userId}`);
+          if (response.ok) {
+            const notifications = await response.json();
+            notificationsList = notifications;
+            updateNotificationList();
+            updateNotificationIcon();
+          } else {
+            console.error('Error fetching notifications:', response.status);
           }
-        })
-      });
-    }
-
-    // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
-    const formatTimeAgo = (notificationTime) => {
-      const currentTime = new Date();
-      const timeDifference = currentTime - new Date(notificationTime);
-
-      if (timeDifference < 60000) { // 1분 미만
-        return "방금 전";
-      } else if (timeDifference < 3600000) { // 1시간 미만
-        const minutes = Math.floor(timeDifference / 60000);
-        return `${minutes}분 전`;
-      } else if (timeDifference < 86400000) { // 24시간 미만
-        const hours = Math.floor(timeDifference / 3600000);
-        return `${hours}시간 전`;
-      } else {
-        const days = Math.floor(timeDifference / 86400000);
-        if(isNaN(days)){
-          return "방금 전";
-        } else {
-          return `${days}일 전`;
+        } catch (error) {
+          console.error('Error fetching notifications:', error);
         }
-      }
-    };
-
-    // 알림 아이템 추가 함수
-    const addNotificationToList = (notification) => {
-      const listItem = document.createElement('div');
-      listItem.className = notification.read ? 'notification-list-item read'
-          : 'notification-list-item unread';
-      const timeAgo = formatTimeAgo(notification.createdAt);
-      listItem.innerHTML = `${notification.content}<br><span class="notification-time">${timeAgo}</span>`;
-      listItem.onclick = () => {
-        handleNotificationItemClick(notification, listItem);
       };
-      notificationList.insertBefore(listItem, notificationList.firstChild);
-    };
 
-    // 알림 읽음 처리 함수
-    const markNotificationAsRead = (notification, listItem) => {
-      if (!notification.read) {
-        notification.read = true;
-        listItem.classList.remove('unread');
-        listItem.classList.add('read');
-        updateNotificationIcon();
-
-        // AJAX 요청으로 서버에 알림 읽음 처리 요청 보내기
-        $.post(`/api/mark-notification-as-read/${notification.id}`)
-      }
-    };
-
-    // 알림 아이템 클릭 처리 함수
-    const handleNotificationItemClick = (notification, listItem) => {
-      markNotificationAsRead(notification, listItem);
-      window.location.href = notification.url;
-    };
-
-    // 알림 아이콘 업데이트 함수
-    const updateNotificationIcon = () => {
-      const unreadCount = notificationsList.filter(notification => !notification.read).length;
-      if (unreadCount > 0) {
-        notificationIcon.classList.add('new-notification');
-        notificationBadge.style.display = "inline";
-        notificationBadge.innerText = unreadCount.toString();
-      } else {
-        notificationIcon.classList.remove('new-notification');
-        notificationBadge.style.display = "none";
-        // notificationBadge.innerText = '';
-      }
-    };
-
-    // 종모양 아이콘 클릭 시 알림 목록 표시/숨기기
-    notificationIcon.addEventListener('click', () => {
-      updateNotificationList();
-      if (!isNotificationListOpen) {
-        notificationList.style.display = 'block';
-        isNotificationListOpen = true;
-      } else {
-        notificationList.style.display = 'none';
-        isNotificationListOpen = false;
-      }
-    });
-
-    // 페이지 로드 시 알림 데이터를 가져와서 표시
-    const loadNotificationsFromServer = (userId) => {
-      fetchNotifications(userId);
-    };
-
-    fetchUserInfo().then(() => {
-      const sse = new EventSource(`/api/notifications/${userId}`);
-      sse.onmessage = (event) => {
-        const notification = JSON.parse(event.data);
-        notificationsList.push(notification);
-        addNotificationToList(notification);
-        updateNotificationIcon();
+      // 사용자 정보를 불러오는 함수
+      const fetchUserInfo = async () => {
+        try {
+          const response = await fetch('/api/get-user-info');
+          if (response.ok) {
+            const userData = await response.json();
+            if (userData && userData.id) {
+              userId = userData.id;
+              loadNotificationsFromServer(userId);
+            }
+          } else {
+            console.error('Error fetching user info:', response.status);
+          }
+        } catch (error) {
+          console.error('Error fetching user info:', error);
+        }
       };
-    });
 
-    // 알림 전체 읽음 처리 함수
-    function markAllNotificationsAsRead() {
-      $.post(`/api/mark-all-notifications-as-read/${userId}`)
-              .done(function(response) {
-                Toast.fire({
-                  icon: 'success',
-                  title: "전체 읽음 처리 되었습니다!",
+
+
+      // 알림 목록 업데이트 함수
+      const updateNotificationList = () => {
+        notificationList.innerHTML = ''; // 목록 초기화
+        notificationsList.forEach(notification => {
+          addNotificationToList(notification);
+        });
+        const listHeader = document.createElement('div');
+        listHeader.className = 'notification-list-header';
+
+        // Create the "전체 읽음" button
+        const markAllReadButton = `<button id="markAllReadButton" class="mark-all-read-button">전체 읽음</button>`;
+        listHeader.innerHTML = markAllReadButton; // innerHTML로 버튼 추가
+        listHeader.innerHTML += '알림';
+
+        notificationList.insertBefore(listHeader, notificationList.firstChild);
+
+        // "전체 읽음" 버튼에 이벤트 리스너 연결
+        const button = document.getElementById('markAllReadButton');
+        button.addEventListener('click', function () {
+          Swal.fire({
+            icon: "waning",
+            title: "알림 전체 읽음처리 하시겠습니까?"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              markAllNotificationsAsRead();
+              window.location.reload();
+            }
+          })
+        });
+
+      };
+
+      // 현재 시간과 주어진 시간 사이의 경과 시간을 계산하여 문자열로 반환하는 함수
+      const formatTimeAgo = (notificationTime) => {
+        const currentTime = new Date();
+        const timeDifference = currentTime - new Date(notificationTime);
+
+        if (timeDifference < 60000) { // 1분 미만
+          return "방금 전";
+        } else if (timeDifference < 3600000) { // 1시간 미만
+          const minutes = Math.floor(timeDifference / 60000);
+          return `${minutes}분 전`;
+        } else if (timeDifference < 86400000) { // 24시간 미만
+          const hours = Math.floor(timeDifference / 3600000);
+          return `${hours}시간 전`;
+        } else {
+          const days = Math.floor(timeDifference / 86400000);
+          if(isNaN(days)){
+            return "방금 전";
+          } else {
+            return `${days}일 전`;
+          }
+        }
+      };
+
+      // 알림 아이템 추가 함수
+      const addNotificationToList = (notification) => {
+        const listItem = document.createElement('div');
+        listItem.className = notification.read ? 'notification-list-item read' : 'notification-list-item unread';
+        const timeAgo = formatTimeAgo(notification.createdAt);
+        listItem.innerHTML = `${notification.content}<br><span class="notification-time">${timeAgo}</span>`;
+        listItem.onclick = () => {
+          handleNotificationItemClick(notification, listItem);
+        };
+        notificationList.insertBefore(listItem, notificationList.firstChild);
+      };
+
+
+      // 알림 읽음 처리 함수
+      const markNotificationAsRead = (notification, listItem) => {
+        if (!notification.read) {
+          notification.read = true;
+          listItem.classList.remove('unread');
+          listItem.classList.add('read');
+          updateNotificationIcon();
+
+          // AJAX 요청으로 서버에 알림 읽음 처리 요청 보내기
+          $.post(`/api/mark-notification-as-read/${notification.id}`)
+        }
+      };
+
+      // 알림 아이템 클릭 처리 함수
+      const handleNotificationItemClick = (notification, listItem) => {
+        markNotificationAsRead(notification, listItem);
+        window.location.href = notification.url;
+      };
+
+      // 알림 아이콘 업데이트 함수
+      const updateNotificationIcon = () => {
+        const unreadCount = notificationsList.filter(notification => !notification.read).length;
+        if (unreadCount > 0) {
+          notificationIcon.classList.add('new-notification');
+          notificationBadge.style.display = "inline";
+          notificationBadge.innerText = unreadCount.toString();
+        } else {
+          notificationIcon.classList.remove('new-notification');
+          notificationBadge.style.display = "none";
+          // notificationBadge.innerText = '';
+        }
+      };
+
+      // 종모양 아이콘 클릭 시 알림 목록 표시/숨기기
+      notificationIcon.addEventListener('click', () => {
+        updateNotificationList();
+        if (!isNotificationListOpen) {
+          notificationList.style.display = 'block';
+          isNotificationListOpen = true;
+        } else {
+          notificationList.style.display = 'none';
+          isNotificationListOpen = false;
+        }
+      });
+
+      // 페이지 로드 시 알림 데이터를 가져와서 표시
+      const loadNotificationsFromServer = (userId) => {
+        fetchNotifications(userId);
+      };
+
+      fetchUserInfo().then(() => {
+        const sse = new EventSource(`/api/notifications/${userId}`);
+        sse.onmessage = (event) => {
+          const notification = JSON.parse(event.data);
+          notificationsList.push(notification);
+          addNotificationToList(notification);
+          updateNotificationIcon();
+        };
+      });
+
+      // 알림 전체 읽음 처리 함수
+      function markAllNotificationsAsRead() {
+        $.post(`/api/mark-all-notifications-as-read/${userId}`)
+                .done(function(response) {
+                  Toast.fire({
+                    icon: 'success',
+                    title: "전체 읽음 처리 되었습니다!",
+                  })
                 })
-              })
-              .fail(function(response) {
-                Toast.fire({
-                  icon: 'error',
-                  title: "전체 읽음 처리 실패!",
-                })
-              });
-    }
+                .fail(function(response) {
+                  Toast.fire({
+                    icon: 'error',
+                    title: "전체 읽음 처리 실패!",
+                  })
+                });
+      }
+    } // if문 종료
   });
 
   function removeToken() { // 토큰 삭제
