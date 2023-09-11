@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
     <title>코끼리</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -29,6 +30,7 @@
     <style>
 
     </style>
+
 </head>
 <body>
 
@@ -1276,7 +1278,7 @@
 
                 // AJAX 요청을 보내고 이미지 URL을 서버로 업로드
                 $.ajax({
-                    url: '/api/users/profile/image', // 서버 업로드 URL로 변경
+                    url: `/api/users/profile/image`, // 서버 업로드 URL로 변경
                     type: 'POST',
                     data: formData,
                     contentType: false,

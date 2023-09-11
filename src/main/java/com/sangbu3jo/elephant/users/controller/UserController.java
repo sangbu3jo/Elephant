@@ -59,7 +59,9 @@ public class UserController {
      */
     @PostMapping("/users/profile/image")
     public ResponseEntity<String> updateImg(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                            @RequestParam MultipartFile image) throws IOException {
+                                            @RequestParam MultipartFile image
+
+                                           ) throws IOException {
 
         String result = userService.updateImg(userDetails.getUser(), image);
 

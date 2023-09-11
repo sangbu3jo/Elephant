@@ -21,6 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +85,6 @@ public class UserService {
      * @throws IOException 예외처리
      */
 
-    @Transactional
     public String updateImg(User requestuser, MultipartFile image) throws IOException {
 
         // 유저 조회
@@ -99,7 +102,18 @@ public class UserService {
         //이미지 변경
         if (!image.isEmpty()) {
             String storedFileName = s3UploaderService.upload(image, "image");
+            if (user.getOldProfile() != null && !user.getOldProfile().isEmpty()) {
+                try {
+                    String oldUrl = URLDecoder.decode(user.getOldProfile(), "UTF-8");
+
+                    deleteImage(oldUrl);
+                }catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+            }
+
             // 값을 받아오면 같은 값 넣어주기
+            user.setOldProfile(storedFileName);
             user.setProfileUrl(storedFileName);
 
         }
