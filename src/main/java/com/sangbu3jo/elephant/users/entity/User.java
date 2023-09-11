@@ -58,6 +58,13 @@ public class User {
   private String profileUrl =  "https://cdn-icons-png.flaticon.com/128/1864/1864497.png";
 
 
+
+  @Column(name = "old_profile_url")
+  private String oldProfile;
+
+
+
+
   @Builder
   public User(SignupRequestDto signupRequestDto, String password, UserRoleEnum role) {
     this.username = signupRequestDto.getUsername();
@@ -112,7 +119,15 @@ public class User {
     this.id = id;
   }
 
+
   public void setProfileUrl(String profileUrl) {
     this.profileUrl = profileUrl;
   }
+
+
+
+  public void setOldProfile(String oldProfile) {
+    this.oldProfile = oldProfile;
+  }
+
 }
