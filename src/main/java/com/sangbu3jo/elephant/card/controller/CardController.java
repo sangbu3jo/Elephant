@@ -87,7 +87,7 @@ public class CardController {
      * @param card_id: URL에 매핑되어 있는 수정할 카드의 ID 값
      * @return: 메세지와 상태코드 반환
      */
-    @DeleteMapping("/cards/{card_id}")
+    @DeleteMapping("/boards/{board_id}/columns/cards/{card_id}")
     public ResponseEntity<String> deleteCard(@PathVariable Long card_id) {
         try {
             cardService.deleteCard(card_id);
