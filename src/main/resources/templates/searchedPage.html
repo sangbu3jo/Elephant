@@ -150,34 +150,43 @@
   </div>
 
   <div class="bottomtwo">
-    <!--게시글 목록 코드-->
-    <div class="card" id="cardArea" th:each="post, postIndex : ${posts}">
-      <div class="card-body" style="text-align: left;">
-        <a th:href="@{/api/posts/{postId}(postId=${post.id})}">
-          <h5 class="card-title"
-              th:text="|${post.title.length() > 15 ? #strings.substring(post.title, 0, 15) + '...' : post.title}|">
-            스터디원 구함 </h5>
-          <h6 class="card-subtitle mb-3 text-body-secondary"
-              th:text="|View : ${post.view_cnt}|">
-            View: 15</h6>
-          <p class="card-text"
-             th:text="|${post.content.length() > 50 ? #strings.substring(post.content, 0, 50) + '...' : post.content}|"
-          >Some quick example text to build on the card title ...</p>
-        </a>
-        <p class="card-link" style="
-                margin: revert;
-                /* text-align: right; */
-                /* margin-top: 90%; */
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-end;"
-           th:text="|${post.nickname}|">sally</p>
-        <p class="card-link" style="
-    font-size: small;
-    text-align: right;
-"
-           th:text="${#temporals.format(post.createdAt, 'MM/dd HH:mm:ss')}">11/11 11:11:11</p>
-      </div>
+    <div class="list-group list-group-flush" style="width: 80%">
+
+      <a class="list-group-item" aria-current="true" >
+        <div class="d-flex w-75 justify-content-between">
+          <h5 class="card-title mb-0">제목</h5>
+          <p class="card-text mb-0">내용</p>
+        </div>
+        <div class="d-flex w-25 justify-content-between">
+          <div style="width: 40%; display: flex; justify-content: center; align-items: center;">
+            <p class="mb-1">닉네임</p>
+          </div>
+          <div style="width: 30%; text-align: center; display: flex; justify-content: center; align-items: center;">
+            <small>조회수</small>
+          </div>
+          <div style="width: 30%; text-align: center; display: flex; justify-content: center; align-items: center;">
+            <small>작성날짜</small>
+          </div>
+        </div>
+      </a>
+
+      <a th:onclick="'gotoPost(\'' + ${post.id} + '\')'" class="list-group-item list-group-item-action" aria-current="true" th:each="post, postIndex : ${posts}">
+        <div class="d-flex w-75 justify-content-between">
+          <h5 class="card-title mb-0" th:text="|${post.title.length() > 15 ? #strings.substring(post.title, 0, 15) + '...' : post.title}|">스터디원 구함 </h5>
+          <p class="card-text mb-0" th:text="|${post.content.length() > 50 ? #strings.substring(post.content, 0, 50) + '...' : post.content}|">Some quick example text to build on the card title ...</p>
+        </div>
+        <div class="d-flex w-25 justify-content-between">
+          <div style="width: 40%; display: flex; justify-content: center; align-items: center;">
+            <p class="mb-1" th:text="|${post.nickname}|">닉네임</p>
+          </div>
+          <div style="width: 30%; text-align: center; display: flex; justify-content: center; align-items: center;">
+            <small th:text="|조회수 : ${post.view_cnt}|">조회수: 00회</small>
+          </div>
+          <div style="width: 30%; text-align: center; display: flex; justify-content: center; align-items: center;">
+            <small th:text="${#temporals.format(post.createdAt, 'MM월 dd일 HH:mm:ss')}">11/11 11:11:11</small>
+          </div>
+        </div>
+      </a>
     </div>
   </div>
 

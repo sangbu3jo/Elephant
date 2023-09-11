@@ -1,7 +1,32 @@
 #cardArea {
     width: 17%;
     margin: 1%;
-    height: -webkit-fill-available;
+}
+
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title,
+.card-text,
+.mb-1,
+small {
+    margin: 5px 0; /* 원하는 간격으로 조절 가능 */
+}
+
+.small {
+    font-size: 12px; /* 원하는 글꼴 크기로 조절 가능 */
+}
+
+.card-title {
+    flex: 0 0 35%; /* 원하는 너비(예: 50%)로 조절 가능 */
+    text-align: start;
+}
+.card-text {
+    flex: 0 0 75%; /* 원하는 너비(예: 50%)로 조절 가능 */
+    text-align: start;
 }
 
 /* 상단바 css 추가 */
@@ -200,10 +225,10 @@ button {
 
 .bottomtwo {
     height: 70%;
-    width: 80%;
+    width: 100%;
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: start;
     justify-content: center;
 }
 
