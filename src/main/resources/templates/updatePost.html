@@ -161,8 +161,8 @@
                      th:unless="${updatePost.category == '문제 은행' || updatePost.category == '자유 게시판'}">
                     <label for="completed">모집 현황</label>
                     <select id="completed" name="completed" class="input-field">
-                        <option value="true">모집 완료</option>
-                        <option value="false">모집 중</option>
+                        <option th:selected="${updatePost.completed == true}" th:value="true">모집 완료</option>
+                        <option th:selected="${updatePost.completed == false}" th:value="false">모집 중</option>
                     </select>
                 </div>
             </div>
@@ -268,7 +268,10 @@
             var selectedCategory = $("#category").val();
             var title = $("#title").val();
             var content = $("#content").val();
-            var completed = $("#completed").val();
+            var completed = null;
+            if(selectedCategory == "COOPERATION_PROJECT" || selectedCategory === "DEVELOPMENT_STUDY"){
+                completed =  $("#completed").val();
+            }
             var files = $("#files")[0].files[0];
 
             if (files) {
@@ -278,7 +281,11 @@
                 formData.append("title", title);
                 formData.append("content", content);
                 formData.append("image", files);
-                formData.append("completed", completed);
+                if (completed != null) {
+                    formData.append("completed", completed);
+                }else {formData.append("completed", false);}
+
+
 
                 Swal.fire({
                     title: "게시글을 수정 하시겠습니까?",
@@ -301,8 +308,6 @@
                             data: formData,
                             processData: false,
                             contentType: false,
-                            // contentType: false,
-                            // contentType: "multipart/form-data",
                             success: function (response) {
                                 $("#result").text(response); // 성공 메시지를 표시합니다.
 
@@ -310,6 +315,7 @@
                             },
                             error: function (error) {
                                 $("#result").text("에러 발생: " + error.responseText); // 에러 메시지를 표시합니다.
+
                             }
                         });
                     }
