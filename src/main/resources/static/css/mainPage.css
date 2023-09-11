@@ -224,8 +224,20 @@ a:hover {
 
 .category-title {
     font-size: 18px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
+.category-title a:nth-child(2) {
+    font-size: 16px;
+    color: #888888;
+}
+
+.category-title a:hover {
+    font-weight: bold;
+    color: #a9a9a9;
+}
 .sidemenu {
     display: flex;
     flex-direction: column;

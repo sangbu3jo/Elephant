@@ -1245,9 +1245,6 @@
                         <div class="row g-0">
                             <div class="col-md-4">
                                 <img src="${profileUrl}" class="img-fluid rounded-start" alt="Profile Image">
-                                 <input type="hidden" id="currentImageUrl" name="currentImageUrl" th:value="${profileUrl}"
-                           readonly>
-
                             </div>
                             <div class="col-md-8">
                                 <div class="card-body">
@@ -1275,13 +1272,9 @@
         uploadImageButton.addEventListener('click', () => {
             const file = imageInput.files[0];
 
-
-
             if (file) {
                 const formData = new FormData();
                 formData.append('image', file);
-
-
 
                 // AJAX 요청을 보내고 이미지 URL을 서버로 업로드
                 $.ajax({

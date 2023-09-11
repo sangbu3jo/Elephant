@@ -39,8 +39,6 @@ public class Post extends TimeStamped {
     private String files;
 
 
-
-
     @Column(nullable = false)
     private Boolean completed;
 
@@ -105,7 +103,5 @@ public class Post extends TimeStamped {
     public void setId(Long id){
         this.id = id;
     }
-
-
 
 }

@@ -22,6 +22,10 @@ public class ProfileViewController {
     public String getImage(@AuthenticationPrincipal UserDetailsImpl userDetails,
                            Model model){
 
+        if (userDetails == null ) {
+            return "login-page";
+        }
+
         UserResponseDto userResponseDto = userService.getUserInfo(userDetails.getUser());
         model.addAttribute("image",userResponseDto.getProfileUrl());
         return "backUsers";

@@ -15,16 +15,19 @@ import java.util.List;
 public class ChatRoom {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    private Long roomId;
+
+    @OneToOne(mappedBy = "chatRoom")
     private Board board;
 
     @OneToMany(mappedBy = "chatroom", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<ChatUser> users = new ArrayList<>();
 
     public ChatRoom(Long id, Board board){
-        this.id = id;
+        this.roomId = id;
         this.board = board;
     }
 

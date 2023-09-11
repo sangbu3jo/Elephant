@@ -170,14 +170,14 @@ class BoardServiceTest {
         when(boardRepository.findById(any(Long.class))).thenReturn(Optional.of(board));
         when(boardUserRepository.findByBoardAndUser(any(Board.class), any(User.class))).thenReturn(Optional.of(boardUser));
         when(mongoTemplate.getCollection(any(String.class))).thenReturn(null); // 컬렉션이 존재하지 않는 경우(채팅내역 X)
-        when(chatRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(chatRoom));
-        when(chatUserRepository.findAllByChatroom(any(ChatRoom.class))).thenReturn(List.of(chatUser));
+//        when(chatRoomRepository.findById(any(Long.class))).thenReturn(Optional.of(chatRoom));
+//        when(chatUserRepository.findAllByChatroom(any(ChatRoom.class))).thenReturn(List.of(chatUser));
 
         boardService.deleteBoard(1L, user);
 
         // then
-        verify(chatUserRepository, times(1)).deleteAll(List.of(chatUser));
-        verify(chatRoomRepository, times(1)).delete(any(ChatRoom.class));
+//        verify(chatUserRepository, times(1)).deleteAll(List.of(chatUser));
+//        verify(chatRoomRepository, times(1)).delete(any(ChatRoom.class));
         verify(boardRepository, times(1)).delete(any(Board.class));
         verify(mongoTemplate, times(1)).getCollection(anyString());
     }

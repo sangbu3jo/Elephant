@@ -66,6 +66,10 @@ public class BoardController {
                                @RequestParam(required = false, defaultValue = "0", value = "page") Integer pageNo,
                                Pageable pageable, Model model) {
         log.info("보드 전체 조회 시도");
+        if (userDetails == null ) {
+            return "login-page";
+        }
+
         pageNo = (pageNo == 0) ? 0 : (pageNo - 1);
         log.info(pageNo.toString());
         Page<BoardResponseDto> boardList = boardService.getBoards(userDetails.getUser(), pageable, pageNo);
