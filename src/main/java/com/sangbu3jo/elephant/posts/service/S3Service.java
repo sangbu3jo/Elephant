@@ -54,18 +54,23 @@ public class S3Service {
                              Post post) throws IOException {
 
 
-        if (category.equals(Category.COOPERATION_PROJECT)) {
-            post.setCategory(Category.COOPERATION_PROJECT);
-        } else if (category.equals(Category.DEVELOPMENT_STUDY)) {
-            post.setCategory(Category.DEVELOPMENT_STUDY);
-        } else if (category.equals(Category.PREVIOUS_EXAM)) {
-            post.setCategory(Category.PREVIOUS_EXAM);
-
-        } else if (category.equals(Category.FORUM_BOARD)) {
-            post.setCategory(Category.PREVIOUS_EXAM);
-        } else {
-            throw new NullPointerException("해당 카테고리를 존재하지 않습니다.");
+        switch (category) {
+            case COOPERATION_PROJECT:
+                post.setCategory(Category.COOPERATION_PROJECT);
+                break;
+            case DEVELOPMENT_STUDY:
+                post.setCategory(Category.DEVELOPMENT_STUDY);
+                break;
+            case PREVIOUS_EXAM:
+                post.setCategory(Category.PREVIOUS_EXAM);
+                break;
+            case FORUM_BOARD:
+                post.setCategory(Category.FORUM_BOARD);
+                break;
+            default:
+                throw new IllegalArgumentException("해당 카테고리를 존재하지 않습니다.");
         }
+
 
 
         if (!image.isEmpty()) {
