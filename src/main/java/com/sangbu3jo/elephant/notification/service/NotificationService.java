@@ -10,6 +10,7 @@ import com.sangbu3jo.elephant.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -60,7 +61,7 @@ public class NotificationService {
 
             for (SseEmitter emitter : emitters) {
                 try {
-                    emitter.send(SseEmitter.event().data(notificationJson));
+                    emitter.send(SseEmitter.event().data(notificationJson), MediaType.TEXT_EVENT_STREAM);
                 } catch (IOException e) {
                     // 연결이 끊긴 경우, 여기서 처리 가능
                     emittersToRemove.add(emitter); // 연결이 끊긴 emitter를 제거할 리스트에 추가
