@@ -80,6 +80,7 @@ public class User {
     this.username = apiUserInfoDto.getEmail();
     this.nickname = apiUserInfoDto.getNickname();
     this.password = password;
+    this.introduction = "-";
     this.role = role;
   }
 
