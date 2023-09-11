@@ -266,9 +266,45 @@ public class ChatRoomService {
     /**
      * 개인 채팅방 (개인&단체) 판별
      * @param chatRoomId: 개인 채팅방의 ID 값
-     * @return: 1:1이면 false, 그룹 채팅방이면 true
+     * @return: 1:1이면 상대의 username, 그룹 채팅방이면 내 이름을 제외한 다른 이들의 username (40자까지만)
      */
-    public Boolean findGroupOrPrivate(String chatRoomId) {
+    public String findGroupOrPrivate(String chatRoomId, String username) {
+        Optional<PrivateChatRoom> privateChatRoom = privateChatRoomRepository.findByTitle(chatRoomId);
+        if (privateChatRoom.isPresent()) {
+            if (privateChatRoom.get().getUser1().equals(username)) {
+                return privateChatRoom.get().getUser2();
+            } else {
+                return privateChatRoom.get().getUser1();
+            }
+        } else {
+            GroupChatRoom groupChatRoom = groupChatRoomRepository.findByTitle(chatRoomId);
+            List<GroupChatUser> users = groupChatRoom.getGroupChatUsers();
+            String title = "";
+            for (int i = 0; i < users.size(); i++) {
+                GroupChatUser g = users.get(i);
+                if (g.getUser().getUsername().equals(username)) {
+                    continue;
+                }
+
+                if (!title.isEmpty()) {
+                    title += ", ";
+                }
+
+                title += g.getUser().getUsername();
+
+                if (title.length() > 40) {
+                    break;
+                }
+            }
+            if (title.length() > 40) {
+                return title.substring(0, 40) + "...";
+            } else {
+                return title;
+            }
+        }
+    }
+
+    public Boolean findGroupPrivate(String chatRoomId) {
         Optional<PrivateChatRoom> privateChatRoom = privateChatRoomRepository.findByTitle(chatRoomId);
         if (privateChatRoom.isPresent()) {
             return false;
@@ -300,4 +336,6 @@ public class ChatRoomService {
             groupChatRoomRepository.delete(groupChatRoom);
         }
     }
+
+
 }
