@@ -5,6 +5,7 @@ import com.sangbu3jo.elephant.board.repository.BoardRepository;
 import com.sangbu3jo.elephant.chat.dto.*;
 import com.sangbu3jo.elephant.chat.entity.*;
 import com.sangbu3jo.elephant.chat.repository.*;
+import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class ChatRoomService {
     private final PrivateChatRoomRepository privateChatRoomRepository;
     private final GroupChatRoomRepository groupChatRoomRepository;
     private final GroupChatUserRepository groupChatUserRepository;
+    private final NotificationService notificationService;
 
     @Autowired
     private final MongoTemplate mongoTemplate;
@@ -66,6 +68,13 @@ public class ChatRoomService {
         mongoTemplate.save(chatMessage, chatMessageRequestDto.getChatRoomId().toString());
         ChatMessageResponseDto message = new ChatMessageResponseDto(chatMessage);
         message.updateUrl(user.getProfileUrl());
+
+        String chatRoomIdString = String.valueOf(chatMessageRequestDto.getChatRoomId());
+        Long testzz = groupChatRoomRepository.findIdByTitle(chatRoomIdString);
+        log.info(String.valueOf(testzz));
+        log.info(String.valueOf(chatMessageRequestDto.getChatRoomId()));
+
+
         return message;
     }
 
@@ -231,6 +240,40 @@ public class ChatRoomService {
         mongoTemplate.save(chatMessage, chatMessageRequestDto.getTitle().toString());
         PrivateChatMessageResponseDto message = new PrivateChatMessageResponseDto(chatMessage);
         message.updateUrl(user.getProfileUrl());
+
+        Optional<String> user1Optional = privateChatRoomRepository.findUser1ByTitle(message.getTitle());
+        Optional<String> user2Optional = privateChatRoomRepository.findUser2ByTitle(message.getTitle());
+
+        if (user1Optional.isPresent() && user2Optional.isPresent()) {
+            String user1 = user1Optional.get();
+            String user2 = user2Optional.get();
+
+            // 현재 사용자와 user1, user2를 비교하여 알림을 보냅니다.
+            if (!user.getUsername().equals(user1)) {
+                User user1Hello = userRepository.findUserIdByUsername(user1).orElseThrow(
+                        () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+                );
+                String notificationContent = user.getNickname() + "님이 메시지를 보냈습니다.";
+                String notificationUrl = "/api/chatRooms/" + chatMessageRequestDto.getTitle().toString();
+                notificationService.oneMessgeNotification(user1Hello.getId(), notificationContent, notificationUrl);
+            }
+
+            if (!user.getUsername().equals(user2)) {
+                User user2Hello = userRepository.findUserIdByUsername(user2).orElseThrow(
+                        () -> new IllegalArgumentException("존재하지 않는 유저입니다.")
+                );
+                String notificationContent = user.getNickname() + "님이 메시지를 보냈습니다.";
+                String notificationUrl = "/api/chatRooms/" + chatMessageRequestDto.getTitle().toString();
+                notificationService.oneMessgeNotification(user2Hello.getId(), notificationContent, notificationUrl);
+            }
+
+        } else {
+            // z
+        }
+
+
+        log.info(message.getTitle());
+
         return message;
     }
 
