@@ -26,7 +26,7 @@ public class NotificationController {
      * @param userId 알림을 받을 사용자의 식별자
      * @return SSE 연결 객체 (SseEmitter)
      */
-    @GetMapping(value = "/notifications/{userId}")
+    @GetMapping(value="/notifications/{userId}", produces = "text/event-stream")
     public SseEmitter getNotifications(@PathVariable Long userId) {
         SseEmitter emitter = new SseEmitter();
 
