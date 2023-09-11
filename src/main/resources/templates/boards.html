@@ -501,15 +501,8 @@
                 // "전체 읽음" 버튼에 이벤트 리스너 연결
                 const button = document.getElementById('markAllReadButton');
                 button.addEventListener('click', function () {
-                    Swal.fire({
-                        icon: "waning",
-                        title: "알림 전체 읽음처리 하시겠습니까?"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            markAllNotificationsAsRead();
-                            window.location.reload();
-                        }
-                    })
+                    markAllNotificationsAsRead();
+                    window.location.reload();
                 });
 
             };

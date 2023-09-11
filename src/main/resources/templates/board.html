@@ -38,7 +38,10 @@
         <input class="board-edit" style="display: none;" th:id="${board.id}">
     </div>
     <div class="title2">
-
+        <div>
+            <p th:text="${board.content}"></p>
+            <p th:text="${board.expiredAt}"></p>
+        </div>
         <!--프로젝트 떠나기 모달창 -->
         <div class="modal fade" th:id="'leaveboard'+${board.id}" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -398,14 +401,14 @@
     const myList = document.getElementById('myList');
 
     // 버튼을 클릭할 때 이벤트 처리
-    toggleButton.addEventListener('click', () => {
-        // 리스트 요소의 가시성을 토글합니다.
-        if (myList.style.display === 'none') {
-            myList.style.display = 'block';
-        } else {
-            myList.style.display = 'none';
-        }
-    });
+    // toggleButton.addEventListener('click', () => {
+    //     // 리스트 요소의 가시성을 토글합니다.
+    //     if (myList.style.display === "none") {
+    //         myList.style.display = 'block';
+    //     } else {
+    //         myList.style.display = 'none';
+    //     }
+    // });
 
     // 카드 이동 - 콘솔에 제대로 찍히는 것 확인
     const listCardContainers = document.querySelectorAll('.list-cards');
