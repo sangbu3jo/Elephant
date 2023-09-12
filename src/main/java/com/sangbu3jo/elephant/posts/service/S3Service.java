@@ -76,8 +76,13 @@ public class S3Service {
         if (!image.isEmpty()) {
             String storedFileName = s3UploaderService.upload(image, "image");
             post.setFiles(storedFileName);
-            post.updatePost(postRequestDto);
+
         }
+
+        //post 값 업데이트
+        post.updatePost(postRequestDto);
+
+
 
 
 

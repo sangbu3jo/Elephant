@@ -68,7 +68,6 @@ public class Post extends TimeStamped {
     public void updatePost(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.content = postRequestDto.getContent();
-
         this.completed = postRequestDto.getCompleted();
     }
 
