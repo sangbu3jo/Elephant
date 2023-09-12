@@ -12,4 +12,6 @@ public interface GroupChatUserRepository extends JpaRepository<GroupChatUser, Lo
     List<GroupChatUser> findByUser(User user);
 
     Optional<GroupChatUser> findByUserAndGroupChatRoom(User user, GroupChatRoom groupChatRoom);
+
+    List<GroupChatUser> findByGroupChatRoom(GroupChatRoom groupChatRoom);
 }
