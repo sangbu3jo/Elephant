@@ -29,6 +29,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
   /**
    * 토큰을 검증하여 사용자의 인증을 처리하는 필터
+   *
    * @param request     요청 Servlet
    * @param response    응답 Servlet
    * @param filterChain 보안 필터 체인 객체
@@ -48,9 +49,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
       jwtUtil.deleteCookie(request, response);
     } else {
       // 엑세스 토큰 유효할 경우
-      if(StringUtils.hasText(AccessTokenValue)){
+      if (StringUtils.hasText(AccessTokenValue)) {
         AccessTokenValue = jwtUtil.substringToken(AccessTokenValue);
-        if(jwtUtil.validateToken(AccessTokenValue)) {
+        if (jwtUtil.validateToken(AccessTokenValue)) {
           Claims info = jwtUtil.getUserInfoFromToken(AccessTokenValue);
           try {
             setAuthentication(info.getSubject());
@@ -60,12 +61,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
           }
         }
 
-      } else if(StringUtils.hasText(refreshTokenValue)) {
+      } else if (StringUtils.hasText(refreshTokenValue)) {
         // 엑세스 토큰은 유효하지 않으나, 리프레시 토큰이 있을 경우
         log.error("There is no Access Token. But has RefreshToken");
         createNewAccessToken(request, response, refreshTokenValue);
         return;
-      }else {
+      } else {
+        log.info("로그인이 안되어 있으면 403 에러가 날 수도..");
         // 구현없습니다.
       }
 
@@ -76,20 +78,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
   /**
    * 리프레시 토큰을 검증하고 엑세스 토큰을 재발급 하는 메서드
-   * @param request 요청 Servlet
-   * @param response 응답 Servlet
+   *
+   * @param request           요청 Servlet
+   * @param response          응답 Servlet
    * @param refreshTokenValue 리프레시 토큰 값
    * @throws IOException
    */
   private void createNewAccessToken(HttpServletRequest request, HttpServletResponse response,
       String refreshTokenValue) throws IOException {
-      refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
-      redisService.generateAccessToken(request, response);
-      response.sendRedirect(request.getRequestURI());
+    refreshTokenValue = jwtUtil.substringToken(refreshTokenValue);
+    redisService.generateAccessToken(request, response);
+    response.sendRedirect(request.getRequestURI());
   }
 
   /**
    * 인증 처리 메서드
+   *
    * @param username 사용자 id값
    */
   public void setAuthentication(String username) {
@@ -102,6 +106,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
   /**
    * 인증 객체 생성 메서드
+   *
    * @param username 사용자 id값
    * @return 인증 객체 반환
    */

@@ -1,9 +1,11 @@
 package com.sangbu3jo.elephant.columns.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@NoArgsConstructor
+@Setter
+@AllArgsConstructor
 @Builder
 public class ColumnsOrderRequestDto {
 

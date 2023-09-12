@@ -10,7 +10,6 @@ import com.sangbu3jo.elephant.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -61,7 +60,7 @@ public class NotificationService {
 
             for (SseEmitter emitter : emitters) {
                 try {
-                    emitter.send(SseEmitter.event().data(notificationJson), MediaType.TEXT_EVENT_STREAM);
+                    emitter.send(SseEmitter.event().data(notificationJson));
                 } catch (IOException e) {
                     // 연결이 끊긴 경우, 여기서 처리 가능
                     emittersToRemove.add(emitter); // 연결이 끊긴 emitter를 제거할 리스트에 추가
@@ -138,7 +137,7 @@ public class NotificationService {
         sendNotificationToUser(userId, notification);
     }
 
-    // 초대시 알림 생성 및 전송
+    // 프로젝트 마감 임박시 알림 생성 및 전송
     public void inviteAndSendNotification(Long userId, String inviteAuthor){
         Notification notification = new Notification();
         LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
@@ -148,6 +147,21 @@ public class NotificationService {
         notification.setUrl("/api/boards");
         notification.setRead(false);
         notification.setType("Invited");
+
+        notificationRepository.save(notification);
+        sendNotificationToUser(userId, notification);
+    }
+
+    // 개인 메시지 알림 생성 및 전송
+    public void oneMessgeNotification(Long userId, String inviteAuthor, String url){
+        Notification notification = new Notification();
+        LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
+        notification.setCreatedAt(currentTime); // 생성 시간 설정
+        notification.setUserId(userId);
+        notification.setContent("\uD83D\uDCE71:1 메시지 알림\uD83D\uDCE7<br>" + inviteAuthor);
+        notification.setUrl(url);
+        notification.setRead(false);
+        notification.setType("1:1 messge");
 
         notificationRepository.save(notification);
         sendNotificationToUser(userId, notification);

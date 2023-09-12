@@ -302,6 +302,10 @@ a:hover {
     padding: 0;
 }
 
+#upload-image-button:hover {
+    color : #6c757d;
+}
+
 
 /* 수정 및 삭제 버튼 스타일 */
 .edit-delete-buttons{

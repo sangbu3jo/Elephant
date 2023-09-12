@@ -113,8 +113,7 @@ public class UserService {
             }
 
             // 값을 받아오면 같은 값 넣어주기
-            user.setOldProfile(storedFileName);
-            user.setProfileUrl(storedFileName);
+            user.imageSave(storedFileName);
 
         }
 
