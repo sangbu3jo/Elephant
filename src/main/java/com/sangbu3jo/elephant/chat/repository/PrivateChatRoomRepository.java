@@ -17,4 +17,10 @@ public interface PrivateChatRoomRepository extends JpaRepository<PrivateChatRoom
     List<PrivateChatRoom> findByUser(String username);
 
     Optional<PrivateChatRoom> findByTitle(String chatRoomId);
+
+    @Query("SELECT p.user1 FROM PrivateChatRoom p WHERE p.title = :title")
+    Optional<String> findUser1ByTitle(@Param("title") String title);
+
+    @Query("SELECT p.user2 FROM PrivateChatRoom p WHERE p.title = :title")
+    Optional<String> findUser2ByTitle(@Param("title") String title);
 }
