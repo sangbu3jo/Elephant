@@ -330,6 +330,10 @@
                     completed: completed
                 };
 
+                if(postData.completed == null){
+                    postData.completed = false;
+                }
+
                 Swal.fire({
                     title: "게시글을 수정 하시겠습니까?",
                     text: '게시글을 수정합니다.',
