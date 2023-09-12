@@ -69,10 +69,23 @@ public class ChatRoomService {
         ChatMessageResponseDto message = new ChatMessageResponseDto(chatMessage);
         message.updateUrl(user.getProfileUrl());
 
-        String chatRoomIdString = String.valueOf(chatMessageRequestDto.getChatRoomId());
-        Long testzz = groupChatRoomRepository.findIdByTitle(chatRoomIdString);
-        log.info(String.valueOf(testzz));
-        log.info(String.valueOf(chatMessageRequestDto.getChatRoomId()));
+        log.info("방 번호" + message.getChatRoomId());
+
+        // 방 번호를 기준으로 해당 방에 속한 유저 리스트를 가져옴
+        List<ChatUser> users = chatUserRepository.findByChatroom_RoomId(chatMessageRequestDto.getChatRoomId());
+
+        // 메시지를 보낸 유저를 제외한 나머지 유저에게 알림을 보냄
+        for (ChatUser chatUser : users) {
+            if (!chatUser.getUsername().equals(user.getUsername())) {
+                    User chatUserF = userRepository.findUserIdByUsername(chatUser.getUsername()).orElseThrow(
+                            () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    );
+                    String notificationContent = user.getNickname() + "님이 메시지를 보냈습니다.";
+                    String notificationUrl = "/api/chat/" + chatMessageRequestDto.getChatRoomId().toString();
+                    notificationService.projectMessgeNotification(chatUserF.getId(), notificationContent, notificationUrl);
+
+            }
+        }
 
 
         return message;
@@ -268,11 +281,25 @@ public class ChatRoomService {
             }
 
         } else {
-            // z
+            // 단체 채팅 알림을 보내는 로직 추가
+            log.info("개인 채팅방 저장 메서드 else시 들어오는 로그 " + message.getTitle());
+
+            GroupChatRoom groupChatRoom = groupChatRoomRepository.findByTitle(message.getTitle());
+            List<GroupChatUser> groupChatUsers = groupChatUserRepository.findByGroupChatRoom(groupChatRoom);
+            for (GroupChatUser groupChatUser : groupChatUsers) {
+                User targetUser = groupChatUser.getUser();
+
+                // 메시지를 보낸유저와 단체 채팅방에 포함된 유저가 일치하지 않을시 알림 전송
+                if (!user.getUsername().equals(targetUser.getUsername())) {
+                    String notificationContent = user.getNickname() + "님이 메시지를 보냈습니다.";
+                    String notificationUrl = "/api/chatRooms/" + chatMessageRequestDto.getTitle().toString();
+                    notificationService.manyMessgeNotification(targetUser.getId(), notificationContent, notificationUrl);
+                }
+            }
         }
 
 
-        log.info(message.getTitle());
+        log.info("개인 채팅방 저장 메서드" + message.getTitle());
 
         return message;
     }

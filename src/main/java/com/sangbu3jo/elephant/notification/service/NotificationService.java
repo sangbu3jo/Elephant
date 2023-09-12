@@ -167,6 +167,36 @@ public class NotificationService {
         sendNotificationToUser(userId, notification);
     }
 
+    // 단체 메시지 알림 생성 및 전송
+    public void manyMessgeNotification(Long userId, String inviteAuthor, String url){
+        Notification notification = new Notification();
+        LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
+        notification.setCreatedAt(currentTime); // 생성 시간 설정
+        notification.setUserId(userId);
+        notification.setContent("\uD83D\uDCE7단체 메시지 알림\uD83D\uDCE7<br>" + inviteAuthor);
+        notification.setUrl(url);
+        notification.setRead(false);
+        notification.setType("단체 messge");
+
+        notificationRepository.save(notification);
+        sendNotificationToUser(userId, notification);
+    }
+
+    // 프로젝트 메시지 알림 생성 및 전송
+    public void projectMessgeNotification(Long userId, String inviteAuthor, String url){
+        Notification notification = new Notification();
+        LocalDateTime currentTime = LocalDateTime.now(); // 현재 시간 가져오기
+        notification.setCreatedAt(currentTime); // 생성 시간 설정
+        notification.setUserId(userId);
+        notification.setContent("\uD83D\uDCE7프로젝트 메시지 알림\uD83D\uDCE7<br>" + inviteAuthor);
+        notification.setUrl(url);
+        notification.setRead(false);
+        notification.setType("프로젝트 messge");
+
+        notificationRepository.save(notification);
+        sendNotificationToUser(userId, notification);
+    }
+
     // 데이터에서 알림정보 추출
     public List<Notification> getNotificationList(Long userId) {
         return notificationRepository.findAllByUserId(userId);
