@@ -11,6 +11,7 @@ import com.sangbu3jo.elephant.chat.dto.MessageType;
 import com.sangbu3jo.elephant.chat.dto.PrivateChatMessageRequestDto;
 import com.sangbu3jo.elephant.chat.entity.*;
 import com.sangbu3jo.elephant.chat.repository.*;
+import com.sangbu3jo.elephant.notification.service.NotificationService;
 import com.sangbu3jo.elephant.users.entity.User;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import com.sangbu3jo.elephant.users.repository.UserRepository;
@@ -57,19 +58,15 @@ class ChatRoomServiceTest {
     @Mock
     GroupChatUserRepository groupChatUserRepository;
     @Mock
+    NotificationService notificationService;
+    @Mock
     PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void init() {
         this.chatRoomService = new ChatRoomService(
-                this.userRepository = userRepository,
-                this.chatRoomRepository = chatRoomRepository,
-                this.chatUserRepository = chatUserRepository,
-                this.boardRepository = boardRepository,
-                this.privateChatRoomRepository = privateChatRoomRepository,
-                this.groupChatRoomRepository = groupChatRoomRepository,
-                this.groupChatUserRepository = groupChatUserRepository,
-                this.mongoTemplate = mongoTemplate
+                userRepository, chatRoomRepository, chatUserRepository, boardRepository,
+                privateChatRoomRepository, groupChatRoomRepository, groupChatUserRepository, notificationService, mongoTemplate
         );
     }
 
