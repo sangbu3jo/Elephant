@@ -446,9 +446,38 @@
     } // if문 종료
   });
 
-  function gotoPost(postid) {
-    // console.log(postid);
-    window.location.href = '/api/posts/' + postid; // 클릭된 리스트 아이템에 맞는 링크로 이동
+  function gotoPost(postId) {
+    const token = Cookies.get('Authorization');
+
+    if(token){ // 토큰 있을 경우
+      window.location.href = `/api/posts/${postId}`; // 클릭된 리스트 아이템에 맞는 링크로 이동
+    } else {
+      outOfLoginPage();
+    }
+  }
+
+  function outOfLoginPage(){
+    Swal.fire({
+      title: '로그인한 사용자만 접근 가능합니다.',
+      text: '로그인/회원가입 하러가기',
+      icon: 'warning',
+
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: '확인',
+      cancelButtonText: '취소',
+
+      reverseButtons: false, // 버튼 순서 거꾸로
+    }).then(result => {
+      if (result.isConfirmed) { // 만약 모달창에서 confirm 버튼을 눌렀다면
+        redirectToLoginPage();
+      }
+    });
+    Toast.fire({
+      icon: 'error',
+      title: "로그인 부탁드립니다.",
+    })
   }
 
   $(document).ready(function () {

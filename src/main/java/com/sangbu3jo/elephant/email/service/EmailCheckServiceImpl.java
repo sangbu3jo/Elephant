@@ -24,7 +24,6 @@ public class EmailCheckServiceImpl implements EmailCheckService {
 
   private final JavaMailSender javaMailSender;
   private final UserRepository userRepository;
-  private final CacheManager redisCacheManager;
   private final EmailAuthRepository emailAuthRepository;
 
 
