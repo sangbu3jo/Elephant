@@ -4,6 +4,9 @@ package com.sangbu3jo.elephant.chat.controller;
 import com.sangbu3jo.elephant.board.dto.BoardResponseDto;
 import com.sangbu3jo.elephant.board.service.BoardService;
 import com.sangbu3jo.elephant.chat.dto.*;
+import com.sangbu3jo.elephant.chat.entity.GroupChatRoom;
+import com.sangbu3jo.elephant.chat.entity.GroupChatUser;
+import com.sangbu3jo.elephant.chat.entity.PrivateChatRoom;
 import com.sangbu3jo.elephant.chat.service.ChatRoomService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
@@ -189,8 +192,10 @@ public class ChatController {
     @GetMapping("/api/chatRooms/{chatRoom_id}")
     public String getPersonalChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
                                       @PathVariable String chatRoom_id) {
-        Boolean groupOrPrivate = chatRoomService.findGroupOrPrivate(chatRoom_id);
-        model.addAttribute("group", groupOrPrivate);
+        String groupOrPrivate = chatRoomService.findGroupOrPrivate(chatRoom_id, userDetails.getUser().getUsername());
+        Boolean groupPrivate = chatRoomService.findGroupPrivate(chatRoom_id);
+        model.addAttribute("title", groupOrPrivate);
+        model.addAttribute("group", groupPrivate);
         model.addAttribute("username", userDetails.getUser().getUsername());
         model.addAttribute("nickname", userDetails.getUser().getNickname());
         return "privateChat";

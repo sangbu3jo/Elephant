@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
     <title>Chat</title>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -33,7 +36,7 @@
 <div id="chat-page" class="hidden">
     <div class="chat-container">
         <div class="chat-header">
-            <h2>Chat</h2>
+            <h4 th:text="${title}">Chat</h4>
             <div>
                 <button class="goOut" th:if="${group}" data-bs-toggle="modal" data-bs-target="#leaveChatBtn" >나가기</button>
                 <button class="goOut" id = "goOutBtn">뒤로가기</button>
@@ -79,6 +82,24 @@
 
 <script>
     'use strict';
+
+    // 현재 페이지와 페이지당 아이템 수 설정
+    var currentPage = 1;
+    var itemsPerPage = 15;
+
+    // handleScroll 함수 정의
+    function handleScroll() {
+        var messageArea = document.getElementById("messageArea");
+        if (messageArea.scrollTop === 0) {
+            // loadMessages();
+            currentPage++;
+            console.log("스크롤 감지중");
+        }
+    }
+
+    // 스크롤 이벤트 리스너 등록
+    var messageArea = document.getElementById("messageArea");
+    messageArea.addEventListener('scroll', handleScroll);
 
     var username = '[[${username}]]';
     var nickname = '[[${nickname}]]';
