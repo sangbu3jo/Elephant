@@ -46,7 +46,9 @@
     <div class="middle">
         <!-- 가운데 코끼리 글씨 및 로고  -->
         <img src="https://cdn-icons-png.flaticon.com/128/1864/1864497.png" style="width: 35px; height: 35px; cursor: pointer" onclick="gotoMain()"> <!-- 로고 이미지 추가 -->
-        <div style="text-align: center; cursor:pointer;" onclick="gotoMain()">
+        <div style="text-align: center;
+                    cursor:pointer;
+                    font-size: 35px;" onclick="gotoMain()">
             코끼리
         </div>
     </div>
@@ -90,12 +92,18 @@
                     <a href="/api/posts/categories/4" class="list-group-item list-group-item-action mini-list">자유게시판</a>
                 </div>
 
+                <a href="/api/view/users" class="list-group-item list-group-item-action hideable">마이 페이지</a>
+                <a href="/api/boards" class="list-group-item list-group-item-action hideable">프로젝트 페이지</a>
+                <a href="/api/chatRooms" class="list-group-item list-group-item-action hideable">채팅 페이지</a>
+                <a href="/api/view/admins" class="list-group-item list-group-item-action hideable" th:if="${admin}">관리자 페이지</a>
+
+<!--
                 <a href="/api/view/users" class="list-group-item list-group-item-action">마이페이지</a>
                 <a href="/api/boards" class="list-group-item list-group-item-action">프로젝트 페이지</a>
-
             
-                <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a> <!--채팅 페이지 테스트 중-->
-                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a> <!--서버에서 admin 여부 true/false로 가져오기-->
+                <a href="/api/chatRooms" class="list-group-item list-group-item-action">채팅 페이지</a> &lt;!&ndash;채팅 페이지 테스트 중&ndash;&gt;
+                <a href="/api/view/admins" class="list-group-item list-group-item-action" th:if="${admin}">관리자 페이지</a> &lt;!&ndash;서버에서 admin 여부 true/false로 가져오기&ndash;&gt;
+-->
 
 
             </div>
@@ -426,7 +434,13 @@
                         })
                     });
             }
-        } // if문 종료
+        } else { // 토큰 없을 경우
+            var hideableElements = document.getElementsByClassName("hideable");
+
+            for (var i = 0; i < hideableElements.length; i++) {
+                hideableElements[i].style.display = "none";
+            }
+        }
     });
 
     function removeToken() { // 토큰 삭제
