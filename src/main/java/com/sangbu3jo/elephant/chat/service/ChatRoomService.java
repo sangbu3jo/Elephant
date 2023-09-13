@@ -11,6 +11,9 @@ import com.sangbu3jo.elephant.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -84,7 +87,7 @@ public class ChatRoomService {
      * @param username: 단체 채탕방에 참여하는 사용자의 이름(username)
      * @return: 단체 채팅방의 메세지 데이터의 리스트를 반환
      */
-    public List<ChatMessageResponseDto> getMessages(Long chatRoomId, String username) {
+    public List<ChatMessageResponseDto> getMessages(Long chatRoomId, String username, Integer pageNo) {
         /* 컬렉션 구분이 없으면
             List<ChatMessage> chatMessages = mongoTemplate.find(
                             Query.query(Criteria.where("chatRoomId").is(chatRoomId)),
@@ -102,7 +105,9 @@ public class ChatRoomService {
         LocalDateTime time = chatUserOptional.get().getEnterTime();
         log.info(time.toString());
 
-        Query query = new Query();
+        int skip = pageNo * 15; // 건너뛸 문서 수 계산
+        Query query = new Query()
+                .with(Sort.by(Sort.Direction.DESC, "sendTime")).skip(skip).limit(15);
         Criteria criteria = Criteria.where("sendTime").gte(time);
         query.addCriteria(criteria);
 
@@ -282,16 +287,21 @@ public class ChatRoomService {
      * @param chatRoomId: 개인 채팅방의 ID 값
      * @return: 개인 채팅방에 존재하는 메세지 데이터를 찾아 리스트로 반환
      */
-    public List<PrivateChatMessageResponseDto> getPrivateMessages(String chatRoomId) {
+    public List<PrivateChatMessageResponseDto> getPrivateMessages(String chatRoomId, Integer pageNo) {
 
-        List<PrivateChatMessage> chatMessages = mongoTemplate.findAll(
-                PrivateChatMessage.class,
-                chatRoomId
-        );
+//        List<PrivateChatMessage> chatMessages = mongoTemplate.findAll(
+//                PrivateChatMessage.class,
+//                chatRoomId
+//        );
+
+        int skip = pageNo * 15; // 건너뛸 문서 수 계산
+        Query query = new Query()
+                .with(Sort.by(Sort.Direction.DESC, "sendTime")).skip(skip).limit(15);
+        List<PrivateChatMessage> chatMessagesList = mongoTemplate.find(query, PrivateChatMessage.class, chatRoomId);
 
         List<PrivateChatMessageResponseDto> messages = new ArrayList<>();
 
-        for (PrivateChatMessage chatMessage : chatMessages) {
+        for (PrivateChatMessage chatMessage : chatMessagesList) {
             // userRepository를 사용하여 user 정보 가져오기
             User user = userRepository.findById(chatMessage.getUser().getId()).orElse(null);
 
@@ -301,8 +311,8 @@ public class ChatRoomService {
                 responseDto.updateUrl(user.getProfileUrl());
                 messages.add(responseDto);
             }
-        }
 
+        }
         return messages;
     }
 
