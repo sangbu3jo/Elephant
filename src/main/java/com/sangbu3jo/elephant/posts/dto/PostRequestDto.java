@@ -20,5 +20,6 @@ public class PostRequestDto {
 
     private Boolean completed = false;
     private Integer selectNum;
+    private Boolean newImg;
 
 }
