@@ -257,10 +257,12 @@
     <!-- 페이징처리 끝 -->
   </div>
 
-</div>
 
 
-<script>
+
+
+
+  <script>
   function gotoMain() {
     window.location.href = "/main";
   }
@@ -543,6 +545,17 @@
                 });
       }
     } // if문 종료
+
+    document.addEventListener('click', function(event) {
+      const notificationList = document.getElementById('notificationList');
+      const notificationIcon = document.querySelector('.notification-icon');
+      const isNotificationListOpen = notificationList.style.display === 'block';
+
+      if (isNotificationListOpen && !notificationList.contains(event.target) && !notificationIcon.contains(event.target)) {
+        notificationList.style.display = 'none';
+      }
+    });
+
   });
 
   function removeToken() { // 토큰 삭제

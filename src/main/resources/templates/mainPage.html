@@ -427,14 +427,25 @@
                         })
                     });
             }
-        } else { // 토큰 없을 경우
+        }else { // 토큰 없을 경우
             var hideableElements = document.getElementsByClassName("hideable");
 
             for (var i = 0; i < hideableElements.length; i++) {
                 hideableElements[i].style.display = "none";
             }
         }
+      
+        document.addEventListener('click', function(event) {
+            const notificationList = document.getElementById('notificationList');
+            const notificationIcon = document.querySelector('.notification-icon');
+            const isNotificationListOpen = notificationList.style.display === 'block';
+
+            if (isNotificationListOpen && !notificationList.contains(event.target) && !notificationIcon.contains(event.target)) {
+                notificationList.style.display = 'none';
+            }
+        });
     });
+  
 
     function removeToken() { // 토큰 삭제
         Cookies.remove('Authorization', {path: '/'});
