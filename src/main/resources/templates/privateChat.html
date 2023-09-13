@@ -38,9 +38,36 @@
         <div class="chat-header">
             <h4 th:text="${title}">Chat</h4>
             <div>
-                <button class="goOut" th:if="${group}" data-bs-toggle="modal" data-bs-target="#leaveChatBtn" >나가기</button>
-                <button class="goOut" id = "goOutBtn">뒤로가기</button>
+                <button class="btn btn-light" id = "goOutBtn">뒤로가기</button>
+                <button class="btn" th:if="${group}" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+                    <img src="https://cdn-icons-png.flaticon.com/128/8212/8212733.png" style="width: 30px; height: 30px;">
+                </button>
             </div>
+
+            <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">채팅방 사용자</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+
+                <div class="goOutClass">
+                    <button class="goOut" th:if="${group}" data-bs-toggle="modal" data-bs-target="#leaveChatBtn">퇴장하기</button>
+                </div>
+
+
+                <div class="offcanvas-body">
+                    <div class="userList" th:each="user : ${users}">
+                        <div class="userImage">
+                            <img th:src = "${user.url}">
+                        </div>
+                        <div class="userInfo">
+                            <p th:text="${user.username}">username</p>
+                            <p th:text="${user.nickname}">nickname</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!--삭제 모달창 -->
             <div class="modal fade" id="leaveChatBtn" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">

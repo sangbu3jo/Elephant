@@ -195,9 +195,17 @@ public class ChatController {
     public String getPersonalChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
                                       @PathVariable String chatRoom_id) {
         String groupOrPrivate = chatRoomService.findGroupOrPrivate(chatRoom_id, userDetails.getUser().getUsername());
-        Boolean groupPrivate = chatRoomService.findGroupPrivate(chatRoom_id);
         model.addAttribute("title", groupOrPrivate);
-        model.addAttribute("group", groupPrivate);
+
+        if (groupOrPrivate.contains(",")) {
+            // 단체
+            model.addAttribute("group", true);
+            model.addAttribute("users", chatRoomService.findUsers(chatRoom_id));
+        } else {
+            // 개인
+            model.addAttribute("group", false);
+        }
+
         model.addAttribute("username", userDetails.getUser().getUsername());
         model.addAttribute("nickname", userDetails.getUser().getNickname());
         return "privateChat";

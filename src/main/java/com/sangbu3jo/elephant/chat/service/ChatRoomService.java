@@ -317,7 +317,7 @@ public class ChatRoomService {
     }
 
     /**
-     * 개인 채팅방 (개인&단체) 판별
+     * 개인 채팅방 (개인&단체) 이름
      * @param chatRoomId: 개인 채팅방의 ID 값
      * @return: 1:1이면 상대의 username, 그룹 채팅방이면 내 이름을 제외한 다른 이들의 username (40자까지만)
      */
@@ -390,5 +390,13 @@ public class ChatRoomService {
         }
     }
 
-
+    /**
+     * 단체 채팅방의 경우만 참여하고 있는 사용자의 목록을 반환
+     * @param chatRoomId: 채팅방의 Title
+     * @return: 해당 채팅방에 참여하고 있는 사용자들의 List
+     */
+    public List<GroupChatUserResponseDto> findUsers(String chatRoomId) {
+        GroupChatRoom groupChatRoom = groupChatRoomRepository.findByTitle(chatRoomId);
+        return groupChatUserRepository.findByGroupChatRoom(groupChatRoom).stream().map(GroupChatUserResponseDto::new).toList();
+    }
 }
