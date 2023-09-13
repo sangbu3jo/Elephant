@@ -38,9 +38,8 @@
         <input class="board-edit" style="display: none;" th:id="${board.id}">
     </div>
     <div class="title2">
-        <div>
-            <p th:text="${board.content}"></p>
-            <p th:text="${board.expiredAt}"></p>
+        <div class="descdate">
+            <p th:text="|${board.content} / ${board.expiredAt} |"></p>
         </div>
         <!--프로젝트 떠나기 모달창 -->
         <div class="modal fade" th:id="'leaveboard'+${board.id}" aria-labelledby="exampleModalLabel" aria-hidden="true">
