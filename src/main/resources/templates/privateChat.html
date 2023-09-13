@@ -83,23 +83,75 @@
 <script>
     'use strict';
 
-    // 현재 페이지와 페이지당 아이템 수 설정
-    var currentPage = 1;
-    var itemsPerPage = 15;
+    var currentPage = 0;       // 현재 페이지
+    var isLoading = false;     // 데이터 로딩 중 플래그
 
-    // handleScroll 함수 정의
+    // 스크롤 이벤트 감지
     function handleScroll() {
         var messageArea = document.getElementById("messageArea");
-        if (messageArea.scrollTop === 0) {
-            // loadMessages();
-            currentPage++;
-            console.log("스크롤 감지중");
+        if (messageArea.scrollTop === 0 && !isLoading) {
+            loadMessages();
         }
     }
 
     // 스크롤 이벤트 리스너 등록
     var messageArea = document.getElementById("messageArea");
     messageArea.addEventListener('scroll', handleScroll);
+
+    // 스크롤로 메세지 데이터 불러오기
+    function loadMessages() {
+        isLoading = true;
+        currentPage++;
+
+        fetch(`/api/chat/privatemessages/${id}` + '?pageNo=' + currentPage, {
+            method: "GET"
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            prependChatMessages(data);
+            isLoading = false;
+        }).catch(function (error) {
+            console.log("데이터 로드 중 에러 발생: " + error);
+            isLoading = false;
+        })
+    }
+
+    function prependChatMessages(chatItems) {
+        // 새로운 채팅 메시지를 하나씩 화면의 상단에 추가
+        chatItems.forEach(function (chatItem) {
+            var messageElement = document.createElement('li');
+            var avatarElement = document.createElement('i');
+            var usernameElement = document.createElement('span');
+            var textElement = document.createElement('p');
+            var timeElement = document.createElement('p');
+
+            messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
+
+            if (chatItem.url != null) {
+                avatarElement.style['background-image'] = 'url(' + chatItem.url + ')';
+                avatarElement.style['background-size'] = 'cover';
+            } else {
+                avatarElement.style['background-image'] = 'url(https://cdn-icons-png.flaticon.com/128/1864/1864497.png)';
+                avatarElement.style['background-size'] = 'cover';
+            }
+
+            usernameElement.appendChild(document.createTextNode(chatItem.nickname));
+            textElement.appendChild(document.createTextNode(chatItem.message));
+            timeElement.appendChild(document.createTextNode(chatItem.sendTime));
+            messageElement.appendChild(avatarElement);
+            messageElement.appendChild(usernameElement);
+            messageElement.appendChild(textElement);
+            messageElement.appendChild(timeElement);
+
+            // 새로운 메시지를 기존 메시지의 맨 위에 추가합니다.
+            var messageList = document.getElementById('messageArea');
+            if (messageList.firstChild) {
+                messageList.insertBefore(messageElement, messageList.firstChild);
+            } else {
+                messageList.appendChild(messageElement);
+            }
+        });
+    }
 
     var username = '[[${username}]]';
     var nickname = '[[${nickname}]]';
@@ -167,7 +219,7 @@
         connectingElement.style.color = 'red';
     }
 
-    function onMessages() {
+    function onMessages(node) {
         $.ajax({
             type: "GET",
             url : "/api/chat/privatemessages/" + id,
@@ -175,11 +227,14 @@
             success: function (data) {
                 var chatting = data;
 
+                chatting.reverse();
+
                 chatting.forEach(function (chatItem) {
                     var messageElement = document.createElement('li');
                     var avatarElement = document.createElement('i');
                     var usernameElement = document.createElement('span');
                     var textElement = document.createElement('p');
+                    var timeElement = document.createElement('p');
 
                     messageElement.classList.add(chatItem.username === username ? 'chat-message2' : 'chat-message');
 
@@ -193,10 +248,11 @@
 
                     usernameElement.appendChild(document.createTextNode(chatItem.nickname));
                     textElement.appendChild(document.createTextNode(chatItem.message));
-
+                    timeElement.appendChild(document.createTextNode(chatItem.sendTime));
                     messageElement.appendChild(avatarElement);
                     messageElement.appendChild(usernameElement);
                     messageElement.appendChild(textElement);
+                    messageElement.appendChild(timeElement);
 
                     messageArea.appendChild(messageElement);
                 });
@@ -222,6 +278,7 @@
                 var avatarElement = document.createElement('i');
                 var usernameElement = document.createElement('span');
                 var textElement = document.createElement('p');
+                var timeElement = document.createElement('p');
 
                 messageElement.classList.add(chat.username === username ? 'chat-message2' : 'chat-message');
                 if (chat.url != null) {
@@ -233,11 +290,11 @@
                 }
                 usernameElement.appendChild(document.createTextNode(chat.nickname));
                 textElement.appendChild(document.createTextNode(chat.message));
-
+                timeElement.appendChild(document.createTextNode(chat.sendTime));
                 messageElement.appendChild(avatarElement);
                 messageElement.appendChild(usernameElement);
                 messageElement.appendChild(textElement);
-
+                messageElement.appendChild(timeElement);
                 messageArea.appendChild(messageElement);
                 messageArea.scrollTop = messageArea.scrollHeight;
             }
@@ -293,18 +350,6 @@
         '#2196F3', '#32c787', '#00BCD4', '#ff5652',
         '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
     ];
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const container = document.getElementById("stars-container");
-
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement("div");
-            star.className = "star";
-            star.style.left = `${Math.random() * 100}vw`;
-            star.style.top = `${Math.random() * 100}vh`;
-            container.appendChild(star);
-        }
-    });
 
 </script>
 </html>
