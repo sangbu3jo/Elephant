@@ -51,7 +51,8 @@ public class S3Service {
     public void modifiedPost(MultipartFile image,
                              Category category,
                              PostRequestDto postRequestDto,
-                             Post post) throws IOException {
+                             Post post
+                             ) throws IOException {
 
 
         switch (category) {
@@ -73,11 +74,14 @@ public class S3Service {
 
 
 
+
         if (!image.isEmpty()) {
             String storedFileName = s3UploaderService.upload(image, "image");
             post.setFiles(storedFileName);
 
         }
+
+
 
         //post 값 업데이트
         post.updatePost(postRequestDto);

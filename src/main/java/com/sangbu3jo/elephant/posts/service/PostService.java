@@ -24,6 +24,7 @@ public class PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final S3Service s3Service;
 
 
     //카테고리
@@ -73,7 +74,7 @@ public class PostService {
 
     //게시물 수정
     @Transactional
-    public void modifiedPost(Post post, PostRequestDto postRequestDto) {
+    public void modifiedPost(Post post, PostRequestDto postRequestDto, Long postId) {
 
 
         //category 나누기
@@ -88,6 +89,12 @@ public class PostService {
 
         } else {
             throw new NullPointerException("해당 카테고리를 존재하지 않습니다.");
+        }
+
+        if(postRequestDto.getNewImg() == false) {
+            //새로 들어온 이미지가 없으니깐 이미지를 삭제 시켜야 함
+            Post postImg = findById(postId);
+            s3Service.deleteFile(postImg.getFiles(), postImg);
         }
 
         post.updatePost(postRequestDto);
