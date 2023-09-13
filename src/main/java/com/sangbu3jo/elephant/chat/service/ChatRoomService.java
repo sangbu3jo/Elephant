@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -321,14 +322,15 @@ public class ChatRoomService {
      * @param chatRoomId: 개인 채팅방의 ID 값
      * @return: 1:1이면 상대의 username, 그룹 채팅방이면 내 이름을 제외한 다른 이들의 username (40자까지만)
      */
-    public String findGroupOrPrivate(String chatRoomId, String username) {
+    public void findGroupOrPrivate(String chatRoomId, String username, Model model) {
         Optional<PrivateChatRoom> privateChatRoom = privateChatRoomRepository.findByTitle(chatRoomId);
         if (privateChatRoom.isPresent()) {
             if (privateChatRoom.get().getUser1().equals(username)) {
-                return privateChatRoom.get().getUser2();
+                model.addAttribute("title",  privateChatRoom.get().getUser2());
             } else {
-                return privateChatRoom.get().getUser1();
+                model.addAttribute("title",  privateChatRoom.get().getUser1());
             }
+            model.addAttribute("group", false);
         } else {
             GroupChatRoom groupChatRoom = groupChatRoomRepository.findByTitle(chatRoomId);
             List<GroupChatUser> users = groupChatRoom.getGroupChatUsers();
@@ -350,19 +352,15 @@ public class ChatRoomService {
                 }
             }
             if (title.length() > 40) {
-                return title.substring(0, 40) + "...";
+                model.addAttribute("title",  title.substring(0, 40) + "...");
             } else {
-                return title;
+                model.addAttribute("title",  title);
             }
+            model.addAttribute("group", true);
+            model.addAttribute("users", findUsers(chatRoomId));
         }
-    }
 
-    public Boolean findGroupPrivate(String chatRoomId) {
-        Optional<PrivateChatRoom> privateChatRoom = privateChatRoomRepository.findByTitle(chatRoomId);
-        if (privateChatRoom.isPresent()) {
-            return false;
-        }
-        return true;
+
     }
 
     /**

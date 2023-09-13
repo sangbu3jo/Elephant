@@ -144,7 +144,6 @@ public class ChatController {
     @GetMapping("/api/chatRooms")
     public String getPrivateChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                       Model model) {
-        // model에 List혹은 Slice 형태로 담아서 보내기 (프론트에서 list 받아서 출력해주기)
         if (userDetails == null ) {
             log.info("로그인 페이지로");
             return "login-page";
@@ -194,18 +193,7 @@ public class ChatController {
     @GetMapping("/api/chatRooms/{chatRoom_id}")
     public String getPersonalChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
                                       @PathVariable String chatRoom_id) {
-        String groupOrPrivate = chatRoomService.findGroupOrPrivate(chatRoom_id, userDetails.getUser().getUsername());
-        model.addAttribute("title", groupOrPrivate);
-
-        if (groupOrPrivate.contains(",")) {
-            // 단체
-            model.addAttribute("group", true);
-            model.addAttribute("users", chatRoomService.findUsers(chatRoom_id));
-        } else {
-            // 개인
-            model.addAttribute("group", false);
-        }
-
+        chatRoomService.findGroupOrPrivate(chatRoom_id, userDetails.getUser().getUsername(), model);
         model.addAttribute("username", userDetails.getUser().getUsername());
         model.addAttribute("nickname", userDetails.getUser().getNickname());
         return "privateChat";
