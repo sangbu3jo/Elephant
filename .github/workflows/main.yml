@@ -69,18 +69,18 @@ jobs: # 병렬로 실행되는 작업 단위, 여러 step으로 이루어짐
     # SSH into the EC2 instance and check for running Java processes
     - name: search runched file and reRun .jar file
       run: |
-        processes=$(ssh ubuntu@${{ec2_INSTANCE_PRIVATE_IP}} "ps -ef | grep java")
+        processes=$(ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "ps -ef | grep java")
        
         num_processes=$(echo "$processes" | grep -c "java")
 
         if [ "$num_processes" -eq 1 ]; then
-          ssh ubuntu@${{ec2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
+          ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
         elif [ "$num_processes" -gt 1 ]; then
           pids=$(echo "$processes" | awk '{print $2}')
           for pid in $pids; do
-            ssh ubuntu@${{ec2_INSTANCE_PRIVATE_IP}} "kill $pid"
+            ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "kill $pid"
           done
-          ssh ubuntu@${{ec2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
+          ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
         else
-          ssh ubuntu@${{ec2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
+          ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
         fi
