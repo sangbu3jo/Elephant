@@ -66,21 +66,21 @@ jobs: # 병렬로 실행되는 작업 단위, 여러 step으로 이루어짐
     - name: Code Deploy
       run: aws deploy create-deployment --application-name githubaction-elephant --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name githubaction-elephant-group --s3-location bucket=elephantcodingclub,bundleType=zip,key=practice-deploy.zip
 
-    # SSH into the EC2 instance and check for running Java processes
-    - name: search runched file and reRun .jar file
-      run: |
-        processes=$(ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "ps -ef | grep java")
+    # # SSH into the EC2 instance and check for running Java processes
+    # - name: search runched file and reRun .jar file
+    #   run: |
+    #     processes=$(ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "ps -ef | grep java")
        
-        num_processes=$(echo "$processes" | grep -c "java")
+    #     num_processes=$(echo "$processes" | grep -c "java")
 
-        if [ "$num_processes" -eq 1 ]; then
-          ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
-        elif [ "$num_processes" -gt 1 ]; then
-          pids=$(echo "$processes" | awk '{print $2}')
-          for pid in $pids; do
-            ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "kill $pid"
-          done
-          ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
-        else
-          ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
-        fi
+    #     if [ "$num_processes" -eq 1 ]; then
+    #       ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
+    #     elif [ "$num_processes" -gt 1 ]; then
+    #       pids=$(echo "$processes" | awk '{print $2}')
+    #       for pid in $pids; do
+    #         ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "kill $pid"
+    #       done
+    #       ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
+    #     else
+    #       ssh ubuntu@${{EC2_INSTANCE_PRIVATE_IP}} "nohup java -jar ~/app/step2/zip/build/libs/*.jar &"
+    #     fi
