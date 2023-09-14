@@ -1,5 +1,6 @@
 REPOSITORY=/home/ubuntu/app
 cd $REPOSITORY
+mkdir test
 
 APP_NAME=app
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
