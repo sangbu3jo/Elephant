@@ -1,10 +1,13 @@
 # appspec.yml
 version: 0.0 # CodeDeploy 버전
 os: linux
+
 files:
   - source: / # CodeDeploy에서 전달해 준 파일 중 destination으로 이동시킬 대상 지정: 루트 경로(전체 파일)
     destination: /home/ubuntu/app # source에서 지정한 파일을 ec2 서버 내에 저장할 위치
-    overwrite: yes
+permissions:
+  - object: /home/ubuntu/app/
+    owner: ubuntu
 hooks: # CodeDeploy 수명 주기 중 하나인 AfterInstall(설치 끝났을때)시, script 폴더 안에 sh 파일 실행
   AfterInstall:
     - location: scripts/deploy.sh
