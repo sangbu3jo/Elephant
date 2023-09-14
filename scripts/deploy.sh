@@ -23,4 +23,4 @@ echo "> $JAR_PATH 배포"
 # nohup을 사용하여 백그라운드에서 Java JAR 파일 실행
 mkdir test1
 cd $JAR_PATH
-nohup java -jar $JAR_NAME &
+nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /del/null &
