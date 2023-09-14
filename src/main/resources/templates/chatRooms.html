@@ -162,10 +162,12 @@
                     </li>
                 </ol>
             </div>
+
         </div>
     </div>
 
 </div>
+
 
 </body>
 
@@ -173,6 +175,7 @@
     function gotoMain() {
         window.location.href = "/main";
     }
+
 
     const Toast = Swal.mixin({
         toast: true,
@@ -286,13 +289,15 @@
         });
     });
 
+
     $(document).ready(function() {
         var page = 0; // 초기 페이지 번호
         var size = 5; // 페이지 크기
         var loading = false; // 데이터 로딩 중인지 여부
 
         // 스크롤 이벤트 감지
-        $('#inviteModal .modal-body').on('scroll', function() {
+        $('body').on('scroll', function() {
+            console.log("스크롤");
             var modalBody = $(this);
             var scrollHeight = modalBody[0].scrollHeight;
             var scrollTop = modalBody.scrollTop();

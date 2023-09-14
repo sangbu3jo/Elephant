@@ -283,14 +283,20 @@ a.list-group-item .vs-title {
     text-decoration: none;
 }
 
-a {
+#sendEmail {
     color: black;
     text-underline: none;
     text-decoration: none;
 }
 
-a:hover{
+#sendEmail:hover{
     color: #002cc4;
+}
+
+#success {
+    color: #c50101;
+    text-underline: none;
+    text-decoration: none;
 }
 
 #login-kakao-btn {

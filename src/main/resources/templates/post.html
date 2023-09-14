@@ -197,9 +197,28 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="reason" class="col-form-label">신고 사유</label>
-                            <input type="text" class="form-control datepickerr" id="reason">
-
+                            <label class="col-form-label">신고 사유</label>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="reason1" name="reason" value="reason1">
+                                <label class="form-check-label" for="reason1">부적절한 언어 사용</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="reason2" name="reason" value="reason2">
+                                <label class="form-check-label" for="reason2">지나친 비방</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="reason3" name="reason" value="reason3">
+                                <label class="form-check-label" for="reason3">이용을 방해할 정도의 도배</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="reason4" name="reason" value="reason4">
+                                <label class="form-check-label" for="reason4">불법 / 음란물 홍보</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" id="reason5" name="reason" value="reason5">
+                                <label class="form-check-label" for="reason5">기타:</label>
+                            </div>
+                            <input type="text" class="form-control datepickerr" id="otherReason" style="display: none;">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -327,23 +346,39 @@
         modal.style.display = "none";
     }
 
+    $(document).ready(function () {
+        // 라디오 버튼의 변경 이벤트를 감지합니다.
+        $('input[name="reason"]').change(function () {
+            if ($(this).val() === 'reason5') {
+                // '기타' 라디오 버튼이 선택된 경우
+                $("#otherReason").show();
+            } else {
+                // 다른 라디오 버튼이 선택된 경우
+                $("#otherReason").hide();
+            }
+        });
+    });
+
     // 게시물 신고 요청 보내기
     function reportPost() {
-        var reason = document.getElementById("reason").value;
-        const postId = window.location.href.split('/').pop();
+        // var reason = document.getElementById("reason").value;
 
-        if (reason.trim() === "") {
-            $('#reportPost').modal('hide');
-            Swal.fire({
-                icon: "waning",
-                title: "신고 사유를 입력해주세요"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    return;
-                }
+        // 선택된 라디오 버튼의 값
+        var selectedReasonValue = $("input[name='reason']:checked").val();
+        // 선택된 라디오 버튼의 텍스트
+        var selectedReasonText = $("input[name='reason']:checked + label").text();
+
+        if (selectedReasonValue === 'reason5') {
+            selectedReasonText = $("#otherReason").val();
+        }
+
+        if (selectedReasonText.trim() === "") {
+            Toast.fire({
+                icon: 'warning',
+                title: "사유를 선택해 주세요 !",
             })
         } else {
-            $('#reportPost').modal('hide');
+            const postId = window.location.href.split('/').pop();
 
             // API 호출 코드 추가
             fetch(`/api/posts/report/${postId}`, {
@@ -351,7 +386,7 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({reason: reason}),
+                body: JSON.stringify({reason: selectedReasonText}), // 원래는 reason
             })
                 .then(response => {
                     if (response.status === 200) {
@@ -401,7 +436,7 @@
                     })
                 })
                 .finally(() => {
-                    closeReportModal(); // 모달 창 닫기
+                    $('#reportPost').modal('hide');
                 });
         }
 

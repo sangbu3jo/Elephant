@@ -184,7 +184,7 @@ button.primary {
 
 #chat-page ul::-webkit-scrollbar {
     margin-left: 5px;
-    width: 6px;
+    width: 8px;
 }
 
 #chat-page ul::-webkit-scrollbar-track {
@@ -193,7 +193,7 @@ button.primary {
 
 #chat-page ul::-webkit-scrollbar-thumb {
     border-radius: 2px;
-    background-color: #fff598;
+    background-color: #ffb2c9;
 }
 
 #chat-page ul::-webkit-scrollbar-button {
@@ -283,12 +283,14 @@ button.primary {
     font-weight: bold;
 }
 
-#chat-page .chat-message p {
+#chat-page .chat-message p,
+#chat-page .chat-message2 p {
     color: #43464b;
 }
 
-#chat-page .chat-message2 p {
-    color: #43464b;
+#chat-page .chat-message p:last-child,
+#chat-page .chat-message2 p:last-child {
+    font-size: 12px;
 }
 
 #messageForm .input-group input {

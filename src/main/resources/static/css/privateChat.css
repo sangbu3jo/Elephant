@@ -29,6 +29,42 @@ body {
     height: 100%;
 }
 
+/* 사용자 리스트 */
+.userList {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 90px;
+}
+
+.userImage {
+    width: 30%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.userImage img {
+    display: block;
+    width: 70px;
+    height: 70px;
+    border-radius: 100%;
+}
+
+.userInfo {
+    font-size: 20px;
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.userInfo p {
+    margin: 0;
+    text-align: start;
+}
+
 .clearfix:after {
     display: block;
     content: "";
@@ -141,7 +177,7 @@ button.primary {
 
 #chat-page ul::-webkit-scrollbar {
     margin-left: 5px;
-    width: 6px;
+    width: 8px;
 }
 
 #chat-page ul::-webkit-scrollbar-track {
@@ -150,7 +186,7 @@ button.primary {
 
 #chat-page ul::-webkit-scrollbar-thumb {
     border-radius: 2px;
-    background-color: #fff598;
+    background-color: #ffb2c9;
 }
 
 #chat-page ul::-webkit-scrollbar-button {
@@ -240,12 +276,14 @@ button.primary {
     font-weight: bold;
 }
 
-#chat-page .chat-message p {
+#chat-page .chat-message p,
+#chat-page .chat-message2 p {
     color: #43464b;
 }
 
-#chat-page .chat-message2 p {
-    color: #43464b;
+#chat-page .chat-message p:last-child,
+#chat-page .chat-message2 p:last-child {
+    font-size: 12px;
 }
 
 #messageForm .input-group input {
@@ -332,9 +370,18 @@ button.primary {
     }
 }
 
+.goOutClass{
+    display: flex;
+    width: 100%;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
 /* 돌아가기 버튼 */
 button.goOut {
     outline: none;
+    width: 50%;
     vertical-align: middle;
     text-decoration: none;
     font-weight: 600;

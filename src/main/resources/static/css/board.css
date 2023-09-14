@@ -64,8 +64,19 @@ html, body {
     justify-content: center;
 }
 
+.descdate {
+    margin-right: 5px;
+    display: flex;
+    flex-direction: row;
+}
+
+.descdate p {
+    margin: 0;
+    font-size: 15px;
+}
+
 .title1{
-    width: 40%;
+    width: 35%;
     height: 100%;
     font-size: 20px;
     font-weight: bold;
@@ -75,7 +86,7 @@ html, body {
 }
 
 .title2 {
-    width: 60%;
+    width: 65%;
     height: 100%;
     font-size: 20px;
     font-weight: bold;

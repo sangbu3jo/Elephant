@@ -23,21 +23,21 @@ html, body {
     align-items: center; /* 세로 가운데 정렬 추가 */
 }
 
-body::-webkit-scrollbar {
+#wrap::-webkit-scrollbar {
     margin-left: 5px;
     width: 10px;
 }
 
-body::-webkit-scrollbar-track {
+#wrap::-webkit-scrollbar-track {
     background-color: transparent;
 }
 
-body::-webkit-scrollbar-thumb {
+#wrap::-webkit-scrollbar-thumb {
     border-radius: 2px;
-    background-color: #dddddd;
+    background-color: #7e7e7e;
 }
 
-body::-webkit-scrollbar-button {
+#wrap::-webkit-scrollbar-button {
     width: 0;
     height: 0;
 }
