@@ -253,7 +253,6 @@
                 const button = document.getElementById('markAllReadButton');
                 button.addEventListener('click', function () {
                     markAllNotificationsAsRead();
-                    window.location.reload();
                 });
 
             };
@@ -361,6 +360,8 @@
                         Toast.fire({
                             icon: 'success',
                             title: "전체 읽음 처리 되었습니다!",
+                        }).then(function () {
+                            window.location.reload();
                         })
                     })
                     .fail(function(response) {

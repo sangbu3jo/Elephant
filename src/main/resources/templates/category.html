@@ -257,7 +257,7 @@
     <!-- 페이징처리 끝 -->
   </div>
 
-
+</div>
 
 
 
@@ -427,7 +427,6 @@
         const button = document.getElementById('markAllReadButton');
         button.addEventListener('click', function () {
           markAllNotificationsAsRead();
-          window.location.reload();
         });
 
       };
@@ -531,18 +530,20 @@
       // 알림 전체 읽음 처리 함수
       function markAllNotificationsAsRead() {
         $.post(`/api/mark-all-notifications-as-read/${userId}`)
-                .done(function(response) {
-                  Toast.fire({
-                    icon: 'success',
-                    title: "전체 읽음 처리 되었습니다!",
-                  })
-                })
-                .fail(function(response) {
-                  Toast.fire({
-                    icon: 'error',
-                    title: "전체 읽음 처리 실패!",
-                  })
-                });
+          .done(function(response) {
+            Toast.fire({
+              icon: 'success',
+              title: "전체 읽음 처리 되었습니다!",
+            }).then(function () {
+              window.location.reload();
+            })
+          })
+          .fail(function(response) {
+            Toast.fire({
+              icon: 'error',
+              title: "전체 읽음 처리 실패!",
+            })
+          });
       }
     } // if문 종료
 
