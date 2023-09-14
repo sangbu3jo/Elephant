@@ -122,8 +122,6 @@
     </div>
 </div>
 
-
-
     <!-- 하단 게시판 -->
     <div class="bottom">
         <div class="bottom-container">
@@ -310,7 +308,6 @@
                 const button = document.getElementById('markAllReadButton');
                 button.addEventListener('click', function () {
                     markAllNotificationsAsRead();
-                    window.location.reload();
                 });
 
             };
@@ -418,6 +415,8 @@
                         Toast.fire({
                             icon: 'success',
                             title: "전체 읽음 처리 되었습니다!",
+                        }).then(function () {
+                            window.location.reload();
                         })
                     })
                     .fail(function(response) {
@@ -434,7 +433,6 @@
                 hideableElements[i].style.display = "none";
             }
         }
-      
         document.addEventListener('click', function(event) {
             const notificationList = document.getElementById('notificationList');
             const notificationIcon = document.querySelector('.notification-icon');
@@ -445,7 +443,6 @@
             }
         });
     });
-  
 
     function removeToken() { // 토큰 삭제
         Cookies.remove('Authorization', {path: '/'});
