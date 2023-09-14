@@ -21,5 +21,5 @@ fi
 
 echo "> $JAR_PATH 배포"
 # nohup을 사용하여 백그라운드에서 Java JAR 파일 실행
-# 출력 및 오류를 무시하고 표준 입력을 /dev/null로 지정
-nohup java -jar $JAR_PATH > /dev/null 2> /dev/null < /del/null &
+mkdir test1
+nohup java -jar $JAR_PATH &
