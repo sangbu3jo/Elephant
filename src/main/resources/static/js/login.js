@@ -252,6 +252,9 @@ function checkEmail() {
 function checkEmailPassword(inputPassword) {
   return new Promise(function (resolve, reject) {
     let userEmail = $('#username').val();
+    var checking = document.querySelector('.modal');
+    var email = document.getElementById('sendEmail');
+    var success = document.getElementById('success');
 
     $.ajax({
       type: "POST",
@@ -265,6 +268,9 @@ function checkEmailPassword(inputPassword) {
         title: data,
       }).then(function () {
         resolve(true);
+        checking.style.display = 'none';
+        email.style.display = 'none';
+        success.style.display = 'block';
       })
     })
     .fail(function (jqXHR, textStatus) {
@@ -315,7 +321,7 @@ function onLogin() {
       icon: 'warning',
       title: '로그인 정보 재확인 부탁드립니다.'
     }).then(function () {
-      window.location.reload();
+      return;
     })
   });
 }

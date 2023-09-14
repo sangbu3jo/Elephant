@@ -47,7 +47,7 @@ public class PostController {
      *
      * @param userDetails 로그인한 유저 정보
      * @param postRequestDto 클라이언트에서 받아온 값
-     * @param post_id 수정할 게시글 id
+     * @param postId 수정할 게시글 id
      * @return 성공 실패 ResponseEntity 반환
      * @throws Exception 예외처리
      */
@@ -55,13 +55,14 @@ public class PostController {
     @PutMapping("/posts/{post_id}")
     public ResponseEntity<String> modifiedPost(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                                @Valid @RequestBody PostRequestDto postRequestDto,
-                                               @PathVariable Long post_id) throws Exception {
+                                               @PathVariable(value = "post_id") Long postId
+                                               ) throws Exception {
 
-        Post post = postService.findById(post_id);
+        Post post = postService.findById(postId);
 
 
         if (userDetails.getUser().getId().equals(post.getUser().getId())) {
-            postService.modifiedPost(post, postRequestDto);
+            postService.modifiedPost(post, postRequestDto, postId);
             return ResponseEntity.status(200).body("Success");
         } else return ResponseEntity.status(400).body("수정 권한이 없습니다.");
     }

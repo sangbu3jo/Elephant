@@ -17,15 +17,16 @@
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+
 @font-face {
-    font-family: 'GangwonState';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/GangwonState.woff2') format('woff2');
+    font-family: 'Dovemayo_gothic';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.1/Dovemayo_gothic.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 * {
-    font-family: 'GangwonState', sans-serif;
+    font-family: 'Dovemayo_gothic', sans-serif;
 }
 
 html {
@@ -282,14 +283,20 @@ a.list-group-item .vs-title {
     text-decoration: none;
 }
 
-a {
+#sendEmail {
     color: black;
     text-underline: none;
     text-decoration: none;
 }
 
-a:hover{
+#sendEmail:hover{
     color: #002cc4;
+}
+
+#success {
+    color: #c50101;
+    text-underline: none;
+    text-decoration: none;
 }
 
 #login-kakao-btn {

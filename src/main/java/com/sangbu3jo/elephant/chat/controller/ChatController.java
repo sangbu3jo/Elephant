@@ -72,11 +72,12 @@ public class ChatController {
      */
     @ResponseBody
     @GetMapping("/api/chat/messages/{board_id}")
-    public List<ChatMessageResponseDto> getChatMessages(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public List<ChatMessageResponseDto> getChatMessages(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                        @RequestParam(required = false, defaultValue = "0") Integer pageNo) {
         log.info("메세지 리스트 요청 넘어옴");
         // 이 사람이 채팅방에 존재하는 지 여부를 파악하고 나서, 채팅방에 들어온 시간을 기준으로 그 이후의 데이터만 갖고와서 보여주어야 함
         try {
-            List<ChatMessageResponseDto> messages = chatRoomService.getMessages(board_id, userDetails.getUser().getUsername());
+            List<ChatMessageResponseDto> messages = chatRoomService.getMessages(board_id, userDetails.getUser().getUsername(), pageNo);
             return messages;
         } catch (IllegalArgumentException e) {
             return null;
@@ -143,7 +144,6 @@ public class ChatController {
     @GetMapping("/api/chatRooms")
     public String getPrivateChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                       Model model) {
-        // model에 List혹은 Slice 형태로 담아서 보내기 (프론트에서 list 받아서 출력해주기)
         if (userDetails == null ) {
             log.info("로그인 페이지로");
             return "login-page";
@@ -162,9 +162,10 @@ public class ChatController {
      */
     @ResponseBody
     @GetMapping("/api/chat/privatemessages/{chatRoom_id}")
-    public List<PrivateChatMessageResponseDto> getChatMessages(@PathVariable String chatRoom_id) {
-        log.info("메세지 리스트 요청 넘어옴");
-        List<PrivateChatMessageResponseDto> messages = chatRoomService.getPrivateMessages(chatRoom_id);
+    public List<PrivateChatMessageResponseDto> getChatMessages(@PathVariable String chatRoom_id,
+                                                               @RequestParam(required = false, defaultValue = "0") Integer pageNo) {
+        log.info("메세지 리스트 요청 넘어옴 / PageNo: " + pageNo);
+        List<PrivateChatMessageResponseDto> messages = chatRoomService.getPrivateMessages(chatRoom_id, pageNo);
         return messages;
     }
 
@@ -192,10 +193,7 @@ public class ChatController {
     @GetMapping("/api/chatRooms/{chatRoom_id}")
     public String getPersonalChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
                                       @PathVariable String chatRoom_id) {
-        String groupOrPrivate = chatRoomService.findGroupOrPrivate(chatRoom_id, userDetails.getUser().getUsername());
-        Boolean groupPrivate = chatRoomService.findGroupPrivate(chatRoom_id);
-        model.addAttribute("title", groupOrPrivate);
-        model.addAttribute("group", groupPrivate);
+        chatRoomService.findGroupOrPrivate(chatRoom_id, userDetails.getUser().getUsername(), model);
         model.addAttribute("username", userDetails.getUser().getUsername());
         model.addAttribute("nickname", userDetails.getUser().getNickname());
         return "privateChat";
