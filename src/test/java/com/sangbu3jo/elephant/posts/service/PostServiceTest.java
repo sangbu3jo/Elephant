@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
@@ -26,12 +27,15 @@ public class PostServiceTest {
 
     @Mock
     private PostRepository postRepository;
+    @Mock
+    private  S3Service s3Service;
+
 
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        postService = new PostService(userRepository, postRepository);
+        postService = new PostService(userRepository, postRepository,s3Service);
     }
 
     @Test
@@ -69,26 +73,40 @@ public class PostServiceTest {
 
 
     @Test
+    @Transactional
     @DisplayName("게시글 수정")
     public void testModifiedPost() {
+        // Given (테스트 시작 시 상황 설정)
+
         // 가짜 게시물 데이터 생성
+        PostRequestDto fakePostRequestDto = new PostRequestDto();
+        fakePostRequestDto.setCategory(Category.DEVELOPMENT_STUDY); // 예제 카테고리 설정
+        fakePostRequestDto.setTitle("수정된 제목");
+        fakePostRequestDto.setContent("수정된 내용");
+        fakePostRequestDto.setNewImg(false); // 이미지 업데이트 없음
+
+        // 가짜 게시물 객체 생성 및 설정
         Post fakePost = new Post();
-        fakePost.setCategory(Category.COOPERATION_PROJECT);
-        fakePost.setTitle("기존 제목");
-        fakePost.setContent("기존 내용");
+        fakePost.setId(1L); // 게시물 ID 설정
+        fakePost.setCategory(Category.COOPERATION_PROJECT); // 초기 카테고리 설정
+        fakePost.setTitle("원래 제목");
+        fakePost.setContent("원래 내용");
+        // 필요한 다른 설정
 
-        PostRequestDto modifiedDto = new PostRequestDto();
-        modifiedDto.setCategory(Category.DEVELOPMENT_STUDY);
-        modifiedDto.setTitle("수정된 제목");
-        modifiedDto.setContent("수정된 내용");
+        // postRepository.findById 메서드에 대한 Mock 설정
+        when(postRepository.findById(1L)).thenReturn(java.util.Optional.of(fakePost));
 
-        // postService.modifiedPost 메서드 호출
-        postService.modifiedPost(fakePost, modifiedDto);
+        // s3Service.deleteFile 메서드에 대한 Mock 설정
+//        doNothing().when(s3Service).deleteFile(anyList(), any(Post.class));
 
-        // 게시물의 카테고리 및 내용이 수정되었는지 확인
-        assertEquals(Category.DEVELOPMENT_STUDY, fakePost.getCategory());
-        assertEquals("수정된 제목", fakePost.getTitle());
-        assertEquals("수정된 내용", fakePost.getContent());
+        // When (테스트하려는 메서드 호출)
+        assertDoesNotThrow(() -> postService.modifiedPost(fakePost, fakePostRequestDto, 1L));
+
+        // Then (예상 결과 검증)
+        assertEquals(Category.DEVELOPMENT_STUDY, fakePost.getCategory()); // 카테고리가 수정되었는지 확인
+        assertEquals("수정된 제목", fakePost.getTitle()); // 제목이 수정되었는지 확인
+        assertEquals("수정된 내용", fakePost.getContent()); // 내용이 수정되었는지 확인
+        // 다른 검증 로직 추가
     }
 
 
