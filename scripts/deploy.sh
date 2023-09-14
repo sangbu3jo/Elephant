@@ -6,7 +6,7 @@ mkdir test
 
 APP_NAME=java
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+JAR_PATH=build/libs
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
@@ -22,4 +22,5 @@ fi
 echo "> $JAR_PATH 배포"
 # nohup을 사용하여 백그라운드에서 Java JAR 파일 실행
 mkdir test1
-nohup java -jar $JAR_PATH &
+cd $JAR_PATH
+nohup java -jar $JAR_NAME &
