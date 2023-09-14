@@ -137,6 +137,8 @@ public class AdminService {
 
         post.setTitle("숨김 처리된 게시글입니다.");
         post.setContent("숨김 처리된 게시글입니다.");
+        post.setFiles(null);
+
         return "게시글 숨김처리가 완료되었습니다";
     }
 

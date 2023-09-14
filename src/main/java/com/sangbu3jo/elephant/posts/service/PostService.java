@@ -24,6 +24,7 @@ public class PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final S3Service s3Service;
 
 
     //카테고리
@@ -46,18 +47,24 @@ public class PostService {
         Post post = new Post(postRequestDto, user);
 
         //category 나누기
-        if (postRequestDto.getCategory().equals(Category.COOPERATION_PROJECT)) {
-            post.setCategory(project);
-        } else if (postRequestDto.getCategory().equals(Category.DEVELOPMENT_STUDY)) {
-            post.setCategory(study);
-        } else if (postRequestDto.getCategory().equals(Category.PREVIOUS_EXAM)) {
-            post.setCategory(previousExam);
-        } else if (postRequestDto.getCategory().equals(Category.FORUM_BOARD)) {
-            post.setCategory(forumBoard);
-
-        } else {
-            throw new NullPointerException("해당 카테고리를 존재하지 않습니다.");
+        // 카테고리 설정
+        switch (postRequestDto.getCategory()) {
+            case COOPERATION_PROJECT:
+                post.setCategory(project);
+                break;
+            case DEVELOPMENT_STUDY:
+                post.setCategory(study);
+                break;
+            case PREVIOUS_EXAM:
+                post.setCategory(previousExam);
+                break;
+            case FORUM_BOARD:
+                post.setCategory(forumBoard);
+                break;
+            default:
+                throw new IllegalArgumentException("해당 카테고리를 지원하지 않습니다.");
         }
+
 
         //게시글을 생성하면 모집 여부 모집 중
         postRequestDto.setCompleted(false);
@@ -73,21 +80,32 @@ public class PostService {
 
     //게시물 수정
     @Transactional
-    public void modifiedPost(Post post, PostRequestDto postRequestDto) {
+    public void modifiedPost(Post post, PostRequestDto postRequestDto, Long postId) {
 
 
-        //category 나누기
-        if (postRequestDto.getCategory().equals(Category.COOPERATION_PROJECT)) {
-            post.setCategory(project);
-        } else if (postRequestDto.getCategory().equals(Category.DEVELOPMENT_STUDY)) {
-            post.setCategory(study);
-        } else if (postRequestDto.getCategory().equals(Category.PREVIOUS_EXAM)) {
-            post.setCategory(previousExam);
-        } else if (postRequestDto.getCategory().equals(Category.FORUM_BOARD)) {
-            post.setCategory(forumBoard);
+        // 카테고리 설정
+        switch (postRequestDto.getCategory()) {
+            case COOPERATION_PROJECT:
+                post.setCategory(project);
+                break;
+            case DEVELOPMENT_STUDY:
+                post.setCategory(study);
+                break;
+            case PREVIOUS_EXAM:
+                post.setCategory(previousExam);
+                break;
+            case FORUM_BOARD:
+                post.setCategory(forumBoard);
+                break;
+            default:
+                throw new IllegalArgumentException("해당 카테고리를 지원하지 않습니다.");
+        }
 
-        } else {
-            throw new NullPointerException("해당 카테고리를 존재하지 않습니다.");
+
+        if(postRequestDto.getNewImg() == false) {
+            //새로 들어온 이미지가 없으니깐 이미지를 삭제 시켜야 함
+            Post postImg = findById(postId);
+            s3Service.deleteFile(postImg.getFiles(), postImg);
         }
 
         post.updatePost(postRequestDto);
