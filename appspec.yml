@@ -9,7 +9,7 @@ permissions:
   - object: /home/ubuntu/app/
     owner: ubuntu
 hooks: # CodeDeploy 수명 주기 중 하나인 AfterInstall(설치 끝났을때)시, script 폴더 안에 sh 파일 실행
-  ApplicationStart:
+  AfterInstall:
     - location: scripts/deploy.sh
       runas: ubuntu
 
