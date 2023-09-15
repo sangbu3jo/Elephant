@@ -6,7 +6,6 @@ cd $REPOSITORY
 APP_NAME=java
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
 JAR_PATH=build/libs
-JAR_FULL_PATH="$JAR_PATH/$JAR_NAME"
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
@@ -22,4 +21,4 @@ fi
 echo "> $JAR_PATH 배포"
 # nohup을 사용하여 백그라운드에서 Java JAR 파일 실행
 cd $JAR_PATH
-nohup java -jar $JAR_FULL_PATH >> /home/ubuntu/dev/deploy.log2>&1&
+nohup java -jar $JAR_NAME >> /home/ubuntu/dev/deploy.log2>&1&
