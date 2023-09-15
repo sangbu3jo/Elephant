@@ -178,8 +178,13 @@
 
       <a th:onclick="'gotoPost(\'' + ${post.id} + '\')'" class="list-group-item list-group-item-action" aria-current="true" th:each="post, postIndex : ${posts}">
         <div class="d-flex w-75 justify-content-between">
-          <h5 class="card-title mb-0" th:text="|${post.title.length() > 15 ? #strings.substring(post.title, 0, 15) + '...' : post.title}|">스터디원 구함 </h5>
+          <h5 class="card-title mb-0">
+            <span th:text="|${(post.title.length() > 15 ? #strings.substring(post.title, 0, 15) + '...' : post.title)}|"></span>
+            <span th:if="${post.getPostCommentList().size() > 0}" th:text="${' (' + post.getPostCommentList().size() + ')'}"> (댓글갯수)</span>
+            <span th:if="${post.files != null}" style="font-size: smaller;">🖼️</span>
+          </h5>
           <p class="card-text mb-0" th:text="|${post.content.length() > 50 ? #strings.substring(post.content, 0, 50) + '...' : post.content}|">Some quick example text to build on the card title ...</p>
+
         </div>
         <div class="d-flex w-25 justify-content-between">
           <div style="width: 40%; display: flex; justify-content: center; align-items: center;">
