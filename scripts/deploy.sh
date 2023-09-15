@@ -22,4 +22,4 @@ touch result.txt
 echo "> $JAR_PATH 배포"
 # nohup을 사용하여 백그라운드에서 Java JAR 파일 실행
 cd $JAR_PATH
-nohup java -jar $JAR_NAME > /dev/null 2> /dev/null < /dev/null &
+nohup java -jar $JAR_NAME &
