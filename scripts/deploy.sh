@@ -18,7 +18,8 @@ else # $CURRENT_PID가 비어 있지 않을 때 실행되는 부분
   sleep 5 # 5초 대기
 fi
 
+touch result.txt
 echo "> $JAR_PATH 배포"
 # nohup을 사용하여 백그라운드에서 Java JAR 파일 실행
 cd $JAR_PATH
-nohup java -jar $JAR_NAME >> /home/ubuntu/dev/deploy.log2>&1&
+nohup java -jar $JAR_NAME >> /home/ubuntu/dev/deploy.log 
