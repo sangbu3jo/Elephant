@@ -48,6 +48,13 @@
         }
 
 
+        .responsive-image {
+            width: 300px;
+            height: auto;
+        }
+
+
+
     </style>
 
 
@@ -176,7 +183,7 @@
         <div class="post-content-bottom">
             <p th:utext="${post.content}">Contents</p>
             <div th:if="${post.files != null}">
-                <img th:src="${post.files}" alt="이미지 대체 텍스트" style="max-width: 100%; height: auto;">
+                <img th:src="${post.files}" alt="이미지 대체 텍스트" class="responsive-image">
             </div>
         </div>
 
