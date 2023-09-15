@@ -134,7 +134,11 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center"
                             th:each="project : ${projects}" th:onclick="'gotoPost(\'' + ${project.id} + '\')'">
-                            <span th:text="|${project.title.length() > 30 ? #strings.substring(project.title, 0, 30) + '...' : project.title}|">제목</span>
+                            <span>
+                                <span th:text="|${(project.title.length() > 20 ? #strings.substring(project.title, 0, 20) + '...' : project.title)}|">제목</span>
+                                <span th:if="${project.getPostCommentList.size() > 0}" th:text="${' (' + project.getPostCommentList.size() + ')'}"> (댓글갯수)</span>
+                                <span th:if="${project.files != null}" style="font-size: smaller;">🖼️</span>
+                            </span>
                             <span th:text="${project.nickname}">작성자</span>
                             <span class="badge bg-primary rounded-pill"
                                   th:text="|조회수: ${project.view_cnt}|">조회수: 1</span>
@@ -150,7 +154,11 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center"
                             th:each="study : ${studies}" th:onclick="'gotoPost(\'' + ${study.id} + '\')'">
-                            <span th:text="|${study.title.length() > 20 ? #strings.substring(study.title, 0, 20) + '...' : study.title}|">제목</span>
+                            <span>
+                                <span th:text="|${(study.title.length() > 20 ? #strings.substring(study.title, 0, 20) + '...' : study.title)}|">제목</span>
+                                <span th:if="${study.getPostCommentList.size() > 0}" th:text="${' (' + study.getPostCommentList.size() + ')'}"> (댓글갯수)</span>
+                                <span th:if="${study.files != null}" style="font-size: smaller;">🖼️</span>
+                            </span>
                             <span th:text="${study.nickname}">작성자</span>
                             <span class="badge bg-primary rounded-pill" th:text="|조회수: ${study.view_cnt}|">조회수: 1</span>
                         </li>
@@ -169,7 +177,11 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center"
                         th:each="exam : ${exams}"  th:onclick="'gotoPost(\'' + ${exam.id} + '\')'">
-                        <span th:text="|${exam.title.length() > 20 ? #strings.substring(exam.title, 0, 20) + '...' : exam.title}|">제목</span>
+                        <span>
+                            <span th:text="|${(exam.title.length() > 20 ? #strings.substring(exam.title, 0, 20) + '...' : exam.title)}|">제목</span>
+                            <span th:if="${exam.getPostCommentList.size() > 0}" th:text="${' (' + exam.getPostCommentList.size() + ')'}"> (댓글갯수)</span>
+                            <span th:if="${exam.files != null}" style="font-size: smaller;">🖼️</span>
+                        </span>
                         <span th:text="${exam.nickname}">작성자</span>
                         <span class="badge bg-primary rounded-pill" th:text="|조회수: ${exam.view_cnt}|">조회수: 1</span>
                     </li>
@@ -184,7 +196,11 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item d-flex justify-content-between align-items-center"
                         th:each="forum : ${forums}"  th:onclick="'gotoPost(\'' + ${forum.id} + '\')'">
-                        <span th:text="|${forum.title.length() > 20 ? #strings.substring(forum.title, 0, 20) + '...' : forum.title}|">제목</span>
+                        <span>
+                            <span th:text="|${(forum.title.length() > 20 ? #strings.substring(forum.title, 0, 20) + '...' : forum.title)}|">제목</span>
+                            <span th:if="${forum.getPostCommentList.size() > 0}" th:text="${' (' + forum.getPostCommentList.size() + ')'}"> (댓글갯수)</span>
+                            <span th:if="${forum.files != null}" style="font-size: smaller;">🖼️</span>
+                        </span>
                         <span th:text="${forum.nickname}">작성자</span>
                         <span class="badge bg-primary rounded-pill"  th:text="|조회수: ${forum.view_cnt}|">조회수: 1</span>
                     </li>
