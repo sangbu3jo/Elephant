@@ -11,6 +11,6 @@ permissions:
 hooks: 
   AfterAllowTraffic:
     - location: scripts/deploy.sh
-      timeout: 180
+      timeout: 1000
       runas: ubuntu
 
