@@ -5,6 +5,7 @@ import com.sangbu3jo.elephant.users.entity.User;
 import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Document/*(collection = "ele")*/
 @Data
 @Getter
+@NoArgsConstructor
 public class ChatMessage implements Serializable {
 
     @Id
@@ -24,18 +26,18 @@ public class ChatMessage implements Serializable {
     private String id;
     private String type; // 메시지 타입
     private Long chatRoomId;
-    private User user;
+    private String nickname;
+    private String username;
     private String message;
     private LocalDateTime sendTime;
 
-    public ChatMessage(ChatMessageRequestDto chatMessageRequestDto, User user) {
+    public ChatMessage(ChatMessageRequestDto chatMessageRequestDto) {
         this.chatRoomId = chatMessageRequestDto.getChatRoomId();
-        this.user = user;
+        this.username = chatMessageRequestDto.getUsername();
+        this.nickname = chatMessageRequestDto.getNickname();
         this.message = chatMessageRequestDto.getMessage();
         this.sendTime = chatMessageRequestDto.getSendTime();
         this.type = chatMessageRequestDto.getType().toString();
     }
-
-    public ChatMessage() {}
 
 }

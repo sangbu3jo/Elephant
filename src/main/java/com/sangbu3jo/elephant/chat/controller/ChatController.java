@@ -1,14 +1,11 @@
 package com.sangbu3jo.elephant.chat.controller;
 
 
-import com.sangbu3jo.elephant.board.dto.BoardResponseDto;
-import com.sangbu3jo.elephant.board.service.BoardService;
-import com.sangbu3jo.elephant.chat.dto.*;
-import com.sangbu3jo.elephant.chat.entity.GroupChatRoom;
-import com.sangbu3jo.elephant.chat.entity.GroupChatUser;
-import com.sangbu3jo.elephant.chat.entity.PrivateChatRoom;
-import com.sangbu3jo.elephant.chat.service.ChatRoomService;
-import com.sangbu3jo.elephant.security.UserDetailsImpl;
+import com.sangbu3jo.elephant.chat.dto.ChatUserRequestDto;
+import com.sangbu3jo.elephant.chat.dto.PrivateChatMessageRequestDto;
+import com.sangbu3jo.elephant.chat.dto.PrivateChatMessageResponseDto;
+import com.sangbu3jo.elephant.chat.dto.PrivateChatRoomResponseDto;
+import com.sangbu3jo.elephant.chat.service.ChatService;
 import com.sangbu3jo.elephant.security.UserDetailsImpl;
 import com.sangbu3jo.elephant.users.entity.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,57 +28,8 @@ import java.util.List;
 @Slf4j
 public class ChatController {
 
-    private final BoardService boardService;
-    private final ChatRoomService chatRoomService;
+    private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
-
-    /**
-     * 미니게임 페이지를 반환
-     * @param board_id: URL에 매핑되어 있는 프로젝트(보드)의 ID 값
-     * @return: 반환할 HTML 페이지
-     */
-    @GetMapping("/api/minigame/{board_id}")
-    public String getMiniGame(@PathVariable Long board_id) {
-        return "miniGame";
-    }
-
-    /**
-     * 단체 채팅방 페이지 반환
-     * @param model: Model에 프론트로 전송할 데이터를 담아서 보냄
-     * @param board_id: URL에 매핑되어 있는 프로젝트(보드)의 ID 값
-     * @param userDetails: 로그인한 사용자인지 확인하기 위함 & 채팅할 사용자 확인 (JWT로 검증)
-     * @return: 반환할 HTML 페이지
-     */
-    @GetMapping("/api/chat/{board_id}")
-    public String getChatRoom(Model model, @PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info("채팅 페이지");
-        BoardResponseDto boardResponseDto = new BoardResponseDto(boardService.findBoard(board_id));
-        chatRoomService.findChatRoom(boardService.findBoard(board_id));
-        model.addAttribute("board", boardResponseDto);
-        model.addAttribute("username", userDetails.getUser().getUsername());
-        model.addAttribute("nickname", userDetails.getUser().getNickname());
-        return "chat";
-    }
-
-    /**
-     * 단체 채팅방 메세지 리스트 반환
-     * @param board_id: URL에 매핑되어 있는 프로젝트(보드)의 ID 값
-     * @param userDetails: 로그인한 사용자인지 확인하기 위함 & 채팅할 사용자 확인 (JWT로 검증)
-     * @return: 채팅방의 메세지 내역 반환
-     */
-    @ResponseBody
-    @GetMapping("/api/chat/messages/{board_id}")
-    public List<ChatMessageResponseDto> getChatMessages(@PathVariable Long board_id, @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                        @RequestParam(required = false, defaultValue = "0") Integer pageNo) {
-        log.info("메세지 리스트 요청 넘어옴");
-        // 이 사람이 채팅방에 존재하는 지 여부를 파악하고 나서, 채팅방에 들어온 시간을 기준으로 그 이후의 데이터만 갖고와서 보여주어야 함
-        try {
-            List<ChatMessageResponseDto> messages = chatRoomService.getMessages(board_id, userDetails.getUser().getUsername(), pageNo);
-            return messages;
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
 
     /**
      * SimpMessageHeaderAccessor (Simp -> Simple Messaging Protocol)
@@ -95,45 +42,6 @@ public class ChatController {
      * 4) 기타 기능
      * 메시지의 목적지, 메시지 유형 등과 같은 다양한 메타데이터를 다루는 데 사용
      */
-
-
-    /**
-     * 단체 채팅방 구독 요청
-     * @param chatMessageRequestDto: 메세지 타입과, 보내는 채팅방의 ID, 유저 정보, 메세지 내용, 보내는 시간을 받아옴
-     * @param headerAccessor: WebSocket 및 메세지 정보를 담음
-     */
-    @MessageMapping("/chat/adduser")
-    public void enterUser(@Payload ChatMessageRequestDto chatMessageRequestDto, SimpMessageHeaderAccessor headerAccessor) {
-        log.info("서버로 요청 넘어옴을 확인");
-        log.info(chatMessageRequestDto.getChatRoomId().toString());
-        // 연결하면서 put 해주어야 함
-        headerAccessor.getSessionAttributes().put("chatRoomId", chatMessageRequestDto.getChatRoomId());
-        headerAccessor.getSessionAttributes().put("nickname", chatMessageRequestDto.getNickname());
-        headerAccessor.getSessionAttributes().put("username", chatMessageRequestDto.getUsername());
-
-        // 채팅방에 처음 들어온 사용자인지 구분
-        Boolean user = chatRoomService.findUsersInChatRoom(chatMessageRequestDto.getUsername(), chatMessageRequestDto.getChatRoomId(), chatMessageRequestDto.getSendTime());
-        if (user) {
-            log.info("처음 들어온 유저");
-            chatMessageRequestDto.setMessage(chatMessageRequestDto.getNickname() + "님이 입장하셨습니다 :D");
-            ChatMessageResponseDto chatMessage = chatRoomService.saveChatMessage(chatMessageRequestDto);
-            messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), chatMessage);
-        }
-    }
-
-    /**
-     * 단체 채팅 메세지 전송
-     * @param chatMessageRequestDto: 메세지 타입과, 보내는 채팅방의 ID, 유저 정보, 메세지 내용, 보내는 시간을 받아옴
-     * @param headerAccessor: WebSocket 및 메세지 정보를 담음
-     */
-    @MessageMapping("/chat/sending")
-    public void sendMessage(@Payload ChatMessageRequestDto chatMessageRequestDto, SimpMessageHeaderAccessor headerAccessor) {
-        log.info("메시지 전송 요청이 넘어온 것을 확인");
-        headerAccessor.getSessionAttributes().put("chatRoomId", chatMessageRequestDto.getChatRoomId());
-        ChatMessageResponseDto message = chatRoomService.saveChatMessage(chatMessageRequestDto);
-        log.info(message.getType());
-        messagingTemplate.convertAndSend("/topic/" + chatMessageRequestDto.getChatRoomId(), message);
-    }
 
     /**
      * 개인 채팅방 리스트
@@ -149,7 +57,7 @@ public class ChatController {
             return "login-page";
         }
         log.info("채팅방 리스트 반환 (개인 & 단체)");
-        List<PrivateChatRoomResponseDto> chatRoomResponseDtos = chatRoomService.findAllPrivateChatRooms(userDetails.getUser()); // username으로 찾기
+        List<PrivateChatRoomResponseDto> chatRoomResponseDtos = chatService.findAllPrivateChatRooms(userDetails.getUser()); // username으로 찾기
         model.addAttribute("chatrooms", chatRoomResponseDtos);
         checkAdmin(model, userDetails);
         return "chatRooms";
@@ -165,7 +73,7 @@ public class ChatController {
     public List<PrivateChatMessageResponseDto> getChatMessages(@PathVariable String chatRoom_id,
                                                                @RequestParam(required = false, defaultValue = "0") Integer pageNo) {
         log.info("메세지 리스트 요청 넘어옴 / PageNo: " + pageNo);
-        List<PrivateChatMessageResponseDto> messages = chatRoomService.getPrivateMessages(chatRoom_id, pageNo);
+        List<PrivateChatMessageResponseDto> messages = chatService.getPrivateMessages(chatRoom_id, pageNo);
         return messages;
     }
 
@@ -180,7 +88,7 @@ public class ChatController {
     public String createPrivateChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails,
                                          @RequestBody ChatUserRequestDto chatUserRequestDto) {
         log.info("개인 채팅방 생성 요청 넘어옴");
-        return chatRoomService.findPrivateChatRoom(userDetails.getUser(), chatUserRequestDto.getUsername());
+        return chatService.findPrivateChatRoom(userDetails.getUser(), chatUserRequestDto.getUsername());
     }
 
     /**
@@ -193,7 +101,7 @@ public class ChatController {
     @GetMapping("/api/chatRooms/{chatRoom_id}")
     public String getPersonalChatRoom(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
                                       @PathVariable String chatRoom_id) {
-        chatRoomService.findGroupOrPrivate(chatRoom_id, userDetails.getUser().getUsername(), model);
+        chatService.findGroupOrPrivate(chatRoom_id, userDetails.getUser().getUsername(), model);
         model.addAttribute("username", userDetails.getUser().getUsername());
         model.addAttribute("nickname", userDetails.getUser().getNickname());
         return "privateChat";
@@ -210,7 +118,7 @@ public class ChatController {
                                                        @PathVariable String chatRoom_id) {
         log.info(chatRoom_id);
         try {
-            chatRoomService.leavePrivateChatRoom(userDetails.getUser(), chatRoom_id);
+            chatService.leavePrivateChatRoom(userDetails.getUser(), chatRoom_id);
             return ResponseEntity.ok().body("성공");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("실패");
@@ -243,7 +151,7 @@ public class ChatController {
         log.info("메시지 전송 요청이 넘어온 것을 확인");
         headerAccessor.getSessionAttributes().put("chatRoomTitle", chatMessageRequestDto.getTitle());
         chatMessageRequestDto.setSendTime(LocalDateTime.now());
-        PrivateChatMessageResponseDto message = chatRoomService.savePrivateChatMessage(chatMessageRequestDto);
+        PrivateChatMessageResponseDto message = chatService.savePrivateChatMessage(chatMessageRequestDto);
         messagingTemplate.convertAndSend("/queue/" + chatMessageRequestDto.getTitle(), message);
     }
 
