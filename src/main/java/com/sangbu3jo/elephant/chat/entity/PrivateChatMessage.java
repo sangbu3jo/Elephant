@@ -23,13 +23,15 @@ public class PrivateChatMessage implements Serializable {
     private String id;
     private String type; // 메시지 타입
     private String title;
-    private User user;
+    private String username;
+    private String nickname;
     private String message;
     private LocalDateTime sendTime;
 
-    public PrivateChatMessage(PrivateChatMessageRequestDto chatMessageRequestDto, User user) {
+    public PrivateChatMessage(PrivateChatMessageRequestDto chatMessageRequestDto) {
         this.title = chatMessageRequestDto.getTitle();
-        this.user = user;
+        this.username = chatMessageRequestDto.getUsername();
+        this.nickname = chatMessageRequestDto.getNickname();
         this.message = chatMessageRequestDto.getMessage();
         this.sendTime = chatMessageRequestDto.getSendTime();
         this.type = chatMessageRequestDto.getType().toString();

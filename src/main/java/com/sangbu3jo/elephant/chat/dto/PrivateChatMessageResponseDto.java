@@ -1,6 +1,7 @@
 package com.sangbu3jo.elephant.chat.dto;
 
 import com.sangbu3jo.elephant.chat.entity.PrivateChatMessage;
+import com.sangbu3jo.elephant.users.entity.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -17,11 +18,12 @@ public class PrivateChatMessageResponseDto {
     private String sendTime;
     private String url;
 
-    public PrivateChatMessageResponseDto (PrivateChatMessage privateChatMessage) {
+    public PrivateChatMessageResponseDto (PrivateChatMessage privateChatMessage, User user) {
         this.type = privateChatMessage.getType();
         this.title = privateChatMessage.getTitle();
-        this.nickname = privateChatMessage.getUser().getNickname();
-        this.username = privateChatMessage.getUser().getUsername();
+        this.nickname = privateChatMessage.getNickname();
+        this.username = privateChatMessage.getUsername();
+        this.url = user.getProfileUrl();
         this.message = privateChatMessage.getMessage();
         this.sendTime = privateChatMessage.getSendTime().format(DateTimeFormatter.ofPattern("MM-dd HH:mm")).toString();
     }

@@ -1,7 +1,16 @@
 # appspec.yml
 version: 0.0 # CodeDeploy 버전
 os: linux
+
 files:
   - source: / # CodeDeploy에서 전달해 준 파일 중 destination으로 이동시킬 대상 지정: 루트 경로(전체 파일)
-    destination: /home/ubuntu/app/step2/zip/ # source에서 지정한 파일을 받을 위치
-    overwrite: yes
+    destination: /home/ubuntu/app # source에서 지정한 파일을 ec2 서버 내에 저장할 위치
+permissions:
+  - object: /home/ubuntu/app/
+    owner: ubuntu
+hooks: 
+  AfterAllowTraffic:
+    - location: scripts/deploy.sh
+      timeout: 1000
+      runas: ubuntu
+
